@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Funciones - Alex</title>
+    <style>
+        /* 1. Variables globales para intercambiar preferencias (Temas) */
+        
+         :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333333;
+            --nav-bg: #2c3e50;
+            --nav-btn-bg: #34495e;
+            --nav-btn-hover: #3498db;
+            --card-bg: #ffffff;
+            --transition-speed: 0.3s;
+        }
+        /* 2. Variables para el Modo Oscuro */
+        
+        [data-theme="dark"] {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --nav-bg: #0f3460;
+            --nav-btn-bg: #16213e;
+            --nav-btn-hover: #e94560;
+            --card-bg: #16213e;
+        }
+        /* 3. Estilos base con transiciones suaves */
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        /* 4. Barra de navegación principal (Flexbox) */
+        
+        nav {
+            background-color: var(--nav-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav button {
+            background-color: var(--nav-btn-bg);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform 0.2s;
+        }
+        
+        nav button:hover {
+            background-color: var(--nav-btn-hover);
+            transform: translateY(-2px);
+            /* Pequeña animación al pasar el ratón */
+        }
+        /* 5. Contenedor del contenido y tarjetas */
+        
+        main {
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .tarjeta-info {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+            transition: background-color var(--transition-speed);
+        }
+        /* 6. Menú desplegable animado (ej. para contactos u opciones) */
+        
+        #menu-desplegable {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--nav-btn-hover);
+            color: white;
+            border-radius: 5px;
+            animation: slideDown 0.4s ease-out;
+            /* Animación CSS */
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Barra de navegación con los botones de funciones -->
+    <nav>
+        <button id="btn-tema">🌓 Cambiar Preferencia de Tema</button>
+        <button id="btn-contacto">📞 Mostrar Menú de Contacto</button>
+        <button id="btn-accion">⚡ Ejecutar Acción</button>
+    </nav>
+
+    <!-- Área principal donde se refleja la interacción -->
+    <main>
+        <h1>Panel de Control Interactivo</h1>
+        <p>Selecciona una opción en la barra superior para probar las diferentes funciones.</p>
+
+        <div class="tarjeta-info">
+            <h2 id="titulo-estado">Estado: Esperando instrucción...</h2>
+            <p id="texto-estado">Aquí se reflejarán los cambios según los botones que presiones.</p>
+
+            <!-- Este div está oculto por defecto y se despliega con JS -->
+            <div id="menu-desplegable">
+                <p>📧 Email: desarrollador@ejemplo.com</p>
+                <p>📱 Teléfono: +503 0000 0000</p>
+                <p>📍 Ubicación: El Salvador</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Lógica JavaScript para hacer funcionar los botones -->
+    <script>
+        // Función 1: Cambiar el tema intercambiando el atributo 'data-theme'
+        const btnTema = document.getElementById('btn-tema');
+        btnTema.addEventListener('click', () => {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+
+            // Si es oscuro, pásalo a claro (vacío), y viceversa
+            const newTheme = currentTheme === 'dark' ? '' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+
+            // Actualizar textos en pantalla
+            document.getElementById('titulo-estado').innerText = "Preferencia Actualizada";
+            document.getElementById('texto-estado').innerText = `Has cambiado el esquema de colores al modo ${newTheme === 'dark' ? 'Oscuro' : 'Claro'}.`;
+        });
+
+        // Función 2: Alternar visibilidad de un menú desplegable
+        const btnContacto = document.getElementById('btn-contacto');
+        const menuDesplegable = document.getElementById('menu-desplegable');
+
+        btnContacto.addEventListener('click', () => {
+            if (menuDesplegable.style.display === 'block') {
+                menuDesplegable.style.display = 'none';
+            } else {
+                menuDesplegable.style.display = 'block';
+                document.getElementById('titulo-estado').innerText = "Menú Desplegado";
+                document.getElementById('texto-estado').innerText = "Has activado un componente animado con CSS y JS.";
+            }
+        });
+
+        // Función 3: Disparar una alerta genérica
+        const btnAccion = document.getElementById('btn-accion');
+        btnAccion.addEventListener('click', () => {
+            alert('¡Acción ejecutada correctamente desde la barra superior!');
+            document.getElementById('titulo-estado').innerText = "Acción Finalizada";
+            document.getElementById('texto-estado').innerText = "El navegador procesó tu petición de alerta.";
+        });
+    </script>
+
+</body>
+
+</html>
