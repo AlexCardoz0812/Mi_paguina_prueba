@@ -1278,6 +1278,142 @@
       margin-bottom: 0.45rem;
       display: block;
     }
+
+    /* ==========================================================================
+       SECCIÓN COMUNIDAD OFFLINE: CONTADOR DE VISITAS, ME GUSTA Y COMENTARIOS
+       ========================================================================== */
+    .community-section {
+      max-width: 960px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+      width: 100%;
+    }
+
+    .community-stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      padding-bottom: 1rem;
+      margin-bottom: 1.15rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .stats-badges-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .visit-counter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--bg-subtle);
+      border: 1.5px solid var(--border-color);
+      color: var(--primary-navy);
+      padding: 0.48rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .like-heart-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #fff1f2;
+      border: 1.5px solid #fda4af;
+      color: #be123c;
+      padding: 0.48rem 1.05rem;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .like-heart-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      background: #ffe4e6;
+      box-shadow: 0 6px 14px rgba(225, 29, 72, 0.18);
+    }
+
+    .like-heart-btn.liked {
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+      border-color: #9f1239;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(225, 29, 72, 0.3);
+    }
+
+    @keyframes heartPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.26); }
+      100% { transform: scale(1); }
+    }
+
+    .like-heart-btn.pop {
+      animation: heartPop 0.35s ease;
+    }
+
+    .comment-form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .comment-form-row {
+        grid-template-columns: 220px 1fr auto;
+        align-items: start;
+      }
+    }
+
+    .comments-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .comment-bubble {
+      background: var(--bg-parchment);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+    }
+
+    .comment-bubble-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+      font-size: 0.84rem;
+    }
+
+    .comment-author {
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
+
+    .comment-date {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    .comment-body {
+      color: var(--text-main);
+      font-size: 0.93rem;
+      white-space: pre-line;
+      word-break: break-word;
+    }
   </style>
 </head>
 <body>
@@ -1646,6 +1782,43 @@
   <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES (TOAST) -->
   <div id="toast-container" aria-live="polite"></div>
 
+  <!-- SECCIÓN DE VISITAS, ME GUSTA Y COMENTARIOS -->
+  <section class="community-section" aria-label="Visitas, Me gusta y Comentarios">
+    <div class="card" style="margin-bottom: 0;">
+      <div class="community-stats-bar">
+        <div>
+          <h3 style="font-family: var(--font-serif); color: var(--primary-navy); font-size: 1.25rem;">
+            💬 Comunidad y Comentarios
+          </h3>
+          <p style="font-size: 0.86rem; color: var(--text-muted);">
+            Deja tu valoración o comentario sobre los juegos bíblicos.
+          </p>
+        </div>
+
+        <div class="stats-badges-group">
+          <span class="visit-counter-pill" title="Total de veces que se ha abierto este juego">
+            👁️ Visitas: <strong id="visit-counter-value">1</strong>
+          </span>
+          <button type="button" id="like-toggle-btn" class="like-heart-btn" onclick="toggleCommunityLike()" title="Dar Me gusta a esta aplicación">
+            <span id="like-heart-icon">🤍</span>
+            <span>Me gusta</span>
+            <strong id="like-counter-value">0</strong>
+          </button>
+        </div>
+      </div>
+
+      <div class="comment-form-row">
+        <input type="text" id="comment-author-input" class="form-control" maxlength="45" placeholder="Tu nombre (Ej. Carlos)">
+        <textarea id="comment-text-input" class="form-control" rows="2" maxlength="400" placeholder="Escribe un comentario, versículo favorito o sugerencia..."></textarea>
+        <button type="button" class="btn btn-primary" onclick="addCommunityComment()" style="height: 100%; min-height: 46px;">
+          Enviar 💬
+        </button>
+      </div>
+
+      <div id="comments-list-container" class="comments-feed"></div>
+    </div>
+  </section>
+
   <!-- MODAL DE CONFIRMACIÓN PROPIO -->
   <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-dialog">
@@ -1705,6 +1878,21 @@
   <!-- ========================================================================
        DATOS INCRUSTADOS POR DEFECTO (Se actualiza automáticamente al exportar HTML)
        ======================================================================== -->
+  <script id="embedded-community-data" type="application/json">
+{
+  "visits": 0,
+  "likes": 1,
+  "comments": [
+    {
+      "id": "welcome-comment",
+      "author": "Equipo BibliaTrivia",
+      "text": "¡Bienvenido! Explora las historias bíblicas, pon a prueba tus conocimientos y deja aquí tu comentario.",
+      "date": "Inicio"
+    }
+  ]
+}
+  </script>
+
   <script id="embedded-quizzes-data" type="application/json">
 [
   {
@@ -1787,6 +1975,8 @@
     const STORAGE_KEY = 'biblia_trivia_quizzes_v1';
     const COPYRIGHT_KEY = 'biblia_trivia_copyright_owner_v1';
     const RANDOM_MODE_KEY = 'biblia_trivia_random_mode_v1';
+    const COMMUNITY_KEY = 'biblia_trivia_community_v1';
+    const USER_LIKED_KEY = 'biblia_trivia_user_liked_v1';
 
     /* ==========================================================================
        BIBLIOTECA INTEGRADA DE HISTORIAS DE LA BIBLIA (ANTIGUO Y NUEVO TESTAMENTO)
@@ -2055,6 +2245,12 @@
     let currentStoryTestamentFilter = 'ALL';
     let selectedCatalogStoryId = null;
     const perQuizSettings = {};
+    let communityState = {
+      visits: 1,
+      likes: 0,
+      comments: []
+    };
+    let hasUserLiked = false;
 
     // Estado de la partida actual
     let currentGame = {
@@ -2079,6 +2275,7 @@
       initPWASupport();
       loadRandomModePreference();
       loadCopyrightOwner();
+      initCommunityWidgets();
       loadQuizzes();
       initMenu3DScene();
       renderLobby();
@@ -2088,13 +2285,143 @@
     });
 
     /* --------------------------------------------------------------------------
-       CATÁLOGO SELECCIONABLE DE HISTORIAS DE LA BIBLIA
+       CONTADOR DE VISITAS, BOTÓN ME GUSTA Y RECUADRO DE COMENTARIOS (OFFLINE)
        -------------------------------------------------------------------------- */
-    function setStoryTestamentFilter(filterVal, btnEl) {
-      currentStoryTestamentFilter = filterVal;
-      document.querySelectorAll('.testament-pill').forEach(p => p.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
-      renderBibleStoriesCatalog();
+    function getEmbeddedCommunityData() {
+      try {
+        const el = document.getElementById('embedded-community-data');
+        if (!el) return { visits: 0, likes: 0, comments: [] };
+        return JSON.parse(el.textContent.trim());
+      } catch (e) {
+        return { visits: 0, likes: 0, comments: [] };
+      }
+    }
+
+    function initCommunityWidgets() {
+      const embedded = getEmbeddedCommunityData();
+      let saved = null;
+      try {
+        const raw = localStorage.getItem(COMMUNITY_KEY);
+        if (raw) saved = JSON.parse(raw);
+      } catch (e) {}
+
+      hasUserLiked = localStorage.getItem(USER_LIKED_KEY) === 'true';
+
+      const baseVisits = Math.max(Number(embedded.visits) || 0, Number(saved?.visits) || 0);
+      const baseLikes = Math.max(Number(embedded.likes) || 0, Number(saved?.likes) || 0);
+
+      const commentMap = new Map();
+      (Array.isArray(embedded.comments) ? embedded.comments : []).forEach(c => commentMap.set(c.id, c));
+      (Array.isArray(saved?.comments) ? saved.comments : []).forEach(c => commentMap.set(c.id, c));
+
+      communityState = {
+        visits: baseVisits + 1,
+        likes: baseLikes,
+        comments: Array.from(commentMap.values())
+      };
+
+      saveCommunityState();
+      renderCommunityWidgets();
+    }
+
+    function saveCommunityState() {
+      try {
+        localStorage.setItem(COMMUNITY_KEY, JSON.stringify(communityState));
+      } catch (e) {}
+    }
+
+    function renderCommunityWidgets() {
+      const visitsEl = document.getElementById('visit-counter-value');
+      const likesEl = document.getElementById('like-counter-value');
+      const likeBtn = document.getElementById('like-toggle-btn');
+      const heartIcon = document.getElementById('like-heart-icon');
+      const listEl = document.getElementById('comments-list-container');
+
+      if (visitsEl) visitsEl.textContent = communityState.visits.toLocaleString('es-ES');
+      if (likesEl) likesEl.textContent = communityState.likes.toLocaleString('es-ES');
+
+      if (likeBtn && heartIcon) {
+        likeBtn.classList.toggle('liked', hasUserLiked);
+        heartIcon.textContent = hasUserLiked ? '❤️' : '🤍';
+      }
+
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      if (communityState.comments.length === 0) {
+        listEl.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 0.75rem;">Aún no hay comentarios. ¡Sé el primero en escribir!</p>';
+        return;
+      }
+
+      communityState.comments.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'comment-bubble';
+        item.innerHTML = `
+          <div class="comment-bubble-header">
+            <span class="comment-author">👤 ${escapeHTML(c.author || 'Anónimo')}</span>
+            <span class="comment-date">${escapeHTML(c.date || '')}</span>
+          </div>
+          <div class="comment-body">${escapeHTML(c.text)}</div>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function toggleCommunityLike() {
+      const btn = document.getElementById('like-toggle-btn');
+      if (hasUserLiked) {
+        hasUserLiked = false;
+        communityState.likes = Math.max(0, communityState.likes - 1);
+      } else {
+        hasUserLiked = true;
+        communityState.likes += 1;
+        if (btn) {
+          btn.classList.remove('pop');
+          void btn.offsetWidth;
+          btn.classList.add('pop');
+        }
+        showToast('¡Gracias por tu Me gusta! ❤️', 'success');
+      }
+
+      localStorage.setItem(USER_LIKED_KEY, String(hasUserLiked));
+      saveCommunityState();
+      renderCommunityWidgets();
+    }
+
+    function addCommunityComment() {
+      const authorInp = document.getElementById('comment-author-input');
+      const textInp = document.getElementById('comment-text-input');
+      if (!authorInp || !textInp) return;
+
+      const author = authorInp.value.trim() || 'Visitante';
+      const text = textInp.value.trim();
+
+      if (!text) {
+        showToast('Escribe un mensaje antes de enviar tu comentario.', 'error');
+        textInp.focus();
+        return;
+      }
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      communityState.comments.unshift({
+        id: 'cmt_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        author,
+        text,
+        date: dateStr
+      });
+
+      textInp.value = '';
+      saveCommunityState();
+      renderCommunityWidgets();
+      showToast('¡Comentario publicado! 💬', 'success');
     }
 
     function filterBibleStoriesCatalog() {
@@ -3783,6 +4110,11 @@
 
         const embeddedScript = docClone.querySelector('#embedded-quizzes-data');
         embeddedScript.textContent = '\n' + JSON.stringify(quizzes, null, 2) + '\n  ';
+
+        const embeddedCommunityScript = docClone.querySelector('#embedded-community-data');
+        if (embeddedCommunityScript) {
+          embeddedCommunityScript.textContent = '\n' + JSON.stringify(communityState, null, 2) + '\n  ';
+        }
 
         const currentOwner = document.getElementById('copyright-owner-display').textContent.trim();
         const cloneOwnerDisplay = docClone.querySelector('#copyright-owner-display');
