@@ -1113,7 +1113,22 @@
             Carga un archivo <strong>.json</strong> que te hayan compartido para añadir sus cuestionarios a tu lista.
           </p>
           <input type="file" id="import-json-file" accept=".json" style="display: none;" onchange="importJSON(event)">
-        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="document.getElementById('import-json-file').click()">Seleccionar Archivo JSON</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES (TOAST) -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- MODAL DE CONFIRMACIÓN PROPIO -->
+  <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-dialog">
+      <h3 id="modal-title">Confirmar Acción</h3>
+      <p id="modal-message">¿Estás seguro de continuar?</p>
+      <div class="modal-actions">
         <button class="btn btn-outline btn-sm" onclick="closeConfirmModal()">Cancelar</button>
         <button id="modal-confirm-btn" class="btn btn-danger btn-sm">Eliminar</button>
       </div>
