@@ -1685,16 +1685,16 @@
     </div>
   </div>
 
-  <!-- PIE DE PÁGINA CON COPYRIGHT PERSONALIZABLE -->
+  <!-- PIE DE PÁGINA CON COPYRIGHT PERSONALIZABLE (SE BLOQUEA AL GUARDARSE) -->
   <footer style="background: var(--primary-navy); color: rgba(255, 255, 255, 0.9); text-align: center; padding: 1.15rem 1rem; margin-top: auto; border-top: 3px solid var(--accent-gold); font-size: 0.9rem;">
     <div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;">
       <div>
         © <span id="copyright-year">2026</span> <strong id="copyright-owner-display" style="color: #fde68a;">Tu Nombre</strong> — Todos los derechos reservados.
       </div>
-      <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+      <div id="copyright-editor-controls" style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
         <input type="text" id="copyright-owner-input" placeholder="Escribe tu nombre aquí..." aria-label="Nombre del autor para el copyright"
                style="padding: 0.3rem 0.65rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: #ffffff; font-size: 0.82rem; width: 210px;">
-        <button type="button" onclick="saveCopyrightOwner()"
+        <button type="button" id="copyright-save-btn" onclick="saveCopyrightOwner()"
                 style="padding: 0.3rem 0.75rem; border-radius: 8px; border: none; background: var(--accent-gold); color: #ffffff; font-weight: 600; font-size: 0.82rem; cursor: pointer;">
           Guardar Copyright
         </button>
@@ -2275,7 +2275,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       CONTROL DE MODALIDAD ALEATORIA Y COPYRIGHT
+       CONTROL DE MODALIDAD ALEATORIA Y COPYRIGHT (BLOQUEABLE TRAS GUARDAR)
        -------------------------------------------------------------------------- */
     function loadRandomModePreference() {
       const saved = localStorage.getItem(RANDOM_MODE_KEY);
@@ -2284,25 +2284,36 @@
       }
     }
 
+    function lockCopyrightEditor(ownerName) {
+      const displayEl = document.getElementById('copyright-owner-display');
+      const controlsEl = document.getElementById('copyright-editor-controls');
+      if (displayEl && ownerName) {
+        displayEl.textContent = ownerName;
+      }
+      if (controlsEl) {
+        controlsEl.remove();
+      }
+    }
+
     function loadCopyrightOwner() {
       const yearEl = document.getElementById('copyright-year');
       if (yearEl) yearEl.textContent = new Date().getFullYear();
 
       const displayEl = document.getElementById('copyright-owner-display');
-      const inputEl = document.getElementById('copyright-owner-input');
       const savedOwner = localStorage.getItem(COPYRIGHT_KEY);
+      const embeddedOwner = displayEl ? displayEl.textContent.trim() : '';
 
       if (savedOwner && savedOwner.trim() !== '') {
-        displayEl.textContent = savedOwner.trim();
-        inputEl.value = savedOwner.trim();
-      } else if (displayEl && displayEl.textContent.trim() !== 'Tu Nombre') {
-        inputEl.value = displayEl.textContent.trim();
+        lockCopyrightEditor(savedOwner.trim());
+      } else if (embeddedOwner && embeddedOwner !== 'Tu Nombre') {
+        lockCopyrightEditor(embeddedOwner);
       }
     }
 
     function saveCopyrightOwner() {
       const inputEl = document.getElementById('copyright-owner-input');
-      const displayEl = document.getElementById('copyright-owner-display');
+      if (!inputEl) return;
+
       const name = inputEl.value.trim();
 
       if (!name) {
@@ -2311,9 +2322,9 @@
         return;
       }
 
-      displayEl.textContent = name;
       localStorage.setItem(COPYRIGHT_KEY, name);
-      showToast(`Copyright actualizado a nombre de "${name}".`, 'success');
+      lockCopyrightEditor(name);
+      showToast(`Copyright fijado a nombre de "${name}". Opción bloqueada.`, 'success');
     }
 
     function getEmbeddedQuizzes() {
@@ -3775,9 +3786,11 @@
 
         const currentOwner = document.getElementById('copyright-owner-display').textContent.trim();
         const cloneOwnerDisplay = docClone.querySelector('#copyright-owner-display');
-        const cloneOwnerInput = docClone.querySelector('#copyright-owner-input');
+        const cloneControls = docClone.querySelector('#copyright-editor-controls');
         if (cloneOwnerDisplay) cloneOwnerDisplay.textContent = currentOwner;
-        if (cloneOwnerInput) cloneOwnerInput.setAttribute('value', currentOwner !== 'Tu Nombre' ? currentOwner : '');
+        if (cloneControls && currentOwner && currentOwner !== 'Tu Nombre') {
+          cloneControls.remove();
+        }
 
         const fullHTML = '<!DOCTYPE html>\n' + docClone.outerHTML;
         const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
@@ -3906,4 +3919,3 @@
   </script>
 </body>
 </html>
-```
