@@ -1414,6 +1414,88 @@
       white-space: pre-line;
       word-break: break-word;
     }
+
+    /* Panel de Registro de Visitas y Me Gusta */
+    .activity-panel-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-navy);
+      color: #ffffff;
+      border: none;
+      padding: 0.48rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .activity-panel-btn:hover {
+      background: var(--primary-navy-hover);
+      transform: translateY(-1px);
+    }
+
+    .activity-panel-box {
+      display: none;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1ece1 100%);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.15rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .activity-panel-box.open {
+      display: block;
+    }
+
+    .activity-panel-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 0.85rem;
+    }
+
+    @media (min-width: 680px) {
+      .activity-panel-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .activity-col-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.85rem;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .activity-col-card h4 {
+      color: var(--primary-navy);
+      font-size: 0.92rem;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .activity-log-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0;
+      border-bottom: 1px dashed #e5dfd3;
+      font-size: 0.84rem;
+    }
+
+    .activity-log-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -1804,6 +1886,41 @@
             <span>Me gusta</span>
             <strong id="like-counter-value">0</strong>
           </button>
+          <button type="button" id="toggle-activity-panel-btn" class="activity-panel-btn" onclick="toggleActivityPanel()" title="Ver quiénes han visitado y dado Me gusta">
+            📊 Ver Registro
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Desplegable: Registro de Quiénes Visitaron y Dieron Me Gusta -->
+      <div id="community-activity-panel" class="activity-panel-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+          <div>
+            <strong style="color: var(--primary-navy); font-size: 0.98rem;">📋 Panel de Actividad de Visitantes</strong>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">Consulta quiénes han abierto la aplicación y quiénes le dieron "Me gusta".</p>
+          </div>
+          <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="visitor-name-reg-input" class="form-control" style="padding: 0.35rem 0.65rem; font-size: 0.83rem; width: 185px;" placeholder="Tu nombre para el registro...">
+            <button type="button" class="btn btn-gold btn-sm" onclick="registerVisitorIdentity()">Guardar mi nombre</button>
+          </div>
+        </div>
+
+        <div class="activity-panel-grid">
+          <div class="activity-col-card">
+            <h4>
+              <span>❤️ Personas que dieron Me gusta</span>
+              <span id="likes-log-count" style="background: #ffe4e6; color: #be123c; padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem;">0</span>
+            </h4>
+            <div id="likes-log-list"></div>
+          </div>
+
+          <div class="activity-col-card">
+            <h4>
+              <span>👁️ Historial de Visitas</span>
+              <span id="visits-log-count" style="background: var(--bg-subtle); color: var(--primary-navy); padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem;">0</span>
+            </h4>
+            <div id="visits-log-list"></div>
+          </div>
         </div>
       </div>
 
@@ -1882,6 +1999,15 @@
 {
   "visits": 0,
   "likes": 1,
+  "visitLogs": [],
+  "likeLogs": [
+    {
+      "id": "init-like",
+      "name": "Equipo BibliaTrivia",
+      "device": "Web",
+      "date": "Inicio"
+    }
+  ],
   "comments": [
     {
       "id": "welcome-comment",
@@ -1977,6 +2103,7 @@
     const RANDOM_MODE_KEY = 'biblia_trivia_random_mode_v1';
     const COMMUNITY_KEY = 'biblia_trivia_community_v1';
     const USER_LIKED_KEY = 'biblia_trivia_user_liked_v1';
+    const VISITOR_PROFILE_KEY = 'biblia_trivia_visitor_profile_v1';
 
     /* ==========================================================================
        BIBLIOTECA INTEGRADA DE HISTORIAS DE LA BIBLIA (ANTIGUO Y NUEVO TESTAMENTO)
@@ -2248,9 +2375,17 @@
     let communityState = {
       visits: 1,
       likes: 0,
+      visitLogs: [],
+      likeLogs: [],
       comments: []
     };
     let hasUserLiked = false;
+    let currentVisitorProfile = {
+      id: '',
+      name: '',
+      device: ''
+    };
+    let currentSessionVisitId = null;
 
     // Estado de la partida actual
     let currentGame = {
@@ -2285,19 +2420,63 @@
     });
 
     /* --------------------------------------------------------------------------
-       CONTADOR DE VISITAS, BOTÓN ME GUSTA Y RECUADRO DE COMENTARIOS (OFFLINE)
+       CONTADOR DE VISITAS, BOTÓN ME GUSTA, PANEL DE ACTIVIDAD Y COMENTARIOS
        -------------------------------------------------------------------------- */
+    function detectVisitorDevice() {
+      const ua = navigator.userAgent || '';
+      if (/Android/i.test(ua)) return 'Android';
+      if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+      if (/Windows/i.test(ua)) return 'Windows';
+      if (/Mac/i.test(ua)) return 'Mac';
+      if (/Linux/i.test(ua)) return 'Linux';
+      return 'Navegador Web';
+    }
+
+    function formatNowShort() {
+      return new Date().toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function loadVisitorProfile() {
+      try {
+        const raw = localStorage.getItem(VISITOR_PROFILE_KEY);
+        if (raw) {
+          currentVisitorProfile = JSON.parse(raw);
+        }
+      } catch (e) {}
+
+      if (!currentVisitorProfile.id) {
+        currentVisitorProfile.id = 'usr_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+      }
+      if (!currentVisitorProfile.device) {
+        currentVisitorProfile.device = detectVisitorDevice();
+      }
+      saveVisitorProfile();
+    }
+
+    function saveVisitorProfile() {
+      try {
+        localStorage.setItem(VISITOR_PROFILE_KEY, JSON.stringify(currentVisitorProfile));
+      } catch (e) {}
+    }
+
     function getEmbeddedCommunityData() {
       try {
         const el = document.getElementById('embedded-community-data');
-        if (!el) return { visits: 0, likes: 0, comments: [] };
+        if (!el) return { visits: 0, likes: 0, visitLogs: [], likeLogs: [], comments: [] };
         return JSON.parse(el.textContent.trim());
       } catch (e) {
-        return { visits: 0, likes: 0, comments: [] };
+        return { visits: 0, likes: 0, visitLogs: [], likeLogs: [], comments: [] };
       }
     }
 
     function initCommunityWidgets() {
+      loadVisitorProfile();
       const embedded = getEmbeddedCommunityData();
       let saved = null;
       try {
@@ -2310,15 +2489,43 @@
       const baseVisits = Math.max(Number(embedded.visits) || 0, Number(saved?.visits) || 0);
       const baseLikes = Math.max(Number(embedded.likes) || 0, Number(saved?.likes) || 0);
 
-      const commentMap = new Map();
-      (Array.isArray(embedded.comments) ? embedded.comments : []).forEach(c => commentMap.set(c.id, c));
-      (Array.isArray(saved?.comments) ? saved.comments : []).forEach(c => commentMap.set(c.id, c));
+      const mergeById = (arr1, arr2) => {
+        const map = new Map();
+        (Array.isArray(arr1) ? arr1 : []).forEach(item => map.set(item.id, item));
+        (Array.isArray(arr2) ? arr2 : []).forEach(item => map.set(item.id, item));
+        return Array.from(map.values());
+      };
+
+      const visitLogs = mergeById(embedded.visitLogs, saved?.visitLogs);
+      const likeLogs = mergeById(embedded.likeLogs, saved?.likeLogs);
+      const comments = mergeById(embedded.comments, saved?.comments);
+
+      const newVisitCount = baseVisits + 1;
+      currentSessionVisitId = 'vis_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+      const displayName = currentVisitorProfile.name || `Visitante #${newVisitCount}`;
+
+      visitLogs.unshift({
+        id: currentSessionVisitId,
+        visitorId: currentVisitorProfile.id,
+        name: displayName,
+        device: currentVisitorProfile.device,
+        date: formatNowShort()
+      });
 
       communityState = {
-        visits: baseVisits + 1,
-        likes: baseLikes,
-        comments: Array.from(commentMap.values())
+        visits: newVisitCount,
+        likes: Math.max(baseLikes, likeLogs.length),
+        visitLogs: visitLogs.slice(0, 100),
+        likeLogs,
+        comments
       };
+
+      const regInput = document.getElementById('visitor-name-reg-input');
+      const commentAuthorInput = document.getElementById('comment-author-input');
+      if (currentVisitorProfile.name) {
+        if (regInput) regInput.value = currentVisitorProfile.name;
+        if (commentAuthorInput && !commentAuthorInput.value) commentAuthorInput.value = currentVisitorProfile.name;
+      }
 
       saveCommunityState();
       renderCommunityWidgets();
@@ -2328,6 +2535,52 @@
       try {
         localStorage.setItem(COMMUNITY_KEY, JSON.stringify(communityState));
       } catch (e) {}
+    }
+
+    function toggleActivityPanel() {
+      const panel = document.getElementById('community-activity-panel');
+      const btn = document.getElementById('toggle-activity-panel-btn');
+      if (!panel) return;
+      const isOpen = panel.classList.toggle('open');
+      if (btn) {
+        btn.textContent = isOpen ? '✖ Cerrar Registro' : '📊 Ver Registro';
+      }
+      renderCommunityWidgets();
+    }
+
+    function registerVisitorIdentity() {
+      const inp = document.getElementById('visitor-name-reg-input');
+      if (!inp) return;
+      const newName = inp.value.trim();
+      if (!newName) {
+        showToast('Escribe tu nombre para registrarte en la lista.', 'error');
+        inp.focus();
+        return;
+      }
+
+      currentVisitorProfile.name = newName;
+      saveVisitorProfile();
+
+      const commentAuthorInput = document.getElementById('comment-author-input');
+      if (commentAuthorInput && !commentAuthorInput.value.trim()) {
+        commentAuthorInput.value = newName;
+      }
+
+      communityState.visitLogs.forEach(v => {
+        if (v.id === currentSessionVisitId || v.visitorId === currentVisitorProfile.id) {
+          v.name = newName;
+        }
+      });
+
+      communityState.likeLogs.forEach(l => {
+        if (l.visitorId === currentVisitorProfile.id) {
+          l.name = newName;
+        }
+      });
+
+      saveCommunityState();
+      renderCommunityWidgets();
+      showToast(`¡Nombre "${newName}" actualizado en el registro de visitas y Me gusta!`, 'success');
     }
 
     function renderCommunityWidgets() {
@@ -2343,6 +2596,46 @@
       if (likeBtn && heartIcon) {
         likeBtn.classList.toggle('liked', hasUserLiked);
         heartIcon.textContent = hasUserLiked ? '❤️' : '🤍';
+      }
+
+      // Renderizar listas del Panel de Visitas y Me gusta
+      const likesLogCount = document.getElementById('likes-log-count');
+      const likesLogList = document.getElementById('likes-log-list');
+      const visitsLogCount = document.getElementById('visits-log-count');
+      const visitsLogList = document.getElementById('visits-log-list');
+
+      if (likesLogCount) likesLogCount.textContent = communityState.likeLogs.length;
+      if (likesLogList) {
+        if (communityState.likeLogs.length === 0) {
+          likesLogList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.83rem; padding: 0.4rem 0;">Nadie ha dado Me gusta todavía.</p>';
+        } else {
+          likesLogList.innerHTML = communityState.likeLogs.map(item => `
+            <div class="activity-log-item">
+              <div>
+                <strong style="color: var(--primary-navy);">❤️ ${escapeHTML(item.name || 'Visitante')}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">📱 ${escapeHTML(item.device || 'Web')}</div>
+              </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">${escapeHTML(item.date || '')}</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      if (visitsLogCount) visitsLogCount.textContent = communityState.visitLogs.length;
+      if (visitsLogList) {
+        if (communityState.visitLogs.length === 0) {
+          visitsLogList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.83rem; padding: 0.4rem 0;">Sin visitas registradas aún.</p>';
+        } else {
+          visitsLogList.innerHTML = communityState.visitLogs.map(item => `
+            <div class="activity-log-item">
+              <div>
+                <strong style="color: var(--text-main);">👤 ${escapeHTML(item.name || 'Visitante')}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">📱 ${escapeHTML(item.device || 'Web')}</div>
+              </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">${escapeHTML(item.date || '')}</span>
+            </div>
+          `).join('');
+        }
       }
 
       if (!listEl) return;
@@ -2369,18 +2662,37 @@
 
     function toggleCommunityLike() {
       const btn = document.getElementById('like-toggle-btn');
+      const commentAuthorVal = document.getElementById('comment-author-input')?.value.trim();
+      const regNameVal = document.getElementById('visitor-name-reg-input')?.value.trim();
+      const chosenName = regNameVal || commentAuthorVal || currentVisitorProfile.name || `Visitante #${communityState.visits}`;
+
+      if (regNameVal || commentAuthorVal) {
+        currentVisitorProfile.name = chosenName;
+        saveVisitorProfile();
+      }
+
       if (hasUserLiked) {
         hasUserLiked = false;
         communityState.likes = Math.max(0, communityState.likes - 1);
+        communityState.likeLogs = communityState.likeLogs.filter(l => l.visitorId !== currentVisitorProfile.id);
       } else {
         hasUserLiked = true;
         communityState.likes += 1;
+        communityState.likeLogs = communityState.likeLogs.filter(l => l.visitorId !== currentVisitorProfile.id);
+        communityState.likeLogs.unshift({
+          id: 'like_' + Date.now(),
+          visitorId: currentVisitorProfile.id,
+          name: chosenName,
+          device: currentVisitorProfile.device,
+          date: formatNowShort()
+        });
+
         if (btn) {
           btn.classList.remove('pop');
           void btn.offsetWidth;
           btn.classList.add('pop');
         }
-        showToast('¡Gracias por tu Me gusta! ❤️', 'success');
+        showToast(`¡Gracias por tu Me gusta, ${chosenName}! ❤️`, 'success');
       }
 
       localStorage.setItem(USER_LIKED_KEY, String(hasUserLiked));
@@ -2393,7 +2705,7 @@
       const textInp = document.getElementById('comment-text-input');
       if (!authorInp || !textInp) return;
 
-      const author = authorInp.value.trim() || 'Visitante';
+      const author = authorInp.value.trim() || currentVisitorProfile.name || 'Visitante';
       const text = textInp.value.trim();
 
       if (!text) {
@@ -2402,14 +2714,21 @@
         return;
       }
 
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      if (authorInp.value.trim()) {
+        currentVisitorProfile.name = authorInp.value.trim();
+        saveVisitorProfile();
+        const regInp = document.getElementById('visitor-name-reg-input');
+        if (regInp) regInp.value = currentVisitorProfile.name;
+
+        communityState.visitLogs.forEach(v => {
+          if (v.visitorId === currentVisitorProfile.id) v.name = currentVisitorProfile.name;
+        });
+        communityState.likeLogs.forEach(l => {
+          if (l.visitorId === currentVisitorProfile.id) l.name = currentVisitorProfile.name;
+        });
+      }
+
+      const dateStr = formatNowShort();
 
       communityState.comments.unshift({
         id: 'cmt_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
