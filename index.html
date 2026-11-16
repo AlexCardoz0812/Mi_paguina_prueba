@@ -1,8 +1,13 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e3a5f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BibliaTrivia">
   <title>BibliaTrivia - Creador y Juego Bíblico Offline</title>
   <style>
     /* ==========================================================================
@@ -76,6 +81,34 @@
       flex-wrap: wrap;
       gap: 0.75rem;
       margin-bottom: 1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .install-app-btn {
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #eab308 100%);
+      color: #1e293b;
+      border: none;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .install-app-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
     }
 
     .brand-title {
@@ -226,7 +259,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       text-decoration: none;
-      min-height: 44px; /* Óptimo para pantallas táctiles */
+      min-height: 44px;
     }
 
     .btn-primary {
@@ -287,27 +320,124 @@
     /* ==========================================================================
        VISTA 1: JUGAR (SELECCIÓN, PARTIDA Y RESULTADOS)
        ========================================================================== */
+    .hero-3d-banner {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: radial-gradient(circle at 25% 20%, #2b548a 0%, #162c4a 60%, #0d1b30 100%);
+      border: 1.5px solid rgba(197, 155, 39, 0.55);
+      box-shadow: 0 18px 36px -10px rgba(15, 29, 51, 0.45);
+      margin-bottom: 1.5rem;
+      min-height: 225px;
+      display: flex;
+      align-items: center;
+      padding: 1.6rem 1.75rem;
+      color: #ffffff;
+    }
+
+    #menu-3d-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+      z-index: 1;
+    }
+
+    #menu-3d-canvas:active {
+      cursor: grabbing;
+    }
+
+    .hero-3d-content {
+      position: relative;
+      z-index: 2;
+      max-width: 540px;
+      pointer-events: none;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+    }
+
+    .hero-3d-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(197, 155, 39, 0.24);
+      border: 1px solid rgba(253, 230, 138, 0.55);
+      color: #fde68a;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.28rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+      letter-spacing: 0.4px;
+    }
+
+    .hero-3d-content h2 {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+      line-height: 1.2;
+    }
+
+    .hero-3d-content p {
+      color: rgba(241, 245, 249, 0.92);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-3d-actions {
+      pointer-events: auto;
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
     .quiz-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.1rem;
+      gap: 1.25rem;
+      perspective: 1100px;
     }
 
     .quiz-card {
-      background: var(--bg-card);
-      border: 1.5px solid var(--border-color);
+      background: linear-gradient(155deg, #ffffff 0%, #fcfaf4 65%, #f5efe2 100%);
+      border: 1.5px solid #e2d8c5;
+      border-bottom: 5px solid #cbbba0;
       border-radius: var(--radius-lg);
-      padding: 1.35rem;
+      padding: 1.4rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      box-shadow:
+        0 12px 24px -8px rgba(30, 58, 95, 0.14),
+        0 4px 10px -2px rgba(197, 155, 39, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.18s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .quiz-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 62%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
     }
 
     .quiz-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
+      box-shadow:
+        0 24px 38px -10px rgba(30, 58, 95, 0.24),
+        0 10px 20px -4px rgba(197, 155, 39, 0.22);
       border-color: var(--accent-gold);
+    }
+
+    .quiz-card:hover::before {
+      opacity: 1;
     }
 
     .quiz-badge {
@@ -340,6 +470,60 @@
       display: flex;
       gap: 0.5rem;
       flex-wrap: wrap;
+    }
+
+    .quiz-card-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      background: rgba(241, 236, 225, 0.72);
+      border: 1px solid #e2d8c5;
+      border-radius: 10px;
+      padding: 0.45rem 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .card-random-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .card-random-btn.is-active {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    .card-time-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
+
+    .card-time-select {
+      padding: 0.22rem 0.45rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
     }
 
     /* Pantalla Activa de Juego */
@@ -391,99 +575,182 @@
       font-size: 1.35rem;
       color: var(--primary-navy);
       margin-bottom: 1.35rem;
+      white-space: pre-line;
     }
 
     .options-list {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+      perspective: 1000px;
+      padding: 0.35rem 0;
     }
 
     @media (min-width: 640px) {
       .options-list {
-        grid-template-columns: 1fr 1fr;
+        gap: 1.15rem;
       }
     }
 
-    .option-btn {
-      background: var(--bg-parchment);
-      border: 2px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 0.95rem 1.1rem;
-      text-align: left;
-      font-size: 1rem;
+    /* Diseño de Cartas Flotantes Interactivas para las Respuestas */
+    .option-card {
+      background: linear-gradient(165deg, #ffffff 0%, #fcf9f2 65%, #f3ece0 100%);
+      border: 2px solid #e6dec8;
+      border-bottom: 6px solid #d4c6a8;
+      border-radius: 20px;
+      padding: 1.35rem 1.2rem;
+      text-align: center;
+      font-size: 1.03rem;
+      font-weight: 600;
       color: var(--text-main);
       cursor: pointer;
       display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      transition: all 0.18s ease;
-      min-height: 54px;
-    }
-
-    .option-btn:hover:not(:disabled) {
-      border-color: var(--primary-navy);
-      background: #ffffff;
-    }
-
-    .option-letter {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      color: var(--primary-navy);
-      flex-shrink: 0;
+      gap: 0.7rem;
+      min-height: 132px;
+      box-shadow:
+        0 12px 24px -6px rgba(30, 58, 95, 0.16),
+        0 4px 10px -2px rgba(197, 155, 39, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      position: relative;
+      user-select: none;
+      transform-style: preserve-3d;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.2s ease,
+                  background 0.2s ease;
+      animation: cardDealIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards,
+                 cardFloatHover 3.4s ease-in-out infinite;
     }
 
-    .option-btn.correct {
-      background-color: var(--success-bg);
+    .option-card:nth-child(1) { animation-delay: 0.04s, 0s; }
+    .option-card:nth-child(2) { animation-delay: 0.12s, 0.85s; }
+    .option-card:nth-child(3) { animation-delay: 0.20s, 1.7s; }
+    .option-card:nth-child(4) { animation-delay: 0.28s, 2.55s; }
+
+    /* Colores distintivos para cada una de las 4 cartas */
+    .option-card:nth-child(1):not(.correct):not(.wrong) {
+      background: linear-gradient(165deg, #f0f7ff 0%, #dbeafe 100%);
+      border-color: #93c5fd;
+      border-bottom-color: #2563eb;
+      color: #1e3a8a;
+    }
+
+    .option-card:nth-child(2):not(.correct):not(.wrong) {
+      background: linear-gradient(165deg, #fffbeb 0%, #fef3c7 100%);
+      border-color: #fcd34d;
+      border-bottom-color: #d97706;
+      color: #78350f;
+    }
+
+    .option-card:nth-child(3):not(.correct):not(.wrong) {
+      background: linear-gradient(165deg, #ecfdf5 0%, #d1fae5 100%);
+      border-color: #6ee7b7;
+      border-bottom-color: #059669;
+      color: #064e3b;
+    }
+
+    .option-card:nth-child(4):not(.correct):not(.wrong) {
+      background: linear-gradient(165deg, #faf5ff 0%, #f3e8ff 100%);
+      border-color: #d8b4fe;
+      border-bottom-color: #7c3aed;
+      color: #4c1d95;
+    }
+
+    @keyframes cardDealIn {
+      from {
+        opacity: 0;
+        transform: translateY(22px) scale(0.94);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes cardFloatHover {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    @keyframes cardShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+
+    .option-card:hover:not(:disabled) {
+      animation: none;
+      border-color: var(--accent-gold);
+      border-bottom-color: var(--primary-navy);
+      background: linear-gradient(165deg, #ffffff 0%, #fffdf7 100%);
+      transform: translateY(-9px) scale(1.025) rotateX(3deg);
+      box-shadow:
+        0 22px 34px -8px rgba(30, 58, 95, 0.26),
+        0 10px 18px -4px rgba(197, 155, 39, 0.24),
+        inset 0 1px 0 #ffffff;
+    }
+
+    .option-card:active:not(:disabled) {
+      animation: none;
+      transform: translateY(2px) scale(0.985);
+      border-bottom-width: 2px;
+      box-shadow: 0 4px 10px rgba(30, 58, 95, 0.15);
+    }
+
+    .option-card:disabled {
+      animation: none;
+      cursor: default;
+    }
+
+    .option-card-text {
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .option-card.correct {
+      animation: none;
+      background: linear-gradient(180deg, #f0fdf4 0%, var(--success-bg) 100%);
       border-color: var(--success-border);
+      border-bottom-color: #1e7e34;
       color: var(--success-text);
-      font-weight: 600;
+      font-weight: 700;
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 18px 30px -6px rgba(52, 168, 83, 0.32);
     }
 
-    .option-btn.correct .option-letter {
-      background-color: var(--success-border);
-      color: #ffffff;
-      border-color: var(--success-border);
-    }
-
-    .option-btn.wrong {
-      background-color: var(--error-bg);
+    .option-card.wrong {
+      animation: cardShake 0.38s ease;
+      background: linear-gradient(180deg, #fef2f2 0%, var(--error-bg) 100%);
       border-color: var(--error-border);
+      border-bottom-color: #b91c1c;
       color: var(--error-text);
     }
 
-    .option-btn.wrong .option-letter {
-      background-color: var(--error-border);
-      color: #ffffff;
-      border-color: var(--error-border);
-    }
-
     .feedback-box {
-      margin-top: 1.25rem;
-      padding: 1rem 1.2rem;
-      border-radius: var(--radius-md);
       display: none;
-      animation: fadeIn 0.25s ease;
+      margin-top: 1.15rem;
+      padding: 0.95rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-color);
     }
 
     .feedback-box.correct {
-      display: block;
       background: var(--success-bg);
-      border-left: 5px solid var(--success-border);
+      border-color: var(--success-border);
       color: var(--success-text);
     }
 
     .feedback-box.wrong {
-      display: block;
       background: var(--error-bg);
-      border-left: 5px solid var(--error-border);
+      border-color: var(--error-border);
       color: var(--error-text);
     }
 
@@ -519,7 +786,119 @@
     }
 
     /* ==========================================================================
-       VISTA 2: CREAR / EDITAR CUESTIONARIOS
+       VISTA 2: BIBLIOTECA DE HISTORIAS BÍBLICAS + GENERADOR AUTOMÁTICO
+       ========================================================================== */
+    .bible-library-box {
+      background: linear-gradient(135deg, #fffdf8 0%, #f5efe0 100%);
+      border: 1.5px solid var(--accent-gold);
+    }
+
+    .library-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+      align-items: center;
+    }
+
+    .testament-pill {
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 0.83rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .testament-pill.active {
+      background: var(--primary-navy);
+      border-color: var(--primary-navy);
+      color: #ffffff;
+    }
+
+    .stories-catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+      gap: 0.7rem;
+      max-height: 330px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .story-catalog-item {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.3rem;
+    }
+
+    .story-catalog-item:hover {
+      border-color: var(--accent-gold);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .story-catalog-item.selected {
+      border-color: var(--primary-navy);
+      background: #eef4fc;
+      box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15);
+    }
+
+    .story-tag-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .story-testament-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: var(--accent-gold-light);
+      color: #7c5e10;
+    }
+
+    .story-testament-tag.nt {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .story-ref-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .story-item-title {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.96rem;
+      color: var(--primary-navy);
+    }
+
+    .story-item-preview {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       VISTA 3: CREAR / EDITAR CUESTIONARIOS
        ========================================================================== */
     .form-group {
       margin-bottom: 1.1rem;
@@ -619,7 +998,7 @@
     }
 
     /* ==========================================================================
-       VISTA 3: COMPARTIR OFFLINE / EXPORTAR / IMPORTAR
+       VISTA 4: COMPARTIR OFFLINE / EXPORTAR / IMPORTAR
        ========================================================================== */
     .share-grid {
       display: grid;
@@ -800,6 +1179,106 @@
       justify-content: flex-end;
       gap: 0.6rem;
     }
+
+    /* Pop-up Modal de Resultado por Pregunta (Correcto / Incorrecto) */
+    .answer-popup-dialog {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 460px;
+      width: 100%;
+      padding: 1.85rem 1.5rem;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.28);
+      text-align: center;
+      border-top: 8px solid var(--primary-navy);
+      animation: popupScaleIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .answer-popup-dialog.is-correct {
+      border-top-color: var(--success-border);
+      box-shadow: 0 18px 45px rgba(52, 168, 83, 0.35);
+      animation: popupCelebrateIn 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .answer-popup-dialog.is-wrong {
+      border-top-color: var(--error-border);
+      background: linear-gradient(180deg, #fff5f5 0%, #ffffff 38%);
+      box-shadow: 0 18px 45px rgba(234, 67, 53, 0.38);
+      animation: popupErrorShake 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    @keyframes popupScaleIn {
+      from { opacity: 0; transform: scale(0.88) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes popupCelebrateIn {
+      0% { opacity: 0; transform: scale(0.78) translateY(16px); }
+      65% { opacity: 1; transform: scale(1.04) translateY(-3px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes popupErrorShake {
+      0% { opacity: 0; transform: scale(0.92); }
+      20% { opacity: 1; transform: translateX(-11px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-7px); }
+      80% { transform: translateX(5px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Destello rojo en pantalla cuando la respuesta es incorrecta */
+    .error-flash-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1250;
+      background: radial-gradient(circle, rgba(234, 67, 53, 0.18) 0%, rgba(185, 28, 28, 0.48) 100%);
+      animation: redFlashFade 0.65s ease-out forwards;
+    }
+
+    @keyframes redFlashFade {
+      0% { opacity: 0; }
+      25% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .answer-popup-icon {
+      font-size: 3.35rem;
+      line-height: 1;
+      margin-bottom: 0.65rem;
+    }
+
+    .answer-popup-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .answer-popup-dialog.is-correct .answer-popup-title {
+      color: var(--success-text);
+    }
+
+    .answer-popup-dialog.is-wrong .answer-popup-title {
+      color: var(--error-text);
+    }
+
+    .answer-popup-detail {
+      background: var(--bg-parchment);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1rem;
+      margin: 0.85rem 0 1.35rem;
+      text-align: left;
+      font-size: 0.94rem;
+      color: var(--text-main);
+    }
+
+    .answer-popup-correct-ans {
+      font-weight: 700;
+      color: var(--success-text);
+      margin-bottom: 0.45rem;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -814,9 +1293,14 @@
             <h1>BibliaTrivia</h1>
           </div>
         </div>
-        <span class="offline-badge" title="Funciona completamente sin conexión a internet">
-          <span class="dot-online"></span> 100% Sin Internet (Offline)
-        </span>
+        <div class="header-actions">
+          <button type="button" id="install-pwa-btn" class="install-app-btn" onclick="triggerPWAInstall()" title="Instalar como aplicación en tu dispositivo">
+            📲 Instalar App
+          </button>
+          <span class="offline-badge" title="Funciona completamente sin conexión a internet">
+            <span class="dot-online"></span> 100% Sin Internet (Offline)
+          </span>
+        </div>
       </div>
 
       <nav class="nav-tabs" role="tablist">
@@ -845,21 +1329,24 @@
     <section id="view-play" class="view-section active">
       <!-- Sub-vista 1A: Selector de Cuestionarios -->
       <div id="play-lobby">
+        <!-- Escenario Interactivo 3D Realista -->
+        <div class="hero-3d-banner">
+          <canvas id="menu-3d-canvas" aria-label="Visualización 3D interactiva de la Biblia"></canvas>
+          <div class="hero-3d-content">
+            <span class="hero-3d-pill">✨ Preguntas Aleatorias • Escena 3D Interactiva</span>
+            <h2>Explora la Palabra Jugando</h2>
+            <p>Arrastra o mueve el cursor sobre el libro 3D. Selecciona un cuestionario o genera uno desde las historias bíblicas.</p>
+            <div class="hero-3d-actions">
+              <button type="button" class="btn btn-gold btn-sm" onclick="startRandomQuickGame()">🎲 Partida Aleatoria Rápida</button>
+              <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.35);" onclick="switchTab('generate')">📖 Biblioteca de Historias</button>
+            </div>
+          </div>
+        </div>
+
         <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.75rem;">
           <div>
             <h2>Selecciona un Cuestionario Bíblico</h2>
-            <p>Elige un juego para poner a prueba tus conocimientos o genera uno nuevo a partir de un texto bíblico.</p>
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; background: var(--bg-card); padding: 0.5rem 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-            <label for="lobby-time-override" style="font-size: 0.88rem; font-weight: 600; color: var(--primary-navy); display: inline-flex; align-items: center; gap: 0.35rem;">
-              ⏱️ Tiempo global:
-            </label>
-            <select id="lobby-time-override" class="form-control" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.86rem; min-height: 34px;" onchange="toggleLobbyCustomMinutes()">
-              <option value="quiz" selected>Usar tiempo del juego</option>
-              <option value="0">Sin límite de tiempo</option>
-              <option value="custom">Personalizar (min)...</option>
-            </select>
-            <input type="number" id="lobby-custom-minutes" class="form-control" min="0.5" max="180" step="0.5" value="5" style="display: none; width: 76px; padding: 0.3rem 0.5rem; font-size: 0.86rem; min-height: 34px;" title="Minutos totales para responder todo el cuestionario">
+            <p>Configura el orden aleatorio y el tiempo directamente en cada tarjeta antes de empezar a jugar.</p>
           </div>
         </div>
         <div id="quiz-list-container" class="quiz-grid"></div>
@@ -918,19 +1405,39 @@
     </section>
 
     <!-- ======================================================================
-         PESTAÑA 2: GENERAR DESDE HISTORIA BÍBLICA (100% OFFLINE)
+         PESTAÑA 2: BIBLIOTECA DE HISTORIAS Y GENERADOR AUTOMÁTICO (100% OFFLINE)
          ====================================================================== -->
     <section id="view-generate" class="view-section">
       <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
         <div>
-          <h2>Generador Automático desde Historia Bíblica</h2>
-          <p>Pega un pasaje o relato bíblico junto con su cita y crea un cuestionario interactivo al instante sin internet.</p>
+          <h2>Historias de la Biblia y Generador Automático</h2>
+          <p>Elige una historia del Antiguo o Nuevo Testamento (o pega tu propio pasaje) para crear preguntas al instante.</p>
         </div>
-        <button type="button" class="btn btn-outline btn-sm" onclick="fillExampleStory()">
-          📖 Probar con historia de ejemplo
-        </button>
       </div>
 
+      <!-- Catálogo Completo de Historias Bíblicas Seleccionables -->
+      <div class="card bible-library-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 0.85rem;">
+          <div>
+            <h3 style="font-family: var(--font-serif); color: var(--primary-navy); font-size: 1.2rem;">
+              📖 Selecciona una Historia Bíblica (<span id="stories-catalog-count">32</span> relatos incluidos)
+            </h3>
+            <p style="font-size: 0.86rem; color: var(--text-muted);">Haz clic en cualquier historia para cargar su cita y texto automáticamente abajo.</p>
+          </div>
+          <input type="search" id="story-search-input" class="form-control" style="max-width: 260px; padding: 0.5rem 0.8rem; font-size: 0.88rem;"
+                 placeholder="🔍 Buscar personaje, cita o tema..." oninput="filterBibleStoriesCatalog()">
+        </div>
+
+        <div class="library-filters">
+          <button type="button" class="testament-pill active" data-filter="ALL" onclick="setStoryTestamentFilter('ALL', this)">Todas las Historias</button>
+          <button type="button" class="testament-pill" data-filter="AT" onclick="setStoryTestamentFilter('AT', this)">📜 Antiguo Testamento</button>
+          <button type="button" class="testament-pill" data-filter="NT" onclick="setStoryTestamentFilter('NT', this)">✝️ Nuevo Testamento</button>
+        </div>
+
+        <div id="stories-catalog-grid" class="stories-catalog-grid"></div>
+      </div>
+
+      <!-- Formulario del Generador -->
       <div class="card">
         <div class="generator-grid">
           <div class="form-group">
@@ -945,7 +1452,7 @@
 
           <div class="form-group">
             <label for="gen-count-input">Cantidad de preguntas (1-50)</label>
-            <input type="number" id="gen-count-input" class="form-control" min="1" max="50" value="5">
+            <input type="number" id="gen-count-input" class="form-control" min="1" max="50" value="6">
             <div class="quick-pills">
               <button type="button" class="quick-pill-btn" onclick="setGenCount(5)">5</button>
               <button type="button" class="quick-pill-btn" onclick="setGenCount(10)">10</button>
@@ -968,7 +1475,7 @@
 
         <div class="form-group">
           <label for="gen-story-textarea">Texto de la Historia o Pasaje Bíblico *</label>
-          <textarea id="gen-story-textarea" class="form-control" rows="7" placeholder="Pega aquí el texto bíblico o relata la historia con detalles (personajes, lugares, cantidades, acciones)..."></textarea>
+          <textarea id="gen-story-textarea" class="form-control" rows="6" placeholder="Selecciona una historia arriba o pega aquí cualquier pasaje bíblico..."></textarea>
         </div>
 
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -1066,7 +1573,7 @@
     </section>
 
     <!-- ======================================================================
-         PESTAÑA 3: GUARDAR Y COMPARTIR OFFLINE
+         PESTAÑA 4: GUARDAR Y COMPARTIR OFFLINE
          ====================================================================== -->
     <section id="view-share" class="view-section">
       <div class="section-header">
@@ -1116,6 +1623,23 @@
           <button class="btn btn-outline" onclick="document.getElementById('import-json-file').click()">Seleccionar Archivo JSON</button>
         </div>
       </div>
+
+      <!-- Instalar como Aplicación Web (PWA) -->
+      <div class="card" style="margin-top: 0.25rem; border-color: #bfdbfe; background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 240px;">
+            <h3 style="font-family: var(--font-serif); color: var(--primary-navy); margin-bottom: 0.3rem;">
+              📲 Instalar BibliaTrivia como Aplicación en tu Dispositivo
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-main);">
+              Instala el juego en la pantalla de inicio de tu celular, tablet o computadora para abrirlo a pantalla completa como una app nativa sin navegador y sin internet.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="triggerPWAInstall()">
+            📲 Instalar Aplicación Web
+          </button>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -1131,6 +1655,33 @@
       <div class="modal-actions">
         <button class="btn btn-outline btn-sm" onclick="closeConfirmModal()">Cancelar</button>
         <button id="modal-confirm-btn" class="btn btn-danger btn-sm">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POP-UP MODAL DE RESULTADO POR PREGUNTA (ACIERTO / ERROR) -->
+  <div id="answer-feedback-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="answer-popup-title">
+    <div id="answer-popup-dialog" class="answer-popup-dialog">
+      <div id="answer-popup-icon" class="answer-popup-icon">🎉</div>
+      <h3 id="answer-popup-title" class="answer-popup-title">¡Respuesta Correcta!</h3>
+      <p id="answer-popup-subtitle" style="color: var(--text-muted); font-size: 0.95rem;"></p>
+      <div class="answer-popup-detail">
+        <span id="answer-popup-correct-text" class="answer-popup-correct-ans"></span>
+        <div id="answer-popup-verse" style="color: var(--text-main); line-height: 1.45;"></div>
+      </div>
+      <button type="button" id="answer-popup-next-btn" class="btn btn-primary" style="width: 100%;" onclick="continueFromAnswerPopup()">
+        Siguiente Pregunta →
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN PWA (PARA iOS / ARCHIVO LOCAL) -->
+  <div id="pwa-install-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pwa-modal-title">
+    <div class="modal-dialog" style="max-width: 460px;">
+      <h3 id="pwa-modal-title">📲 Instalar como Aplicación Web</h3>
+      <div id="pwa-modal-body" style="color: var(--text-main); font-size: 0.93rem; line-height: 1.55; margin: 0.75rem 0 1.25rem;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary btn-sm" onclick="closePWAModal()">Entendido</button>
       </div>
     </div>
   </div>
@@ -1236,7 +1787,275 @@
   <script>
     const STORAGE_KEY = 'biblia_trivia_quizzes_v1';
     const COPYRIGHT_KEY = 'biblia_trivia_copyright_owner_v1';
+    const RANDOM_MODE_KEY = 'biblia_trivia_random_mode_v1';
+
+    /* ==========================================================================
+       BIBLIOTECA INTEGRADA DE HISTORIAS DE LA BIBLIA (ANTIGUO Y NUEVO TESTAMENTO)
+       ========================================================================== */
+    const BIBLICAL_STORIES_LIBRARY = [
+      // ANTIGUO TESTAMENTO
+      {
+        id: 'at-creacion',
+        testament: 'AT',
+        title: 'La Creación del Mundo y el Edén',
+        verse: 'Génesis 1:1 - 2:25',
+        story: 'En el principio creó Dios los cielos y la tierra en seis días mediante su palabra poderosa. El primer día separó la luz de las tinieblas; el segundo formó la expansión de los cielos; el tercero reunió las aguas y produjo hierba y árboles frutales. El cuarto día puso lumbreras en el cielo, el sol, la luna y las estrellas; el quinto creó los peces del mar y las aves de los cielos. El sexto día formó los animales terrestres y creó al ser humano, Adán y Eva, a su imagen y semejanza, colocándolos en el huerto de Edén y descansando el séptimo día.'
+      },
+      {
+        id: 'at-noe',
+        testament: 'AT',
+        title: 'Noé y el Arca del Diluvio',
+        verse: 'Génesis 6:9 - 9:17',
+        story: 'Al ver que la maldad de los hombres se había multiplicado en la tierra, Dios halló gracia en Noé, un varón justo que caminaba con Dios. El Señor ordenó a Noé construir un arca de madera de gofer de trescientos codos de largo y entrar en ella con su esposa, sus tres hijos Sem, Cam y Jafet, y parejas de todo ser viviente. Llovió sobre la tierra durante cuarenta días y cuarenta noches hasta cubrir los montes más altos. Al bajar las aguas, Noé envió un cuervo y luego una paloma que regresó con una hoja de olivo; finalmente Dios puso un arcoíris en las nubes como señal de su pacto eterno.'
+      },
+      {
+        id: 'at-babel',
+        testament: 'AT',
+        title: 'La Torre de Babel',
+        verse: 'Génesis 11:1-9',
+        story: 'Toda la tierra tenía entonces una sola lengua y unas mismas palabras. Al establecerse en la llanura de Sinar, los hombres decidieron fabricar ladrillos cocidos y edificar una ciudad y una torre cuya cúspide llegara al cielo para hacerse un nombre y no ser esparcidos. Descendió el Señor para ver la ciudad y la torre que edificaban los hijos de los hombres, y confundió allí su lenguaje para que ninguno entendiera el habla de su compañero, dispersándolos desde Babel sobre toda la faz de la tierra.'
+      },
+      {
+        id: 'at-abraham',
+        testament: 'AT',
+        title: 'El Llamado de Abraham y el Sacrificio de Isaac',
+        verse: 'Génesis 12:1-7; 22:1-18',
+        story: 'Dios llamó a Abram a salir de su tierra de Ur y de su parentela hacia la tierra de Canaán, prometiéndole hacer de él una nación grande y bendecir en él a todas las familias de la tierra. En su vejez, Abraham y su esposa Sara recibieron al hijo prometido, Isaac. Años después, Dios probó la fe de Abraham pidiéndole ofrecer a Isaac en el monte Moriah. Cuando Abraham obedeció y estaba por sacrificar a su hijo, el ángel del Señor lo detuvo desde el cielo y proveyó un carnero enredado en un zarzal.'
+      },
+      {
+        id: 'at-jose',
+        testament: 'AT',
+        title: 'José en Egipto: De Esclavo a Gobernador',
+        verse: 'Génesis 37:1 - 45:28',
+        story: 'Jacob amaba a su hijo José más que a todos sus hermanos y le hizo una túnica de diversos colores. Llenos de envidia por sus sueños, sus hermanos vendieron a José por veinte piezas de plata a unos mercaderes ismaelitas que lo llevaron a Egipto. Allí sirvió en casa de Potifar, fue encarcelado injustamente y luego llamado ante el faraón para interpretar sus sueños sobre siete años de abundancia y siete años de hambre. El faraón nombró a José gobernador de todo Egipto, permitiéndole salvar del hambre a su propia familia y perdonar a sus hermanos.'
+      },
+      {
+        id: 'at-moises-zarza',
+        testament: 'AT',
+        title: 'Moisés y la Zarza Ardiente',
+        verse: 'Éxodo 2:1 - 4:17',
+        story: 'Para salvarlo del decreto del faraón, la madre de Moisés lo colocó en una arquilla de juncos en el río Nilo, donde fue rescatado y criado por la hija del faraón. Siendo adulto, Moisés huyó a Madián y trabajó como pastor para su suegro Jetro. En el monte Horeb, el ángel del Señor se le apareció en una llama de fuego en medio de una zarza que ardía sin consumirse. Desde allí Dios llamó a Moisés para regresar a Egipto y liberar al pueblo de Israel de la esclavitud.'
+      },
+      {
+        id: 'at-exodo-mar-rojo',
+        testament: 'AT',
+        title: 'Las Plagas de Egipto y el Cruce del Mar Rojo',
+        verse: 'Éxodo 7:14 - 14:31',
+        story: 'Ante la negativa del faraón de dejar ir a Israel, Dios envió diez plagas sobre Egipto, culminando con la noche de la Pascua en la que la sangre del cordero protegió los hogares israelitas. Tras salir de Egipto guiados por una columna de nube de día y una columna de fuego de noche, el pueblo quedó acorralado frente al Mar Rojo mientras los carros del faraón los perseguían. Moisés extendió su vara sobre el mar, y el Señor dividió las aguas formando un camino seco por donde cruzó todo Israel antes de que las aguas cubrieran al ejército egipcio.'
+      },
+      {
+        id: 'at-diez-mandamientos',
+        testament: 'AT',
+        title: 'Los Diez Mandamientos en el Monte Sinaí',
+        verse: 'Éxodo 19:16 - 20:21; 31:18',
+        story: 'Al tercer mes de salir de Egipto, Israel acampó frente al monte Sinaí, el cual humeaba y temblaba con truenos, relámpagos y sonido de bocina. Moisés subió a la cumbre del monte durante cuarenta días y cuarenta noches, donde Dios le entregó la ley y los Diez Mandamientos escritos en dos tablas de piedra: amar y adorar solo a Dios, no hacer ídolos, honrar el día de reposo, honrar a padre y madre, y no matar, hurtar, mentir ni codiciar.'
+      },
+      {
+        id: 'at-jerico',
+        testament: 'AT',
+        title: 'Josué y la Caída de los Muros de Jericó',
+        verse: 'Josué 6:1-27',
+        story: 'Tras la muerte de Moisés, Josué guió a Israel a cruzar el río Jordán hacia la tierra prometida, enfrentándose a la ciudad amurallada de Jericó. Siguiendo las instrucciones del Señor, los soldados y siete sacerdotes con bocinas de cuerno de carnero marcharon alrededor de la ciudad una vez al día durante seis días llevando el arca del pacto. El séptimo día dieron siete vueltas alrededor de Jericó, tocaron las bocinas, todo el pueblo gritó a gran voz y los muros de la ciudad se derrumbaron.'
+      },
+      {
+        id: 'at-gedeon',
+        testament: 'AT',
+        title: 'Gedeón y sus Trescientos Valientes',
+        verse: 'Jueces 6:11 - 7:25',
+        story: 'Cuando los madianitas oprimían a Israel, el ángel del Señor llamó a Gedeón mientras sacudía trigo en un lagar. Gedeón reunió un ejército de treinta y dos mil hombres, pero Dios redujo las tropas para mostrar su poder, dejando únicamente a trescientos soldados que bebieron agua llevándola con la mano a la boca. De noche, Gedeón dividió a los trescientos en tres escuadrones con trompetas y cántaros vacíos con antorchas encendidas adentro; al romper los cántaros y sonar las trompetas, el campamento enemigo entró en confusión y huyó.'
+      },
+      {
+        id: 'at-sanson',
+        testament: 'AT',
+        title: 'Sansón y Dalila',
+        verse: 'Jueces 13:1 - 16:30',
+        story: 'Sansón fue consagrado como nazareo desde su nacimiento y recibió de Dios una fuerza sobrenatural para defender a Israel de los filisteos, matando incluso a un león joven con sus manos. Sin embargo, Dalila fue sobornada por los príncipes filisteos para descubrir el secreto de su fuerza. Tras insistirle cada día, Sansón reveló que nunca había pasado navaja sobre su cabeza. Mientras dormía le cortaron las siete trenzas de su cabello, perdió su fuerza y fue capturado; pero al crecerle de nuevo el cabello, clamó a Dios y derribó las columnas del templo filisteo.'
+      },
+      {
+        id: 'at-rut',
+        testament: 'AT',
+        title: 'Rut y Noemí: Lealtad y Redención',
+        verse: 'Rut 1:1 - 4:17',
+        story: 'Durante una hambruna en Belén, Noemí emigró a Moab donde quedaron viudas ella y sus dos nueras. Al regresar a Belén, Rut decidió quedarse junto a su suegra diciendo que su pueblo sería su pueblo y su Dios sería su Dios. En Belén, Rut espigó en los campos de Booz, un pariente cercano generoso que protegió a Rut, se casó con ella como pariente redentor y juntos fueron padres de Obed, abuelo del rey David.'
+      },
+      {
+        id: 'at-david-goliat',
+        testament: 'AT',
+        title: 'David y el Gigante Goliat',
+        verse: '1 Samuel 17:4-50',
+        story: 'Salió del campamento de los filisteos un paladín llamado Goliat, oriundo de Gat, que medía seis codos y un palmo de altura. Durante cuarenta días desafió al ejército de Israel y al rey Saúl. David, un joven pastor de Belén hijo de Isaí, rechazó la armadura de bronce de Saúl, tomó su cayado, escogió cinco piedras lisas del arroyo y avanzó con su honda en la mano en el nombre del Señor de los ejércitos. Lanzó una piedra que se clavó en la frente de Goliat, derribando al gigante.'
+      },
+      {
+        id: 'at-salomon',
+        testament: 'AT',
+        title: 'La Sabiduría del Rey Salomón y el Templo',
+        verse: '1 Reyes 3:5-28; 6:1-38',
+        story: 'Al inicio de su reinado, Dios se apareció en sueños a Salomón en Gabaón y le dijo que pidiera lo que quisiera. En lugar de pedir riquezas o larga vida, Salomón pidió un corazón entendido para juzgar y gobernar con justicia al pueblo de Israel. Agradado por su humildad, Dios le concedió una sabiduría incomparable, además de riquezas y paz, permitiéndole construir el majestuoso Templo del Señor en Jerusalén.'
+      },
+      {
+        id: 'at-elias-carmelo',
+        testament: 'AT',
+        title: 'Elías y los Profetas en el Monte Carmelo',
+        verse: '1 Reyes 18:17-40',
+        story: 'Durante una sequía de tres años en tiempos del rey Acab, el profeta Elías convocó al pueblo y a cuatrocientos cincuenta profetas de Baal en el monte Carmelo. Propuso preparar dos altares sin poner fuego para demostrar quién era el verdadero Dios. Los profetas de Baal clamaron desde la mañana hasta la tarde sin respuesta. Luego Elías reparó el altar del Señor, empapó la leña con doce cántaros de agua y oró; al instante descendió fuego del cielo que consumió el holocausto, la leña, las piedras y el agua.'
+      },
+      {
+        id: 'at-daniel-leones',
+        testament: 'AT',
+        title: 'Daniel en el Foso de los Leones',
+        verse: 'Daniel 6:1-28',
+        story: 'Daniel sobresalía entre todos los gobernadores del reino de Darío por su espíritu superior e integridad. Sus rivales convencieron al rey de firmar un decreto prohibiendo orar a cualquier dios u hombre durante treinta días excepto al rey. Daniel continuó arrodillándose tres veces al día frente a su ventana abierta hacia Jerusalén para orar a Dios. Por ello fue arrojado al foso de los leones, pero a la mañana siguiente salió completamente ileso porque Dios envió su ángel y cerró la boca de los leones.'
+      },
+      {
+        id: 'at-horno-fuego',
+        testament: 'AT',
+        title: 'Sadrac, Mesac y Abed-nego en el Horno de Fuego',
+        verse: 'Daniel 3:1-30',
+        story: 'El rey Nabucodonosor levantó una estatua de oro de sesenta codos de altura en el campo de Dura y ordenó que todos se postraran al sonar los instrumentos musicales. Los tres jóvenes hebreos Sadrac, Mesac y Abed-nego se negaron a adorar la estatua. Furioso, el rey mandó calentar el horno siete veces más de lo acostumbrado y los arrojó atados adentro; sin embargo, caminaron ilesos en medio del fuego acompañados por un cuarto varón semejante al Hijo de Dios.'
+      },
+      {
+        id: 'at-jonas',
+        testament: 'AT',
+        title: 'Jonás y el Gran Pez hacia Nínive',
+        verse: 'Jonás 1:1 - 3:10',
+        story: 'Dios envió al profeta Jonás a predicar contra la maldad de la gran ciudad de Nínive, pero Jonás huyó abordando una nave hacia Tarsis. El Señor levantó una gran tempestad en el mar, y al ser arrojado al agua por los marineros, Jonás fue tragado por un gran pez en cuyo vientre permaneció tres días y tres noches orando a Dios. Tras ser devuelto a tierra firme, Jonás predicó en Nínive y toda la ciudad, desde el rey hasta el pueblo, ayunó y se arrepintió.'
+      },
+      {
+        id: 'at-ester',
+        testament: 'AT',
+        title: 'La Reina Ester Salva a su Pueblo',
+        verse: 'Ester 2:17 - 8:17',
+        story: 'La joven judía Ester fue elegida reina de Persia por el rey Asuero en Susa. Cuando el malvado oficial Amán tramó destruir a todos los judíos del imperio, Mardoqueo animó a Ester a interceder ante el rey aunque presentarse sin ser llamada conllevaba pena de muerte. Tras ayunar tres días junto a su pueblo, Ester se presentó ante el rey Asuero, halló gracia ante sus ojos, desenmascaró el plan de Amán y salvó la vida de todo el pueblo judío.'
+      },
+
+      // NUEVO TESTAMENTO
+      {
+        id: 'nt-nacimiento-jesus',
+        testament: 'NT',
+        title: 'El Nacimiento de Jesús en Belén',
+        verse: 'Lucas 2:1-20; Mateo 2:1-12',
+        story: 'Por un edicto de Augusto César para empadronar al mundo, José y María viajaron desde Nazaret de Galilea hasta Belén de Judea. Al no haber lugar en el mesón, María dio a luz a Jesús, lo envolvió en pañales y lo acostó en un pesebre. Un ángel anunció las buenas nuevas de gran gozo a unos pastores que velaban en el campo, acompañados por una multitud de huestes celestiales; más tarde unos sabios de oriente siguieron una estrella y le ofrecieron oro, incienso y mirra.'
+      },
+      {
+        id: 'nt-bautismo-tentacion',
+        testament: 'NT',
+        title: 'El Bautismo de Jesús y la Tentación en el Desierto',
+        verse: 'Mateo 3:13 - 4:11',
+        story: 'Jesús vino desde Galilea al río Jordán para ser bautizado por Juan el Bautista. Al subir del agua, los cielos se abrieron, el Espíritu de Dios descendió como paloma sobre Él y una voz del cielo dijo que era su Hijo amado. Luego Jesús fue llevado por el Espíritu al desierto donde ayunó cuarenta días y cuarenta noches, venciendo las tres tentaciones del diablo respondiendo siempre con la Palabra escrita de Dios.'
+      },
+      {
+        id: 'nt-bodas-cana',
+        testament: 'NT',
+        title: 'Las Bodas de Caná: El Primer Milagro',
+        verse: 'Juan 2:1-11',
+        story: 'Se celebraron unas bodas en Caná de Galilea a las que asistieron Jesús, su madre María y sus discípulos. Cuando faltó el vino, María dijo a los sirvientes que hicieran todo lo que Jesús les dijera. Había allí seis tinajas de piedra para la purificación; Jesús ordenó llenarlas de agua hasta el borde y luego llevar una muestra al maestresala, quien comprobó que el agua había sido transformada en el mejor vino.'
+      },
+      {
+        id: 'nt-sermon-monte',
+        testament: 'NT',
+        title: 'El Sermón del Monte y las Bienaventuranzas',
+        verse: 'Mateo 5:1 - 7:29',
+        story: 'Al ver a las multitudes, Jesús subió al monte en Galilea y enseñó a sus discípulos las Bienaventuranzas, llamando bienaventurados a los pobres en espíritu, a los mansos, a los misericordiosos, a los de limpio corazón y a los pacificadores. Enseñó que sus seguidores son la sal de la tierra y la luz del mundo, dio la oración del Padre Nuestro y concluyó comparando al que oye y hace sus palabras con un hombre prudente que edifica su casa sobre la roca.'
+      },
+      {
+        id: 'nt-multiplicacion-panes',
+        testament: 'NT',
+        title: 'Alimentación de los Cinco Mil',
+        verse: 'Juan 6:1-14; Mateo 14:13-21',
+        story: 'Una gran multitud siguió a Jesús hasta un lugar desierto junto al mar de Galilea. Al caer la tarde, los discípulos hallaron únicamente a un muchacho que tenía cinco panes de cebada y dos pececillos. Jesús mandó recostar a la gente sobre la hierba, tomó los cinco panes y los dos peces, dio gracias a Dios y los repartió hasta que cinco mil hombres comieron y se saciaron, recogiendo doce cestas llenas de los pedazos que sobraron.'
+      },
+      {
+        id: 'nt-caminar-agua',
+        testament: 'NT',
+        title: 'Jesús Camina sobre el Agua',
+        verse: 'Mateo 14:22-33',
+        story: 'Después de alimentar a la multitud, Jesús envió a sus discípulos en la barca mientras Él subía al monte a orar a solas. A la cuarta vigilia de la noche, la barca era azotada por las olas y el viento contrario, y Jesús se acercó a ellos caminando sobre el mar. Pedro pidió ir hacia Él sobre las aguas y caminó varios pasos, pero al sentir el fuerte viento tuvo miedo y comenzó a hundirse, siendo rescatado al instante por la mano de Jesús.'
+      },
+      {
+        id: 'nt-buen-samaritano',
+        testament: 'NT',
+        title: 'La Parábola del Buen Samaritano',
+        verse: 'Lucas 10:25-37',
+        story: 'Para responder quién es nuestro prójimo, Jesús relató la historia de un hombre que descendía de Jerusalén a Jericó y cayó en manos de ladrones que lo despojaron y dejaron medio muerto. Un sacerdote y un levita pasaron de largo por el camino, pero un samaritano movido a misericordia vendó sus heridas con aceite y vino, lo subió en su cabalgadura, lo llevó a un mesón y pagó dos denarios para su cuidado.'
+      },
+      {
+        id: 'nt-hijo-prodigo',
+        testament: 'NT',
+        title: 'La Parábola del Hijo Pródigo',
+        verse: 'Lucas 15:11-32',
+        story: 'Un hombre tenía dos hijos, y el menor pidió su parte de la herencia para marcharse a una provincia lejana donde malgastó todos sus bienes viviendo perdidamente. Cuando llegó una gran hambre y terminó cuidando cerdos, volvió en sí y decidió regresar arrepentido a pedir trabajo como jornalero. Aún estaba lejos cuando su padre lo vio, corrió lleno de amor a abrazarlo y besó su rostro, celebrando una gran fiesta porque su hijo perdido había sido hallado.'
+      },
+      {
+        id: 'nt-lazaro',
+        testament: 'NT',
+        title: 'La Resurrección de Lázaro en Betania',
+        verse: 'Juan 11:1-44',
+        story: 'Lázaro de Betania, hermano de Marta y María, enfermó gravemente y murió. Cuando Jesús llegó, Lázaro llevaba ya cuatro días en el sepulcro. Jesús declaró a Marta que Él es la resurrección y la vida, lloró frente a la tumba, ordenó quitar la piedra y clamó a gran voz: Lázaro, ven fuera. Al instante el que había estado muerto salió atado de pies y manos con vendas, manifestando la gloria de Dios.'
+      },
+      {
+        id: 'nt-zaqueo',
+        testament: 'NT',
+        title: 'Zaqueo y el Encuentro en Jericó',
+        verse: 'Lucas 19:1-10',
+        story: 'Al pasar Jesús por Jericó, un jefe de los publicanos llamado Zaqueo, que era rico y de baja estatura, quería ver quién era Jesús pero la multitud se lo impedía. Corrió adelante y subió a un árbol sicómoro para verlo pasar. Jesús miró hacia arriba, lo llamó por su nombre pidiéndole bajar rápido para posar en su casa; Zaqueo lo recibió con gozo y prometió dar la mitad de sus bienes a los pobres y devolver cuatro veces lo defraudado.'
+      },
+      {
+        id: 'nt-ultima-cena-resurreccion',
+        testament: 'NT',
+        title: 'La Última Cena, Crucifixión y Resurrección',
+        verse: 'Lucas 22:14-20; 24:1-12',
+        story: 'Durante la Pascua en el aposento alto de Jerusalén, Jesús compartió el pan y la copa con sus doce apóstoles instituyendo el nuevo pacto, y luego oró en el huerto de Getsemaní antes de ser entregado y crucificado en el monte Gólgota. Al tercer día, muy de mañana, las mujeres fueron al sepulcro llevando especias aromáticas y hallaron la piedra removida y la tumba vacía, anunciando dos ángeles que Jesús había resucitado tal como lo había dicho.'
+      },
+      {
+        id: 'nt-pentecostes',
+        testament: 'NT',
+        title: 'Pentecostés y el Nacimiento de la Iglesia',
+        verse: 'Hechos 2:1-41',
+        story: 'El día de Pentecostés estaban todos los creyentes unánimes juntos en Jerusalén cuando vino del cielo un estruendo como de un viento recio y aparecieron lenguas repartidas como de fuego sobre cada uno de ellos. Todos fueron llenos del Espíritu Santo y comenzaron a hablar en otras lenguas las maravillas de Dios; Pedro predicó con valentía y alrededor de tres mil personas creyeron y fueron bautizadas aquel día.'
+      },
+      {
+        id: 'nt-pablo-damasco',
+        testament: 'NT',
+        title: 'La Conversión de Saulo camino a Damasco',
+        verse: 'Hechos 9:1-22',
+        story: 'Saulo de Tarso perseguía con amenazas a los discípulos del Señor y viajaba hacia Damasco con cartas para encarcelarlos. Cerca de la ciudad lo rodeó de repente un resplandor de luz del cielo, cayó en tierra y oyó la voz de Jesús preguntándole por qué lo perseguía. Saulo quedó ciego durante tres días sin comer ni beber hasta que el discípulo Ananías oró por él, recobró la vista, fue bautizado y predicó el evangelio como el apóstol Pablo.'
+      }
+    ];
+
+    const SPANISH_STOPWORDS = new Set([
+      'para', 'como', 'pero', 'sobre', 'entre', 'hasta', 'desde', 'donde', 'cuando',
+      'quien', 'quienes', 'cual', 'cuales', 'porque', 'aunque', 'mientras', 'despues',
+      'antes', 'durante', 'contra', 'hacia', 'segun', 'todos', 'todas', 'todo', 'toda',
+      'este', 'esta', 'estos', 'estas', 'aquel', 'aquella', 'ellos', 'ellas', 'nosotros',
+      'vosotros', 'habia', 'tenia', 'estaba', 'fueron', 'siendo', 'sido', 'hacer', 'hecho',
+      'dijo', 'dijeron', 'entonces', 'tambien', 'muy', 'mas', 'menos', 'sin', 'con', 'por',
+      'los', 'las', 'una', 'unos', 'unas', 'del', 'al', 'que', 'sus', 'su', 'le', 'les'
+    ]);
+
+    const BIBLICAL_DISTRACTOR_BANK = {
+      names: [
+        'Moisés', 'Abraham', 'Isaac', 'Jacob', 'José', 'Josué', 'Gedeón', 'Sansón',
+        'Samuel', 'Saúl', 'David', 'Salomón', 'Elías', 'Eliseo', 'Isaías', 'Jeremías',
+        'Ezequiel', 'Daniel', 'Jonás', 'Nehemías', 'Pedro', 'Juan', 'Pablo', 'Bernabé',
+        'Esteban', 'Felipe', 'Tomás', 'Mateo', 'Lucas', 'Timoteo', 'Ester', 'Rut', 'María'
+      ],
+      places: [
+        'Jerusalén', 'Belén', 'Nazaret', 'Jericó', 'Egipto', 'Babilonia', 'Nínive',
+        'Galilea', 'Samaria', 'Judea', 'Sinaí', 'Capernaúm', 'Damasco', 'Antioquía', 'Hebrón'
+      ],
+      numbers: ['3', '7', '10', '12', '30', '40', '50', '70', '100', '120', '300'],
+      keywords: [
+        'alianza', 'santuario', 'profeta', 'ejército', 'desierto', 'promesa', 'sabiduría',
+        'oración', 'sacrificio', 'bendición', 'mandamiento', 'discípulos', 'testimonio'
+      ]
+    };
+
     let quizzes = [];
+    let isRandomModeEnabled = true;
+    let deferredInstallPrompt = null;
+    let currentStoryTestamentFilter = 'ALL';
+    let selectedCatalogStoryId = null;
+    const perQuizSettings = {};
 
     // Estado de la partida actual
     let currentGame = {
@@ -1258,12 +2077,213 @@
        INICIALIZACIÓN Y ALMACENAMIENTO LOCAL / INCRUSTADO
        -------------------------------------------------------------------------- */
     window.addEventListener('DOMContentLoaded', () => {
+      initPWASupport();
+      loadRandomModePreference();
       loadCopyrightOwner();
       loadQuizzes();
+      initMenu3DScene();
       renderLobby();
+      renderBibleStoriesCatalog();
       renderManageList();
       resetEditorToNew();
     });
+
+    /* --------------------------------------------------------------------------
+       CATÁLOGO SELECCIONABLE DE HISTORIAS DE LA BIBLIA
+       -------------------------------------------------------------------------- */
+    function setStoryTestamentFilter(filterVal, btnEl) {
+      currentStoryTestamentFilter = filterVal;
+      document.querySelectorAll('.testament-pill').forEach(p => p.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderBibleStoriesCatalog();
+    }
+
+    function filterBibleStoriesCatalog() {
+      renderBibleStoriesCatalog();
+    }
+
+    function renderBibleStoriesCatalog() {
+      const grid = document.getElementById('stories-catalog-grid');
+      const countBadge = document.getElementById('stories-catalog-count');
+      if (!grid) return;
+
+      const query = (document.getElementById('story-search-input')?.value || '').trim().toLowerCase();
+
+      const filtered = BIBLICAL_STORIES_LIBRARY.filter(item => {
+        const matchesTestament = currentStoryTestamentFilter === 'ALL' || item.testament === currentStoryTestamentFilter;
+        const matchesQuery = !query ||
+          item.title.toLowerCase().includes(query) ||
+          item.verse.toLowerCase().includes(query) ||
+          item.story.toLowerCase().includes(query);
+        return matchesTestament && matchesQuery;
+      });
+
+      if (countBadge) countBadge.textContent = filtered.length;
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.9rem;">No se encontraron historias con ese filtro. Prueba otro término o pega tu propio pasaje abajo.</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'story-catalog-item' + (selectedCatalogStoryId === item.id ? ' selected' : '');
+        const isNT = item.testament === 'NT';
+        btn.innerHTML = `
+          <div class="story-tag-row">
+            <span class="story-testament-tag ${isNT ? 'nt' : ''}">${isNT ? 'Nuevo Testamento' : 'Antiguo Testamento'}</span>
+            <span class="story-ref-label">${escapeHTML(item.verse)}</span>
+          </div>
+          <div class="story-item-title">${escapeHTML(item.title)}</div>
+          <div class="story-item-preview">${escapeHTML(item.story)}</div>
+        `;
+        btn.onclick = () => selectBiblicalStoryFromCatalog(item.id);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectBiblicalStoryFromCatalog(storyId) {
+      const found = BIBLICAL_STORIES_LIBRARY.find(s => s.id === storyId);
+      if (!found) return;
+
+      selectedCatalogStoryId = storyId;
+      document.getElementById('gen-title-input').value = found.title;
+      document.getElementById('gen-verse-input').value = found.verse;
+      document.getElementById('gen-story-textarea').value = found.story;
+
+      renderBibleStoriesCatalog();
+      showToast(`Historia "${found.title}" (${found.verse}) cargada. Pulsa "Generar Cuestionario Automáticamente".`, 'success');
+      document.getElementById('gen-title-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    /* --------------------------------------------------------------------------
+       SOPORTE DE APLICACIÓN WEB INSTALABLE (PWA) OFFLINE
+       -------------------------------------------------------------------------- */
+    function initPWASupport() {
+      const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="108" fill="#1e3a5f"/><rect x="34" y="34" width="444" height="444" rx="84" fill="none" stroke="#c59b27" stroke-width="14"/><text x="256" y="310" font-size="220" text-anchor="middle" fill="#fde68a">📜</text></svg>`;
+      const iconDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgIcon);
+
+      const manifest = {
+        name: 'BibliaTrivia - Juegos Bíblicos Offline',
+        short_name: 'BibliaTrivia',
+        description: 'Crea, juega y comparte trivias interactivas sobre la Biblia 100% sin internet.',
+        start_url: window.location.href,
+        display: 'standalone',
+        background_color: '#f8f5ee',
+        theme_color: '#1e3a5f',
+        icons: [
+          { src: iconDataUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: iconDataUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+        ]
+      };
+
+      try {
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        const linkEl = document.createElement('link');
+        linkEl.rel = 'manifest';
+        linkEl.href = manifestURL;
+        document.head.appendChild(linkEl);
+      } catch (e) {}
+
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+        const swCode = `
+          const CACHE_NAME = 'bibliatrivia-offline-v1';
+          self.addEventListener('install', (e) => {
+            e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll([self.location.href])));
+            self.skipWaiting();
+          });
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(
+              caches.match(e.request).then((cached) => cached || fetch(e.request).then((resp) => {
+                const clone = resp.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+                return resp;
+              }).catch(() => cached))
+            );
+          });
+        `;
+        try {
+          const swBlob = new Blob([swCode], { type: 'application/javascript' });
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl).catch(() => {});
+        } catch (err) {}
+      }
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        const btn = document.getElementById('install-pwa-btn');
+        if (btn) btn.style.display = 'inline-flex';
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        showToast('¡BibliaTrivia se instaló como aplicación en tu dispositivo!', 'success');
+      });
+    }
+
+    async function triggerPWAInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choiceResult = await deferredInstallPrompt.userChoice;
+        if (choiceResult && choiceResult.outcome === 'accepted') {
+          showToast('Instalando BibliaTrivia en tu dispositivo...', 'success');
+        }
+        deferredInstallPrompt = null;
+        return;
+      }
+
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isLocalFile = window.location.protocol === 'file:';
+      const bodyEl = document.getElementById('pwa-modal-body');
+
+      if (isIOS) {
+        bodyEl.innerHTML = `
+          <p style="margin-bottom: 0.6rem;">Para instalar <strong>BibliaTrivia</strong> en tu iPhone o iPad:</p>
+          <ol style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.45rem;">
+            <li>Toca el botón <strong>Compartir</strong> (el cuadro con la flecha hacia arriba) en la barra de Safari.</li>
+            <li>Desliza hacia abajo y selecciona <strong>"Agregar a pantalla de inicio"</strong>.</li>
+            <li>Pulsa <strong>Agregar</strong> y tendrás el ícono de la app listo para usar sin internet.</li>
+          </ol>
+        `;
+      } else if (isLocalFile) {
+        bodyEl.innerHTML = `
+          <p style="margin-bottom: 0.6rem;">Estás abriendo el archivo directamente desde tu almacenamiento local:</p>
+          <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.45rem;">
+            <li><strong>En Android (Chrome):</strong> Toca el menú <strong>⋮</strong> arriba a la derecha y elige <strong>"Agregar a la pantalla principal"</strong>.</li>
+            <li><strong>En Computadora (Chrome / Edge):</strong> Abre el menú <strong>⋮</strong> → <strong>Guardar y compartir</strong> → <strong>Crear acceso directo</strong> (marca "Abrir como ventana").</li>
+            <li>Si publicas este archivo en cualquier enlace web (HTTPS), el botón instalará la app automáticamente con un clic.</li>
+          </ul>
+        `;
+      } else {
+        bodyEl.innerHTML = `
+          <p style="margin-bottom: 0.6rem;">Para instalar <strong>BibliaTrivia</strong> como aplicación:</p>
+          <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.45rem;">
+            <li>Haz clic en el ícono de <strong>Instalar (⊕ / 💻)</strong> en la barra de direcciones de tu navegador, o abre el menú <strong>⋮</strong> y selecciona <strong>"Instalar aplicación"</strong>.</li>
+          </ul>
+        `;
+      }
+
+      document.getElementById('pwa-install-modal').classList.add('open');
+    }
+
+    function closePWAModal() {
+      const modal = document.getElementById('pwa-install-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    /* --------------------------------------------------------------------------
+       CONTROL DE MODALIDAD ALEATORIA Y COPYRIGHT
+       -------------------------------------------------------------------------- */
+    function loadRandomModePreference() {
+      const saved = localStorage.getItem(RANDOM_MODE_KEY);
+      if (saved !== null) {
+        isRandomModeEnabled = saved === 'true';
+      }
+    }
 
     function loadCopyrightOwner() {
       const yearEl = document.getElementById('copyright-year');
@@ -1315,7 +2335,6 @@
         try {
           const saved = JSON.parse(savedRaw);
           if (Array.isArray(saved) && saved.length > 0) {
-            // Combinar los incrustados nuevos (si el archivo fue compartido) con los guardados localmente
             const map = new Map();
             embedded.forEach(q => map.set(q.id, q));
             saved.forEach(q => map.set(q.id, q));
@@ -1355,6 +2374,8 @@
       if (tabName === 'play') {
         exitGame();
         renderLobby();
+      } else if (tabName === 'generate') {
+        renderBibleStoriesCatalog();
       } else if (tabName === 'create') {
         renderManageList();
       }
@@ -1379,12 +2400,6 @@
       return `${secs} seg`;
     }
 
-    function toggleLobbyCustomMinutes() {
-      const mode = document.getElementById('lobby-time-override').value;
-      const customInp = document.getElementById('lobby-custom-minutes');
-      customInp.style.display = (mode === 'custom') ? 'inline-block' : 'none';
-    }
-
     function renderLobby() {
       const container = document.getElementById('quiz-list-container');
       container.innerHTML = '';
@@ -1393,33 +2408,155 @@
         container.innerHTML = `
           <div class="card" style="grid-column: 1 / -1; text-align: center;">
             <p style="margin-bottom: 1rem;">Aún no hay cuestionarios disponibles.</p>
-            <button class="btn btn-primary" onclick="switchTab('create')">Crear mi primer cuestionario</button>
+            <button class="btn btn-primary" onclick="switchTab('generate')">Generar desde una Historia Bíblica</button>
           </div>
         `;
         return;
       }
 
       quizzes.forEach(quiz => {
-        const quizSec = Number(quiz.tiempoTotalSegundos) || 0;
-        const timeText = quizSec > 0 ? `⏱️ ${formatDurationLabel(quizSec)}` : '⏱️ Tiempo libre';
+        if (!perQuizSettings[quiz.id]) {
+          perQuizSettings[quiz.id] = {
+            random: typeof quiz.randomMode === 'boolean' ? quiz.randomMode : isRandomModeEnabled,
+            seconds: Number(quiz.tiempoTotalSegundos) || 0
+          };
+        }
+
+        const cfg = perQuizSettings[quiz.id];
+        const baseSeconds = Number(quiz.tiempoTotalSegundos) || 0;
+        const presetValues = [0, 60, 120, 180, 300, 600];
+        if (baseSeconds > 0 && !presetValues.includes(baseSeconds)) {
+          presetValues.push(baseSeconds);
+          presetValues.sort((a, b) => a - b);
+        }
+
+        const timeOptionsHTML = presetValues.map(sec => {
+          const label = sec === 0 ? 'Sin límite' : formatDurationLabel(sec);
+          return `<option value="${sec}" ${cfg.seconds === sec ? 'selected' : ''}>${label}</option>`;
+        }).join('');
+
         const card = document.createElement('div');
         card.className = 'quiz-card';
         card.innerHTML = `
-          <div>
+          <div style="transform: translateZ(18px);">
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.65rem;">
               <span class="quiz-badge" style="margin-bottom: 0;">📖 ${quiz.questions.length} ${quiz.questions.length === 1 ? 'pregunta' : 'preguntas'}</span>
-              <span class="quiz-badge" style="margin-bottom: 0; background: #eef2ff; color: var(--primary-navy);">${timeText}</span>
             </div>
             <h3>${escapeHTML(quiz.title)}</h3>
             <p>${escapeHTML(quiz.description || 'Cuestionario interactivo sobre la Biblia.')}</p>
           </div>
-          <div class="quiz-card-actions">
-            <button class="btn btn-primary" style="flex: 1;" onclick="startQuiz('${quiz.id}')">▶ Jugar Ahora</button>
-            <button class="btn btn-outline btn-sm" title="Editar cuestionario" onclick="editQuiz('${quiz.id}')">✏️</button>
+          <div style="transform: translateZ(24px);">
+            <div class="quiz-card-controls">
+              <button type="button"
+                      class="card-random-btn ${cfg.random ? 'is-active' : ''}"
+                      onclick="toggleCardRandomMode('${quiz.id}')"
+                      title="Activar o desactivar orden aleatorio en este juego">
+                ${cfg.random ? '🔀 Aleatorio: SÍ' : '📋 Orden fijo'}
+              </button>
+              <label class="card-time-box" title="Tiempo límite para este cuestionario">
+                ⏱️
+                <select class="card-time-select" onchange="updateCardTime('${quiz.id}', this.value)">
+                  ${timeOptionsHTML}
+                </select>
+              </label>
+            </div>
+            <div class="quiz-card-actions">
+              <button class="btn btn-primary" style="flex: 1;" onclick="startQuiz('${quiz.id}')">▶ Jugar Ahora</button>
+              <button class="btn btn-outline btn-sm" title="Editar cuestionario" onclick="editQuiz('${quiz.id}')">✏️</button>
+            </div>
           </div>
         `;
+        attach3DCardTilt(card);
         container.appendChild(card);
       });
+    }
+
+    function toggleCardRandomMode(quizId) {
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+      if (!perQuizSettings[quizId]) {
+        perQuizSettings[quizId] = { random: true, seconds: Number(quiz.tiempoTotalSegundos) || 0 };
+      }
+      perQuizSettings[quizId].random = !perQuizSettings[quizId].random;
+      quiz.randomMode = perQuizSettings[quizId].random;
+      saveQuizzesToStorage();
+      renderLobby();
+    }
+
+    function updateCardTime(quizId, secondsVal) {
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+      const secs = Math.max(0, parseInt(secondsVal, 10) || 0);
+      if (!perQuizSettings[quizId]) {
+        perQuizSettings[quizId] = { random: isRandomModeEnabled, seconds: secs };
+      } else {
+        perQuizSettings[quizId].seconds = secs;
+      }
+      quiz.tiempoTotalSegundos = secs;
+      saveQuizzesToStorage();
+      renderManageList();
+    }
+
+    function attach3DCardTilt(card) {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -7;
+        const rotateY = ((x - centerX) / centerX) * 7;
+
+        card.style.setProperty('--glare-x', `${(x / rect.width) * 100}%`);
+        card.style.setProperty('--glare-y', `${(y / rect.height) * 100}%`);
+        card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-5px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0px)';
+      });
+    }
+
+    function startRandomQuickGame() {
+      if (!quizzes || quizzes.length === 0) {
+        showToast('No hay cuestionarios disponibles para jugar.', 'error');
+        return;
+      }
+      const randomQuiz = quizzes[Math.floor(Math.random() * quizzes.length)];
+      startQuiz(randomQuiz.id);
+    }
+
+    function prepareQuizForPlay(sourceQuiz, useRandom = true) {
+      if (!useRandom) {
+        return {
+          ...sourceQuiz,
+          questions: sourceQuiz.questions.map(q => ({
+            question: q.question,
+            options: [...q.options],
+            correctIndex: q.correctIndex,
+            explanation: q.explanation || ''
+          }))
+        };
+      }
+
+      const shuffledQuestions = shuffleArray(sourceQuiz.questions).map(q => {
+        const indexedOptions = q.options.map((text, idx) => ({
+          text,
+          isCorrect: idx === q.correctIndex
+        }));
+        const shuffledOpts = shuffleArray(indexedOptions);
+        return {
+          question: q.question,
+          options: shuffledOpts.map(o => o.text),
+          correctIndex: shuffledOpts.findIndex(o => o.isCorrect),
+          explanation: q.explanation || ''
+        };
+      });
+
+      return {
+        ...sourceQuiz,
+        questions: shuffledQuestions
+      };
     }
 
     function startQuiz(quizId) {
@@ -1431,19 +2568,16 @@
 
       clearGameTimer();
 
-      // Determinar el tiempo límite global (del cuestionario o ajustado por el anfitrión en el lobby)
-      const overrideMode = document.getElementById('lobby-time-override').value;
-      let effectiveSeconds = Number(found.tiempoTotalSegundos) || 0;
+      const cardCfg = perQuizSettings[quizId] || {
+        random: typeof found.randomMode === 'boolean' ? found.randomMode : isRandomModeEnabled,
+        seconds: Number(found.tiempoTotalSegundos) || 0
+      };
 
-      if (overrideMode === '0') {
-        effectiveSeconds = 0;
-      } else if (overrideMode === 'custom') {
-        const customMins = parseFloat(document.getElementById('lobby-custom-minutes').value);
-        effectiveSeconds = (!isNaN(customMins) && customMins > 0) ? Math.round(customMins * 60) : 0;
-      }
+      const preparedQuiz = prepareQuizForPlay(found, cardCfg.random);
+      const effectiveSeconds = Number(cardCfg.seconds) || 0;
 
       currentGame = {
-        quiz: found,
+        quiz: preparedQuiz,
         questionIndex: 0,
         score: 0,
         answered: false,
@@ -1458,7 +2592,7 @@
       document.getElementById('play-results').style.display = 'none';
       document.getElementById('play-active').style.display = 'block';
 
-      document.getElementById('active-quiz-title').textContent = found.title;
+      document.getElementById('active-quiz-title').textContent = preparedQuiz.title;
       startGlobalQuizTimer();
       renderCurrentQuestion();
     }
@@ -1484,10 +2618,8 @@
     }
 
     function startGlobalQuizTimer() {
-      clearGameTimer();
       const badge = document.getElementById('timer-badge');
-
-      if (!currentGame.timerEnabled || currentGame.totalSeconds <= 0) {
+      if (!currentGame.timerEnabled) {
         badge.style.display = 'none';
         return;
       }
@@ -1501,53 +2633,44 @@
 
         if (currentGame.timeLeft <= 0) {
           clearGameTimer();
-          handleGlobalTimeOut();
+          currentGame.timedOut = true;
+          closeAnswerPopup();
+          showResults();
         }
       }, 1000);
     }
 
-    function handleGlobalTimeOut() {
-      currentGame.timedOut = true;
-      currentGame.answered = true;
-      showToast('⏰ ¡Se acabó el tiempo límite del cuestionario!', 'error');
-      showResults();
-    }
-
     function renderCurrentQuestion() {
+      currentGame.answered = false;
+      closeAnswerPopup();
       const { quiz, questionIndex, score } = currentGame;
       const q = quiz.questions[questionIndex];
-      const total = quiz.questions.length;
-
-      currentGame.answered = false;
 
       document.getElementById('current-score').textContent = score;
-      document.getElementById('question-counter').textContent = `Pregunta ${questionIndex + 1} de ${total}`;
+      document.getElementById('question-counter').textContent =
+        `Pregunta ${questionIndex + 1} de ${quiz.questions.length}`;
       document.getElementById('question-display').textContent = q.question;
 
-      // Actualizar barra de progreso
-      const progressPct = ((questionIndex) / total) * 100;
+      const progressPct = (questionIndex / quiz.questions.length) * 100;
       document.getElementById('game-progress-bar').style.width = `${progressPct}%`;
 
-      // Limpiar feedback y ocultar botón siguiente
       const feedbackArea = document.getElementById('feedback-area');
       feedbackArea.className = 'feedback-box';
       feedbackArea.style.display = 'none';
       document.getElementById('next-question-btn').style.display = 'none';
 
-      // Renderizar opciones
       const optionsContainer = document.getElementById('options-container');
       optionsContainer.innerHTML = '';
-      const letters = ['A', 'B', 'C', 'D'];
 
       q.options.forEach((optText, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerHTML = `
-          <span class="option-letter">${letters[idx]}</span>
-          <span>${escapeHTML(optText)}</span>
+        const cardBtn = document.createElement('button');
+        cardBtn.type = 'button';
+        cardBtn.className = 'option-card';
+        cardBtn.innerHTML = `
+          <span class="option-card-text">${escapeHTML(optText)}</span>
         `;
-        btn.onclick = () => selectAnswer(idx);
-        optionsContainer.appendChild(btn);
+        cardBtn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(cardBtn);
       });
     }
 
@@ -1564,18 +2687,16 @@
         document.getElementById('current-score').textContent = currentGame.score;
       }
 
-      // Colorear botones
-      const buttons = document.querySelectorAll('#options-container .option-btn');
-      buttons.forEach((btn, idx) => {
-        btn.disabled = true;
+      const cards = document.querySelectorAll('#options-container .option-card');
+      cards.forEach((card, idx) => {
+        card.disabled = true;
         if (idx === q.correctIndex) {
-          btn.classList.add('correct');
+          card.classList.add('correct');
         } else if (idx === selectedIndex && !isCorrect) {
-          btn.classList.add('wrong');
+          card.classList.add('wrong');
         }
       });
 
-      // Mostrar retroalimentación
       const feedbackArea = document.getElementById('feedback-area');
       const feedbackTitle = document.getElementById('feedback-title');
       const feedbackExp = document.getElementById('feedback-explanation');
@@ -1584,20 +2705,81 @@
       feedbackArea.style.display = 'block';
       feedbackTitle.textContent = isCorrect
         ? '✅ ¡Respuesta Correcta!'
-        : `❌ Incorrecto. La respuesta correcta es: "${q.options[q.correctIndex]}"`;
+        : `❌ Te equivocaste. La respuesta correcta era: "${q.options[q.correctIndex]}"`;
 
       feedbackExp.textContent = q.explanation ? `📖 ${q.explanation}` : '';
 
-      // Actualizar barra de progreso al completar esta pregunta
       const progressPct = ((questionIndex + 1) / quiz.questions.length) * 100;
       document.getElementById('game-progress-bar').style.width = `${progressPct}%`;
 
-      // Botón siguiente o finalizar
+      const isLastQuestion = (questionIndex + 1 >= quiz.questions.length);
+      const nextLabel = isLastQuestion ? 'Ver Resultados Finales 🏆' : 'Siguiente Pregunta →';
+
       const nextBtn = document.getElementById('next-question-btn');
       nextBtn.style.display = 'inline-flex';
-      nextBtn.textContent = (questionIndex + 1 < quiz.questions.length)
-        ? 'Siguiente Pregunta →'
-        : 'Ver Resultados Finales 🏆';
+      nextBtn.textContent = nextLabel;
+
+      openAnswerPopup(isCorrect, q, selectedIndex, nextLabel);
+    }
+
+    function openAnswerPopup(isCorrect, questionObj, selectedIndex, nextLabel) {
+      const modal = document.getElementById('answer-feedback-modal');
+      const dialog = document.getElementById('answer-popup-dialog');
+      const iconEl = document.getElementById('answer-popup-icon');
+      const titleEl = document.getElementById('answer-popup-title');
+      const subtitleEl = document.getElementById('answer-popup-subtitle');
+      const correctTextEl = document.getElementById('answer-popup-correct-text');
+      const verseEl = document.getElementById('answer-popup-verse');
+      const nextBtn = document.getElementById('answer-popup-next-btn');
+
+      dialog.classList.remove('is-correct', 'is-wrong');
+      dialog.classList.add(isCorrect ? 'is-correct' : 'is-wrong');
+
+      if (isCorrect) {
+        iconEl.textContent = '🎉';
+        titleEl.textContent = '¡Respuesta Correcta!';
+        subtitleEl.textContent = '¡Muy bien! Has sumado +1 punto a tu marcador.';
+        correctTextEl.textContent = `✔ ${questionObj.options[questionObj.correctIndex]}`;
+      } else {
+        iconEl.textContent = '❌';
+        titleEl.textContent = '¡Respuesta Incorrecta!';
+        subtitleEl.textContent = `Elegiste: "${questionObj.options[selectedIndex]}"`;
+        correctTextEl.textContent = `✔ Respuesta correcta: ${questionObj.options[questionObj.correctIndex]}`;
+      }
+
+      if (questionObj.explanation) {
+        verseEl.style.display = 'block';
+        verseEl.textContent = `📖 ${questionObj.explanation}`;
+      } else {
+        verseEl.style.display = 'none';
+      }
+
+      nextBtn.textContent = nextLabel;
+      nextBtn.className = isCorrect ? 'btn btn-olive' : 'btn btn-primary';
+      modal.classList.add('open');
+
+      if (isCorrect) {
+        launchConfetti();
+      } else {
+        triggerErrorAnimation();
+      }
+    }
+
+    function triggerErrorAnimation() {
+      const overlay = document.createElement('div');
+      overlay.className = 'error-flash-overlay';
+      document.body.appendChild(overlay);
+      setTimeout(() => overlay.remove(), 700);
+    }
+
+    function closeAnswerPopup() {
+      const modal = document.getElementById('answer-feedback-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function continueFromAnswerPopup() {
+      closeAnswerPopup();
+      nextQuestion();
     }
 
     function nextQuestion() {
@@ -1611,6 +2793,7 @@
 
     function showResults() {
       clearGameTimer();
+      closeAnswerPopup();
       document.getElementById('play-active').style.display = 'none';
       document.getElementById('play-results').style.display = 'block';
 
@@ -1654,6 +2837,7 @@
 
     function exitGame() {
       clearGameTimer();
+      closeAnswerPopup();
       document.getElementById('play-active').style.display = 'none';
       document.getElementById('play-results').style.display = 'none';
       document.getElementById('play-lobby').style.display = 'block';
@@ -1674,40 +2858,219 @@
     }
 
     /* --------------------------------------------------------------------------
-       SECCIÓN 1.5: MOTOR GENERADOR DE PREGUNTAS DESDE HISTORIA BÍBLICA (OFFLINE)
+       MOTOR DE VISUALIZACIÓN 3D REALISTA DEL MENÚ PRINCIPAL (100% OFFLINE)
        -------------------------------------------------------------------------- */
-    const SPANISH_STOPWORDS = new Set([
-      'para', 'como', 'pero', 'porque', 'cuando', 'donde', 'quien', 'quienes', 'cual', 'cuales',
-      'sobre', 'entre', 'hasta', 'desde', 'hacia', 'contra', 'según', 'segun', 'durante', 'mediante',
-      'había', 'habia', 'tenía', 'tenia', 'estaba', 'fueron', 'eran', 'siendo', 'sido', 'hacer',
-      'dijo', 'dijeron', 'respondió', 'respondio', 'entonces', 'después', 'despues', 'antes',
-      'todos', 'todas', 'todo', 'toda', 'otros', 'otras', 'otro', 'otra', 'mismo', 'misma',
-      'aquel', 'aquella', 'aquellos', 'aquellas', 'este', 'esta', 'estos', 'estas', 'ese', 'esa',
-      'ellos', 'ellas', 'nosotros', 'vosotros', 'ustedes', 'también', 'tambien', 'además', 'ademas',
-      'muy', 'más', 'mas', 'menos', 'mucho', 'mucha', 'muchos', 'muchas', 'poco', 'poca',
-      'cada', 'algún', 'algun', 'alguna', 'ningún', 'ningun', 'ninguna', 'jehová', 'jehova', 'dios', 'señor', 'senor'
-    ]);
+    function initMenu3DScene() {
+      const canvas = document.getElementById('menu-3d-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
 
-    const BIBLICAL_DISTRACTOR_BANK = {
-      names: [
-        'Moisés', 'Abraham', 'Isaac', 'Jacob', 'José', 'Josué', 'Gedeón', 'Sansón',
-        'Samuel', 'Saúl', 'David', 'Salomón', 'Elías', 'Eliseo', 'Isaías', 'Jeremías',
-        'Ezequiel', 'Daniel', 'Jonás', 'Nehemías', 'Pedro', 'Juan', 'Pablo', 'Bernabé',
-        'Timoteo', 'Lázaro', 'Zaqueo', 'Nicodemo', 'Ester', 'Rut', 'Débora', 'María', 'Marta'
-      ],
-      places: [
-        'Jerusalén', 'Belén', 'Nazaret', 'Egipto', 'Babilonia', 'Jericó', 'Samaria',
-        'Galilea', 'Judea', 'Sinaí', 'Nínive', 'Damasco', 'Antioquía', 'Caná', 'Betania', 'Gaza'
-      ],
-      numbers: [
-        '3', '5', '7', '10', '12', '30', '40', '50', '70', '100', '120', '300', '400', '5000'
-      ],
-      keywords: [
-        'alianza', 'ofrenda', 'profecía', 'templo', 'ejército', 'desierto', 'montaña',
-        'milagro', 'oración', 'sabiduría', 'justicia', 'misericordia', 'espada', 'túnica',
-        'altar', 'testimonio', 'pueblo', 'reino', 'promesa', 'bendición', 'victoria'
-      ]
-    };
+      let width = 0;
+      let height = 0;
+      let rotY = -0.35;
+      let rotX = 0.28;
+      let targetRotY = -0.35;
+      let targetRotX = 0.28;
+      let isDragging = false;
+      let lastPointerX = 0;
+      let lastPointerY = 0;
+
+      const particles = Array.from({ length: 34 }, () => ({
+        x: (Math.random() - 0.5) * 420,
+        y: (Math.random() - 0.5) * 240,
+        z: (Math.random() - 0.5) * 280,
+        size: 1.2 + Math.random() * 2.4,
+        speed: 0.25 + Math.random() * 0.55,
+        phase: Math.random() * Math.PI * 2
+      }));
+
+      function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = rect.width;
+        height = rect.height;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      canvas.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        lastPointerX = e.clientX;
+        lastPointerY = e.clientY;
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        if (isDragging) {
+          const dx = e.clientX - lastPointerX;
+          const dy = e.clientY - lastPointerY;
+          targetRotY += dx * 0.009;
+          targetRotX = Math.max(-0.65, Math.min(0.75, targetRotX + dy * 0.007));
+          lastPointerX = e.clientX;
+          lastPointerY = e.clientY;
+        } else if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          const nx = ((e.clientX - rect.left) / rect.width) - 0.5;
+          const ny = ((e.clientY - rect.top) / rect.height) - 0.5;
+          targetRotY = -0.35 + nx * 0.75;
+          targetRotX = 0.28 + ny * 0.45;
+        }
+      });
+
+      window.addEventListener('pointerup', () => {
+        isDragging = false;
+      });
+
+      function project3D(x, y, z, cx, cy, focal) {
+        const cosY = Math.cos(rotY);
+        const sinY = Math.sin(rotY);
+        const x1 = x * cosY - z * sinY;
+        const z1 = z * cosY + x * sinY;
+
+        const cosX = Math.cos(rotX);
+        const sinX = Math.sin(rotX);
+        const y2 = y * cosX - z1 * sinX;
+        const z2 = z1 * cosX + y * sinX;
+
+        const scale = focal / (focal + z2);
+        return {
+          x: cx + x1 * scale,
+          y: cy + y2 * scale,
+          z: z2,
+          scale
+        };
+      }
+
+      function drawQuad(pts, fillStyle, strokeStyle = null) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) {
+          ctx.lineTo(pts[i].x, pts[i].y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = fillStyle;
+        ctx.fill();
+        if (strokeStyle) {
+          ctx.strokeStyle = strokeStyle;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      function animate(timeMs) {
+        const t = timeMs * 0.001;
+        ctx.clearRect(0, 0, width, height);
+
+        if (!isDragging) {
+          targetRotY += 0.0022;
+        }
+        rotY += (targetRotY - rotY) * 0.08;
+        rotX += (targetRotX - rotX) * 0.08;
+
+        const cx = width > 680 ? width * 0.77 : width * 0.78;
+        const cy = height * 0.54 + Math.sin(t * 1.8) * 5;
+        const focal = 460;
+        const bookScale = width > 680 ? 1.05 : 0.78;
+
+        const glow = ctx.createRadialGradient(cx, cy, 10, cx, cy, 165 * bookScale);
+        glow.addColorStop(0, 'rgba(253, 224, 71, 0.34)');
+        glow.addColorStop(0.55, 'rgba(197, 155, 39, 0.12)');
+        glow.addColorStop(1, 'rgba(197, 155, 39, 0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
+
+        const wHalf = 92 * bookScale;
+        const hHalf = 66 * bookScale;
+        const depth = 16 * bookScale;
+
+        const coverPts = [
+          project3D(-wHalf - 6, -hHalf - 5, depth, cx, cy, focal),
+          project3D(wHalf + 6, -hHalf - 5, depth, cx, cy, focal),
+          project3D(wHalf + 6, hHalf + 5, depth, cx, cy, focal),
+          project3D(-wHalf - 6, hHalf + 5, depth, cx, cy, focal)
+        ];
+        drawQuad(coverPts, '#4a1d1f', '#d4af37');
+
+        const bottomEdgePts = [
+          project3D(-wHalf, hHalf, 0, cx, cy, focal),
+          project3D(wHalf, hHalf, 0, cx, cy, focal),
+          project3D(wHalf, hHalf, depth, cx, cy, focal),
+          project3D(-wHalf, hHalf, depth, cx, cy, focal)
+        ];
+        drawQuad(bottomEdgePts, '#d6b665', '#b5923c');
+
+        const segments = 8;
+        for (let side of [-1, 1]) {
+          for (let i = 0; i < segments; i++) {
+            const u0 = i / segments;
+            const u1 = (i + 1) / segments;
+            const x0 = side * u0 * wHalf;
+            const x1 = side * u1 * wHalf;
+            const arch0 = -Math.sin(u0 * Math.PI) * 14 * bookScale;
+            const arch1 = -Math.sin(u1 * Math.PI) * 14 * bookScale;
+
+            const pTL = project3D(x0, -hHalf, arch0, cx, cy, focal);
+            const pTR = project3D(x1, -hHalf, arch1, cx, cy, focal);
+            const pBR = project3D(x1, hHalf, arch1, cx, cy, focal);
+            const pBL = project3D(x0, hHalf, arch0, cx, cy, focal);
+
+            const shade = Math.round(248 - Math.sin(u0 * Math.PI) * 26 - (side === 1 ? 8 : 0));
+            const pageColor = `rgb(${shade}, ${shade - 5}, ${shade - 16})`;
+            drawQuad([pTL, pTR, pBR, pBL], pageColor);
+
+            if (i > 1 && i < segments - 1) {
+              for (let row = -3; row <= 3; row++) {
+                const ly = row * 14 * bookScale;
+                const lStart = project3D(x0 + side * 2, ly, arch0 - 0.5, cx, cy, focal);
+                const lEnd = project3D(x1 - side * 2, ly, arch1 - 0.5, cx, cy, focal);
+                ctx.beginPath();
+                ctx.moveTo(lStart.x, lStart.y);
+                ctx.lineTo(lEnd.x, lEnd.y);
+                ctx.strokeStyle = 'rgba(110, 95, 75, 0.28)';
+                ctx.lineWidth = 1.1;
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        const ribbonTop = project3D(0, -hHalf - 2, -2, cx, cy, focal);
+        const ribbonBot = project3D(4 * bookScale, hHalf + 18 * bookScale, -4, cx, cy, focal);
+        ctx.beginPath();
+        ctx.moveTo(ribbonTop.x, ribbonTop.y);
+        ctx.lineTo(ribbonBot.x, ribbonBot.y);
+        ctx.strokeStyle = '#e11d48';
+        ctx.lineWidth = 3 * bookScale;
+        ctx.stroke();
+
+        particles.forEach(p => {
+          p.y -= p.speed * 0.35;
+          if (p.y < -120) p.y = 120;
+          const proj = project3D(
+            p.x + Math.sin(t + p.phase) * 10,
+            p.y,
+            p.z,
+            cx,
+            cy,
+            focal
+          );
+          if (proj.scale > 0) {
+            const alpha = Math.max(0.15, Math.min(0.85, proj.scale * 0.65));
+            ctx.beginPath();
+            ctx.arc(proj.x, proj.y, p.size * proj.scale, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(253, 230, 138, ${alpha.toFixed(2)})`;
+            ctx.fill();
+          }
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+    }
 
     function setGenCount(val) {
       document.getElementById('gen-count-input').value = val;
@@ -1721,30 +3084,16 @@
       document.getElementById('quiz-time-minutes').value = mins;
     }
 
-    function fillExampleStory() {
-      document.getElementById('gen-title-input').value = 'David y Goliat';
-      document.getElementById('gen-verse-input').value = '1 Samuel 17:4-50';
-      document.getElementById('gen-count-input').value = '8';
-      document.getElementById('gen-time-minutes').value = '4';
-      document.getElementById('gen-story-textarea').value =
-        'Salió entonces del campamento de los filisteos un paladín llamado Goliat, oriundo de Gat, que medía seis codos y un palmo de altura. ' +
-        'Durante cuarenta días, Goliat desafiaba mañana y tarde al ejército de Israel pidiendo un hombre que peleara contra él. ' +
-        'El rey Saúl y todos los soldados de Israel tenían mucho temor al escuchar las palabras del gigante. ' +
-        'David, un joven pastor de Belén hijo de Isaí, fue al campamento para llevar provisiones a sus hermanos mayores y se ofreció a pelear contra el filisteo. ' +
-        'David rechazó la armadura de bronce de Saúl, tomó su cayado, escogió cinco piedras lisas del arroyo y avanzó con su honda en la mano. ' +
-        'David declaró que venía en el nombre del Señor de los ejércitos, metió su mano en el zurrón, tomó una piedra y la lanzó con la honda. ' +
-        'La piedra se clavó en la frente de Goliat, quien cayó rostro en tierra, logrando así David una gran victoria para Israel.';
-      showToast('Historia de ejemplo cargada. Pulsa "Generar Cuestionario Automáticamente".', 'info');
-    }
-
     function clearGeneratorForm() {
+      selectedCatalogStoryId = null;
       document.getElementById('gen-title-input').value = '';
       document.getElementById('gen-verse-input').value = '';
-      document.getElementById('gen-count-input').value = '5';
+      document.getElementById('gen-count-input').value = '6';
       document.getElementById('gen-time-minutes').value = '3';
       document.getElementById('gen-story-textarea').value = '';
       document.getElementById('generated-preview-card').style.display = 'none';
       document.getElementById('generated-questions-list').innerHTML = '';
+      renderBibleStoriesCatalog();
     }
 
     function generateQuizFromStory() {
@@ -1763,7 +3112,7 @@
       }
 
       if (!rawText || rawText.length < 30) {
-        showToast('Por favor escribe o pega una historia bíblica un poco más detallada.', 'error');
+        showToast('Selecciona una historia bíblica arriba o pega un pasaje más detallado.', 'error');
         document.getElementById('gen-story-textarea').focus();
         return;
       }
@@ -1785,17 +3134,10 @@
       showToast(`¡Se generaron ${generatedQuestions.length} preguntas a partir del pasaje!`, 'success');
     }
 
-    /**
-     * Motor heurístico de PLN en español (100% offline):
-     * Extrae múltiples ángulos (personajes/lugares, números, acciones/verbos,
-     * palabras clave, orden de eventos y comprensión contextual) para generar
-     * hasta la cantidad exacta solicitada evitando duplicados.
-     */
     function runHeuristicBiblicalNLP(text, verseRef, desiredCount) {
       const refLabel = verseRef || 'el pasaje bíblico';
       const cleanText = text.replace(/\s+/g, ' ').trim();
 
-      // Dividir en oraciones o cláusulas significativas
       let sentences = cleanText
         .split(/(?<=[.!?])\s+/)
         .map(s => s.trim())
@@ -1812,7 +3154,6 @@
         sentences.push(cleanText);
       }
 
-      // Extraer entidades globales del pasaje para distractores coherentes
       const properNounsSet = new Set();
       const numbersSet = new Set();
       const keywordsSet = new Set();
@@ -1848,7 +3189,7 @@
         }
       };
 
-      // Ángulo 1: Nombres propios (personajes o lugares) dentro de cada oración
+      // Ángulo 1: Nombres propios (personajes o lugares)
       sentences.forEach(sentence => {
         const words = sentence.replace(/[.,;:¡!¿?"'()«»]/g, '').split(' ');
         const foundNames = words.filter((w, idx) =>
@@ -1875,7 +3216,7 @@
         });
       });
 
-      // Ángulo 2: Datos numéricos, medidas o cantidades
+      // Ángulo 2: Datos numéricos o cantidades
       sentences.forEach(sentence => {
         const numMatch = sentence.match(/\b(\d+|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|doce|cuarenta|cincuenta|setenta|cien|mil)\b/i);
         if (numMatch) {
@@ -1898,7 +3239,7 @@
         }
       });
 
-      // Ángulo 3: Palabras clave y acciones relevantes
+      // Ángulo 3: Palabras clave
       sentences.forEach(sentence => {
         const words = sentence.replace(/[.,;:¡!¿?"'()«»]/g, '').split(' ');
         const contentWords = words.filter((w, idx) =>
@@ -1920,7 +3261,7 @@
         });
       });
 
-      // Ángulo 4: Orden cronológico de eventos (si hay al menos 3 oraciones)
+      // Ángulo 4: Orden cronológico
       if (sentences.length >= 3) {
         for (let i = 0; i < sentences.length - 1; i++) {
           const currentEvt = sentences[i].replace(/[.!?]+$/, '');
@@ -1945,7 +3286,7 @@
         }
       }
 
-      // Ángulo 5: Comprensión / Afirmación verdadera basada en cada oración del relato
+      // Ángulo 5: Afirmaciones verdaderas
       sentences.forEach((sentence, idx) => {
         const cleanSent = sentence.replace(/[.!?]+$/, '');
         const falseStatements = generatePlausibleFalseStatements(cleanSent, textNames);
@@ -1958,7 +3299,6 @@
         });
       });
 
-      // Completar si el usuario solicitó más preguntas que los candidatos únicos extraídos
       let loopGuard = 0;
       while (candidates.length < desiredCount && loopGuard < desiredCount * 2) {
         const baseSent = sentences[loopGuard % sentences.length].replace(/[.!?]+$/, '');
@@ -2013,7 +3353,6 @@
       const distractors = [];
       const fallbackNames = shuffleArray([...BIBLICAL_DISTRACTOR_BANK.names]);
 
-      // Intentar sustituir un nombre propio por otro personaje bíblico
       const words = trueSentence.split(' ');
       const capWord = words.find((w, idx) => idx > 0 && /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}$/.test(w.replace(/[.,;:]/g, '')));
       if (capWord) {
@@ -2022,7 +3361,6 @@
         distractors.push(replaceWholeWord(trueSentence, cleanCap, altName) + '.');
       }
 
-      // Negación o inversión de contexto
       distractors.push('Ninguno de los personajes mencionados participó en este suceso.');
       distractors.push('Este acontecimiento ocurrió únicamente después del exilio en Babilonia.');
       distractors.push('El relato indica que nadie quiso obedecer ni escuchar el mensaje.');
@@ -2113,8 +3451,8 @@
       const tiempoTotalSegundos = (!isNaN(minsVal) && minsVal > 0) ? Math.round(minsVal * 60) : 0;
 
       const description = verse
-        ? `Cuestionario generado automáticamente a partir de ${verse}.`
-        : 'Cuestionario generado automáticamente a partir de un relato bíblico.';
+        ? `Cuestionario generado a partir de ${verse}.`
+        : 'Cuestionario generado a partir de un relato bíblico.';
 
       const nodes = document.querySelectorAll('#generated-questions-list .question-editor-item');
       if (nodes.length === 0) {
@@ -2160,8 +3498,6 @@
       showToast('¡Cuestionario guardado en tu biblioteca offline!', 'success');
 
       if (playImmediately) {
-        document.getElementById('lobby-time-override').value = 'quiz';
-        toggleLobbyCustomMinutes();
         switchTab('play');
         startQuiz(newQuiz.id);
       } else {
@@ -2170,7 +3506,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       SECCIÓN 2: CREAR Y EDITAR CUESTIONARIOS MANUALMENTE
+       SECCIÓN 3: CREAR Y EDITAR CUESTIONARIOS MANUALMENTE
        -------------------------------------------------------------------------- */
     function resetEditorToNew() {
       document.getElementById('edit-quiz-id').value = '';
@@ -2396,16 +3732,17 @@
     }
 
     /* --------------------------------------------------------------------------
-       SECCIÓN 3: EXPORTAR HTML AUTÓNOMO E IMPORTAR / EXPORTAR JSON
+       SECCIÓN 4: EXPORTAR HTML AUTÓNOMO E IMPORTAR / EXPORTAR JSON
        -------------------------------------------------------------------------- */
     function downloadStandaloneHTML() {
       try {
-        // Clonar el documento HTML actual
         const docClone = document.documentElement.cloneNode(true);
 
-        // Limpiar el contenido dinámico renderizado en el clon para que inicie limpio
         const lobbyClone = docClone.querySelector('#quiz-list-container');
         if (lobbyClone) lobbyClone.innerHTML = '';
+
+        const catalogClone = docClone.querySelector('#stories-catalog-grid');
+        if (catalogClone) catalogClone.innerHTML = '';
 
         const editorListClone = docClone.querySelector('#questions-editor-list');
         if (editorListClone) editorListClone.innerHTML = '';
@@ -2422,7 +3759,9 @@
         const toastClone = docClone.querySelector('#toast-container');
         if (toastClone) toastClone.innerHTML = '';
 
-        // Asegurar que la pestaña "Jugar" esté activa por defecto en el archivo exportado
+        const answerModalClone = docClone.querySelector('#answer-feedback-modal');
+        if (answerModalClone) answerModalClone.classList.remove('open');
+
         docClone.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'play'));
         docClone.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id === 'view-play'));
         const playLobby = docClone.querySelector('#play-lobby');
@@ -2432,11 +3771,9 @@
         if (playActive) playActive.style.display = 'none';
         if (playResults) playResults.style.display = 'none';
 
-        // Inyectar todos los cuestionarios actuales dentro de la etiqueta <script id="embedded-quizzes-data">
         const embeddedScript = docClone.querySelector('#embedded-quizzes-data');
         embeddedScript.textContent = '\n' + JSON.stringify(quizzes, null, 2) + '\n  ';
 
-        // Conservar el nombre de copyright configurado al exportar el HTML compartido
         const currentOwner = document.getElementById('copyright-owner-display').textContent.trim();
         const cloneOwnerDisplay = docClone.querySelector('#copyright-owner-display');
         const cloneOwnerInput = docClone.querySelector('#copyright-owner-input');
@@ -2493,7 +3830,6 @@
           let addedCount = 0;
           imported.forEach(item => {
             if (item && item.title && Array.isArray(item.questions) && item.questions.length > 0) {
-              // Asignar un nuevo ID si ya existe uno igual para no sobrescribir accidentalmente
               const exists = quizzes.some(q => q.id === item.id);
               const quizToAdd = {
                 ...item,
@@ -2571,3 +3907,4 @@
   </script>
 </body>
 </html>
+```
