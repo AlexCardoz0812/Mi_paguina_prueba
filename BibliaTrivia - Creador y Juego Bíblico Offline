@@ -1,0 +1,2558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BibliaTrivia - Creador y Juego Bíblico Offline</title>
+  <style>
+    /* ==========================================================================
+       VARIABLES DE DISEÑO Y PALETA DE COLORES (Tonos Pergamino, Dorado y Azul Profundo)
+       100% autocontenido, sin dependencias externas ni CDN.
+       ========================================================================== */
+    :root {
+      --bg-parchment: #f8f5ee;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1ece1;
+      --primary-navy: #1e3a5f;
+      --primary-navy-hover: #152a45;
+      --accent-gold: #c59b27;
+      --accent-gold-light: #f4ebd0;
+      --accent-olive: #4a6b53;
+      --text-main: #2c2825;
+      --text-muted: #6b635b;
+      --border-color: #dfd7c8;
+      --success-bg: #e6f4ea;
+      --success-border: #34a853;
+      --success-text: #137333;
+      --error-bg: #fce8e6;
+      --error-border: #ea4335;
+      --error-text: #c5221f;
+      --shadow-sm: 0 2px 6px rgba(30, 58, 95, 0.06);
+      --shadow-md: 0 6px 18px rgba(30, 58, 95, 0.1);
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-serif: Georgia, "Times New Roman", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-parchment);
+      color: var(--text-main);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+       ENCABEZADO Y NAVEGACIÓN PRINCIPAL
+       ========================================================================== */
+    header {
+      background: linear-gradient(135deg, var(--primary-navy) 0%, #2a4d7a 100%);
+      color: #ffffff;
+      padding: 1.25rem 1rem 0;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .brand h1 {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .offline-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .dot-online {
+      width: 8px;
+      height: 8px;
+      background-color: #4ade80;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Pestañas de Navegación */
+    .nav-tabs {
+      display: flex;
+      gap: 0.35rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.85);
+      border: none;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-parchment);
+      color: var(--primary-navy);
+    }
+
+    /* ==========================================================================
+       CONTENEDOR PRINCIPAL Y TARJETAS
+       ========================================================================== */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+    }
+
+    .section-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-serif);
+      color: var(--primary-navy);
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* ==========================================================================
+       BOTONES Y CONTROLES GENERALES
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      min-height: 44px; /* Óptimo para pantallas táctiles */
+    }
+
+    .btn-primary {
+      background-color: var(--primary-navy);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-navy-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-gold {
+      background-color: var(--accent-gold);
+      color: #ffffff;
+    }
+
+    .btn-gold:hover {
+      background-color: #b0881f;
+      transform: translateY(-1px);
+    }
+
+    .btn-olive {
+      background-color: var(--accent-olive);
+      color: #ffffff;
+    }
+
+    .btn-olive:hover {
+      background-color: #3b5743;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--bg-subtle);
+      border-color: var(--primary-navy);
+    }
+
+    .btn-danger {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .btn-danger:hover {
+      background-color: #fecaca;
+    }
+
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      min-height: 36px;
+    }
+
+    /* ==========================================================================
+       VISTA 1: JUGAR (SELECCIÓN, PARTIDA Y RESULTADOS)
+       ========================================================================== */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.1rem;
+    }
+
+    .quiz-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-gold);
+    }
+
+    .quiz-badge {
+      display: inline-block;
+      background: var(--accent-gold-light);
+      color: #7c5e10;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+      align-self: flex-start;
+    }
+
+    .quiz-card h3 {
+      font-family: var(--font-serif);
+      color: var(--primary-navy);
+      font-size: 1.2rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .quiz-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      flex: 1;
+    }
+
+    .quiz-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Pantalla Activa de Juego */
+    .game-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-pill {
+      background: var(--accent-gold-light);
+      color: #6e5209;
+      font-weight: 700;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .progress-wrapper {
+      width: 100%;
+      height: 10px;
+      background: var(--bg-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-olive));
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .question-number {
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-olive);
+      margin-bottom: 0.4rem;
+    }
+
+    .question-text {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--primary-navy);
+      margin-bottom: 1.35rem;
+    }
+
+    .options-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .options-list {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .option-btn {
+      background: var(--bg-parchment);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.1rem;
+      text-align: left;
+      font-size: 1rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.18s ease;
+      min-height: 54px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary-navy);
+      background: #ffffff;
+    }
+
+    .option-letter {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--primary-navy);
+      flex-shrink: 0;
+    }
+
+    .option-btn.correct {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+      color: var(--success-text);
+      font-weight: 600;
+    }
+
+    .option-btn.correct .option-letter {
+      background-color: var(--success-border);
+      color: #ffffff;
+      border-color: var(--success-border);
+    }
+
+    .option-btn.wrong {
+      background-color: var(--error-bg);
+      border-color: var(--error-border);
+      color: var(--error-text);
+    }
+
+    .option-btn.wrong .option-letter {
+      background-color: var(--error-border);
+      color: #ffffff;
+      border-color: var(--error-border);
+    }
+
+    .feedback-box {
+      margin-top: 1.25rem;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md);
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .feedback-box.correct {
+      display: block;
+      background: var(--success-bg);
+      border-left: 5px solid var(--success-border);
+      color: var(--success-text);
+    }
+
+    .feedback-box.wrong {
+      display: block;
+      background: var(--error-bg);
+      border-left: 5px solid var(--error-border);
+      color: var(--error-text);
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .feedback-verse {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-top: 0.35rem;
+    }
+
+    /* Pantalla Final de Resultados */
+    .results-box {
+      text-align: center;
+      padding: 1rem 0.5rem;
+    }
+
+    .results-trophy {
+      font-size: 3.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-score-big {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin: 0.5rem 0;
+    }
+
+    /* ==========================================================================
+       VISTA 2: CREAR / EDITAR CUESTIONARIOS
+       ========================================================================== */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--primary-navy);
+      font-size: 0.92rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      background: #ffffff;
+      color: var(--text-main);
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-navy);
+    }
+
+    .question-editor-item {
+      background: var(--bg-parchment);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .question-editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .question-editor-header h4 {
+      color: var(--primary-navy);
+      font-size: 1rem;
+    }
+
+    .options-editor-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
+    }
+
+    @media (min-width: 640px) {
+      .options-editor-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .option-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #ffffff;
+      padding: 0.35rem 0.6rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+    }
+
+    .option-input-row.is-correct {
+      border-color: var(--success-border);
+      background: var(--success-bg);
+    }
+
+    .option-input-row input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success-border);
+      cursor: pointer;
+    }
+
+    .option-input-row input[type="text"] {
+      border: none;
+      background: transparent;
+      width: 100%;
+      padding: 0.35rem;
+      font-size: 0.92rem;
+    }
+
+    .option-input-row input[type="text"]:focus {
+      outline: none;
+    }
+
+    /* ==========================================================================
+       VISTA 3: COMPARTIR OFFLINE / EXPORTAR / IMPORTAR
+       ========================================================================== */
+    .share-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 700px) {
+      .share-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #fdfbf7 0%, var(--accent-gold-light) 100%);
+      border: 2px solid var(--accent-gold);
+    }
+
+    /* ==========================================================================
+       ESTILOS DEL GENERADOR AUTOMÁTICO Y TEMPORIZADOR
+       ========================================================================== */
+    .generator-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .generator-grid {
+        grid-template-columns: 2fr 1.2fr 1fr 1fr;
+      }
+    }
+
+    .quick-pills {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .quick-pill-btn {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--primary-navy);
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quick-pill-btn:hover {
+      background: var(--accent-gold-light);
+      border-color: var(--accent-gold);
+    }
+
+    .timer-pill {
+      background: #eef2ff;
+      color: var(--primary-navy);
+      border: 1px solid #c7d2fe;
+      font-weight: 700;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-pill.amber {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #f59e0b;
+    }
+
+    .timer-pill.warning {
+      background: var(--error-bg);
+      color: var(--error-text);
+      border-color: var(--error-border);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -12px;
+      z-index: 1200;
+      pointer-events: none;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      to {
+        transform: translateY(105vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* ==========================================================================
+       NOTIFICACIONES FLOTANTES (TOAST) Y DIÁLOGO DE CONFIRMACIÓN PROPIO
+       ========================================================================== */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      left: 20px;
+      max-width: 400px;
+      margin-left: auto;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--primary-navy);
+      color: #ffffff;
+      padding: 0.85rem 1.15rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      font-size: 0.92rem;
+      font-weight: 500;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .toast.success { background: var(--accent-olive); }
+    .toast.error { background: #b91c1c; }
+
+    /* Modal de Confirmación sin usar confirm() del navegador */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 30, 45, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 420px;
+      width: 100%;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-dialog h3 {
+      font-family: var(--font-serif);
+      color: var(--primary-navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-dialog p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ENCABEZADO Y PESTAÑAS -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-title">
+          <div class="brand-icon" aria-hidden="true">📜</div>
+          <div>
+            <h1>BibliaTrivia</h1>
+          </div>
+        </div>
+        <span class="offline-badge" title="Funciona completamente sin conexión a internet">
+          <span class="dot-online"></span> 100% Sin Internet (Offline)
+        </span>
+      </div>
+
+      <nav class="nav-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="play" onclick="switchTab('play')">
+          <span>🎮</span> Jugar
+        </button>
+        <button class="tab-btn" data-tab="generate" onclick="switchTab('generate')">
+          <span>✨</span> Generar desde Historia
+        </button>
+        <button class="tab-btn" data-tab="create" onclick="switchTab('create')">
+          <span>✏️</span> Crear / Editar Manual
+        </button>
+        <button class="tab-btn" data-tab="share" onclick="switchTab('share')">
+          <span>📤</span> Guardar y Compartir
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+
+    <!-- ======================================================================
+         PESTAÑA 1: JUGAR
+         ====================================================================== -->
+    <section id="view-play" class="view-section active">
+      <!-- Sub-vista 1A: Selector de Cuestionarios -->
+      <div id="play-lobby">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h2>Selecciona un Cuestionario Bíblico</h2>
+            <p>Elige un juego para poner a prueba tus conocimientos o genera uno nuevo a partir de un texto bíblico.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; background: var(--bg-card); padding: 0.5rem 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <label for="lobby-time-override" style="font-size: 0.88rem; font-weight: 600; color: var(--primary-navy); display: inline-flex; align-items: center; gap: 0.35rem;">
+              ⏱️ Tiempo global:
+            </label>
+            <select id="lobby-time-override" class="form-control" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.86rem; min-height: 34px;" onchange="toggleLobbyCustomMinutes()">
+              <option value="quiz" selected>Usar tiempo del juego</option>
+              <option value="0">Sin límite de tiempo</option>
+              <option value="custom">Personalizar (min)...</option>
+            </select>
+            <input type="number" id="lobby-custom-minutes" class="form-control" min="0.5" max="180" step="0.5" value="5" style="display: none; width: 76px; padding: 0.3rem 0.5rem; font-size: 0.86rem; min-height: 34px;" title="Minutos totales para responder todo el cuestionario">
+          </div>
+        </div>
+        <div id="quiz-list-container" class="quiz-grid"></div>
+      </div>
+
+      <!-- Sub-vista 1B: Partida en Curso -->
+      <div id="play-active" style="display: none;">
+        <div class="card">
+          <div class="game-top-bar">
+            <button class="btn btn-outline btn-sm" onclick="exitGame()">← Salir al menú</button>
+            <strong id="active-quiz-title" style="color: var(--primary-navy);">Título</strong>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <span id="timer-badge" class="timer-pill" style="display: none;" title="Tiempo restante para todo el cuestionario">⏱️ <span id="timer-display">05:00</span></span>
+              <span class="score-pill">Puntos: <span id="current-score">0</span></span>
+            </div>
+          </div>
+
+          <div class="progress-wrapper">
+            <div id="game-progress-bar" class="progress-bar"></div>
+          </div>
+
+          <div class="question-number" id="question-counter">Pregunta 1 de 10</div>
+          <h3 class="question-text" id="question-display">¿Texto de la pregunta?</h3>
+
+          <div id="options-container" class="options-list"></div>
+
+          <div id="feedback-area" class="feedback-box">
+            <div class="feedback-title" id="feedback-title"></div>
+            <div class="feedback-verse" id="feedback-explanation"></div>
+          </div>
+
+          <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+            <button id="next-question-btn" class="btn btn-primary" style="display: none;" onclick="nextQuestion()">
+              Siguiente Pregunta →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-vista 1C: Pantalla de Resultados -->
+      <div id="play-results" style="display: none;">
+        <div class="card results-box">
+          <div class="results-trophy" id="results-icon">🏆</div>
+          <h2 id="results-heading" style="font-family: var(--font-serif); color: var(--primary-navy);">¡Juego Completado!</h2>
+          <p id="results-quiz-name" style="color: var(--text-muted); margin-top: 0.25rem;"></p>
+
+          <div class="results-score-big" id="results-score-text">8 / 10</div>
+          <p id="results-message" style="max-width: 480px; margin: 0 auto 1.5rem; color: var(--text-main);"></p>
+
+          <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-gold" onclick="restartCurrentQuiz()">🔄 Volver a Jugar</button>
+            <button class="btn btn-outline" onclick="exitGame()">📚 Elegir Otro Cuestionario</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PESTAÑA 2: GENERAR DESDE HISTORIA BÍBLICA (100% OFFLINE)
+         ====================================================================== -->
+    <section id="view-generate" class="view-section">
+      <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h2>Generador Automático desde Historia Bíblica</h2>
+          <p>Pega un pasaje o relato bíblico junto con su cita y crea un cuestionario interactivo al instante sin internet.</p>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="fillExampleStory()">
+          📖 Probar con historia de ejemplo
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="generator-grid">
+          <div class="form-group">
+            <label for="gen-title-input">Título del Cuestionario *</label>
+            <input type="text" id="gen-title-input" class="form-control" placeholder="Ej. David y Goliat">
+          </div>
+
+          <div class="form-group">
+            <label for="gen-verse-input">Cita Bíblica *</label>
+            <input type="text" id="gen-verse-input" class="form-control" placeholder="Ej. 1 Samuel 17:4-50">
+          </div>
+
+          <div class="form-group">
+            <label for="gen-count-input">Cantidad de preguntas (1-50)</label>
+            <input type="number" id="gen-count-input" class="form-control" min="1" max="50" value="5">
+            <div class="quick-pills">
+              <button type="button" class="quick-pill-btn" onclick="setGenCount(5)">5</button>
+              <button type="button" class="quick-pill-btn" onclick="setGenCount(10)">10</button>
+              <button type="button" class="quick-pill-btn" onclick="setGenCount(15)">15</button>
+              <button type="button" class="quick-pill-btn" onclick="setGenCount(20)">20</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="gen-time-minutes">Tiempo total (min, 0 = libre)</label>
+            <input type="number" id="gen-time-minutes" class="form-control" min="0" max="180" step="0.5" value="3" placeholder="0 = Sin límite">
+            <div class="quick-pills">
+              <button type="button" class="quick-pill-btn" onclick="setGenTime(0)">Libre</button>
+              <button type="button" class="quick-pill-btn" onclick="setGenTime(2)">2m</button>
+              <button type="button" class="quick-pill-btn" onclick="setGenTime(5)">5m</button>
+              <button type="button" class="quick-pill-btn" onclick="setGenTime(10)">10m</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="gen-story-textarea">Texto de la Historia o Pasaje Bíblico *</label>
+          <textarea id="gen-story-textarea" class="form-control" rows="7" placeholder="Pega aquí el texto bíblico o relata la historia con detalles (personajes, lugares, cantidades, acciones)..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-gold" onclick="generateQuizFromStory()">
+            ✨ Generar Cuestionario Automáticamente
+          </button>
+          <button type="button" class="btn btn-outline" onclick="clearGeneratorForm()">
+            Limpiar Campos
+          </button>
+        </div>
+      </div>
+
+      <!-- Vista previa editable de las preguntas generadas -->
+      <div id="generated-preview-card" class="card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+          <div>
+            <h3 style="font-family: var(--font-serif); color: var(--primary-navy);">Vista Previa del Cuestionario Generado</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Revisa o ajusta cualquier pregunta antes de guardarla en tu biblioteca.</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="generateQuizFromStory()">🔄 Regenerar Preguntas</button>
+        </div>
+
+        <div id="generated-questions-list"></div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-primary" onclick="saveGeneratedQuiz(false)">
+            💾 Guardar en Biblioteca
+          </button>
+          <button type="button" class="btn btn-olive" onclick="saveGeneratedQuiz(true)">
+            ▶ Guardar Cuestionario y Jugar Ahora
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PESTAÑA 3: CREAR / EDITAR JUEGOS MANUALMENTE
+         ====================================================================== -->
+    <section id="view-create" class="view-section">
+      <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h2 id="editor-mode-title">Crear Nuevo Cuestionario</h2>
+          <p>Diseña tus propias preguntas bíblicas. Selecciona el círculo verde en la respuesta correcta.</p>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="resetEditorToNew()">+ Nuevo en Blanco</button>
+      </div>
+
+      <div class="card">
+        <input type="hidden" id="edit-quiz-id" value="">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label for="quiz-title-input">Título del Cuestionario *</label>
+            <input type="text" id="quiz-title-input" class="form-control" placeholder="Ej. Reyes y Profetas de Israel">
+          </div>
+
+          <div class="form-group">
+            <label for="quiz-time-minutes">Tiempo límite total (minutos, 0 = sin límite)</label>
+            <input type="number" id="quiz-time-minutes" class="form-control" min="0" max="180" step="0.5" value="0" placeholder="Ej. 5">
+            <div class="quick-pills">
+              <button type="button" class="quick-pill-btn" onclick="setEditorTime(0)">Sin límite</button>
+              <button type="button" class="quick-pill-btn" onclick="setEditorTime(1)">1 min</button>
+              <button type="button" class="quick-pill-btn" onclick="setEditorTime(3)">3 min</button>
+              <button type="button" class="quick-pill-btn" onclick="setEditorTime(5)">5 min</button>
+              <button type="button" class="quick-pill-btn" onclick="setEditorTime(10)">10 min</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quiz-desc-input">Descripción breve</label>
+          <input type="text" id="quiz-desc-input" class="form-control" placeholder="Ej. Preguntas ideales para jóvenes y grupos de estudio bíblico">
+        </div>
+
+        <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1.35rem 0;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-family: var(--font-serif); color: var(--primary-navy);">Preguntas del Juego</h3>
+          <span id="editor-q-count" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">1 pregunta</span>
+        </div>
+
+        <div id="questions-editor-list"></div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem;">
+          <button type="button" class="btn btn-outline" onclick="addQuestionBlock()">+ Añadir Otra Pregunta</button>
+          <button type="button" class="btn btn-primary" onclick="saveQuizFromEditor()">💾 Guardar Cuestionario</button>
+        </div>
+      </div>
+
+      <!-- Lista rápida de cuestionarios guardados para editar o borrar -->
+      <div class="card">
+        <h3 style="font-family: var(--font-serif); color: var(--primary-navy); margin-bottom: 0.75rem;">Cuestionarios Guardados</h3>
+        <div id="manage-quizzes-list"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PESTAÑA 3: GUARDAR Y COMPARTIR OFFLINE
+         ====================================================================== -->
+    <section id="view-share" class="view-section">
+      <div class="section-header">
+        <h2>Guardar y Compartir sin Internet</h2>
+        <p>Todos tus cambios se guardan automáticamente en este dispositivo. Usa estas opciones para llevar tus juegos a otros celulares o computadoras.</p>
+      </div>
+
+      <!-- Opción Estrella: Descargar como HTML autónomo -->
+      <div class="card highlight-box">
+        <div style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+          <div style="font-size: 2.5rem;">📦</div>
+          <div style="flex: 1; min-width: 240px;">
+            <h3 style="font-family: var(--font-serif); color: var(--primary-navy); margin-bottom: 0.35rem;">
+              Descargar Aplicación Completa con tus Juegos (.html)
+            </h3>
+            <p style="font-size: 0.94rem; color: var(--text-main); margin-bottom: 1rem;">
+              Genera un nuevo archivo <strong>.html</strong> idéntico a este, pero con <strong>todos los cuestionarios que has creado ya incrustados adentro</strong>. Puedes enviarlo por WhatsApp, correo o memoria USB: quien lo abra podrá jugar inmediatamente sin instalar nada y sin internet.
+            </p>
+            <button class="btn btn-gold" onclick="downloadStandaloneHTML()">
+              ⬇️ Descargar Archivo .HTML Listo para Compartir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="share-grid">
+        <!-- Exportar JSON -->
+        <div class="card">
+          <h3 style="font-family: var(--font-serif); color: var(--primary-navy); margin-bottom: 0.4rem;">
+            📤 Exportar Respaldo (.json)
+          </h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Descarga únicamente los datos de tus preguntas en un archivo ligero para guardar una copia de seguridad.
+          </p>
+          <button class="btn btn-primary" onclick="exportJSON()">Descargar Respaldo JSON</button>
+        </div>
+
+        <!-- Importar JSON -->
+        <div class="card">
+          <h3 style="font-family: var(--font-serif); color: var(--primary-navy); margin-bottom: 0.4rem;">
+            📥 Importar Preguntas (.json)
+          </h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Carga un archivo <strong>.json</strong> que te hayan compartido para añadir sus cuestionarios a tu lista.
+          </p>
+          <input type="file" id="import-json-file" accept=".json" style="display: none;" onchange="importJSON(event)">
+        <div class="modal-actions">
+        <button class="btn btn-outline btn-sm" onclick="closeConfirmModal()">Cancelar</button>
+        <button id="modal-confirm-btn" class="btn btn-danger btn-sm">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIE DE PÁGINA CON COPYRIGHT PERSONALIZABLE -->
+  <footer style="background: var(--primary-navy); color: rgba(255, 255, 255, 0.9); text-align: center; padding: 1.15rem 1rem; margin-top: auto; border-top: 3px solid var(--accent-gold); font-size: 0.9rem;">
+    <div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;">
+      <div>
+        © <span id="copyright-year">2026</span> <strong id="copyright-owner-display" style="color: #fde68a;">Tu Nombre</strong> — Todos los derechos reservados.
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+        <input type="text" id="copyright-owner-input" placeholder="Escribe tu nombre aquí..." aria-label="Nombre del autor para el copyright"
+               style="padding: 0.3rem 0.65rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: #ffffff; font-size: 0.82rem; width: 210px;">
+        <button type="button" onclick="saveCopyrightOwner()"
+                style="padding: 0.3rem 0.75rem; border-radius: 8px; border: none; background: var(--accent-gold); color: #ffffff; font-weight: 600; font-size: 0.82rem; cursor: pointer;">
+          Guardar Copyright
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       DATOS INCRUSTADOS POR DEFECTO (Se actualiza automáticamente al exportar HTML)
+       ======================================================================== -->
+  <script id="embedded-quizzes-data" type="application/json">
+[
+  {
+    "id": "default-biblical-characters",
+    "title": "Héroes de la Fe y Relatos Bíblicos",
+    "description": "Un recorrido clásico por historias fundamentales del Antiguo y Nuevo Testamento.",
+    "tiempoTotalSegundos": 180,
+    "questions": [
+      {
+        "question": "¿Quién construyó un arca siguiendo las instrucciones de Dios para sobrevivir al gran diluvio?",
+        "options": ["Moisés", "Noé", "Abraham", "Jacob"],
+        "correctIndex": 1,
+        "explanation": "Génesis 6:14-22 — Dios instruyó a Noé para construir el arca de madera de gofer y salvar a su familia y a los animales."
+      },
+      {
+        "question": "¿Con qué arma derrotó el joven David al gigante filisteo Goliat?",
+        "options": ["Una espada de bronce", "Una lanza pesada", "Una honda y una piedra", "Un arco y flechas"],
+        "correctIndex": 2,
+        "explanation": "1 Samuel 17:49-50 — David metió su mano en la bolsa, tomó una piedra, la tiró con la honda e hirió al filisteo en la frente."
+      },
+      {
+        "question": "¿Quién fue arrojado a un foso de leones por orar a Dios a pesar del decreto del rey Darío?",
+        "options": ["Daniel", "Elías", "Jeremías", "Jonás"],
+        "correctIndex": 0,
+        "explanation": "Daniel 6:16-22 — Dios envió su ángel y cerró la boca de los leones para que no le hicieran daño a Daniel."
+      },
+      {
+        "question": "¿Qué profeta fue tragado por un gran pez tras intentar huir de la misión de predicar en Nínive?",
+        "options": ["Amós", "Jonás", "Oseas", "Miqueas"],
+        "correctIndex": 1,
+        "explanation": "Jonás 1:17 — Jehová tenía preparado un gran pez que tragase a Jonás, y estuvo en su vientre tres días y tres noches."
+      },
+      {
+        "question": "¿Quién recibió las tablas de los Diez Mandamientos en el monte Sinaí?",
+        "options": ["Josué", "Aarón", "Moisés", "Samuel"],
+        "correctIndex": 2,
+        "explanation": "Éxodo 31:18 — Dios dio a Moisés dos tablas del testimonio, tablas de piedra escritas con el dedo de Dios."
+      }
+    ]
+  },
+  {
+    "id": "default-life-of-jesus",
+    "title": "Vida y Milagros de Jesús",
+    "description": "Preguntas sobre el nacimiento, enseñanzas y señales de Jesús en los Evangelios.",
+    "tiempoTotalSegundos": 0,
+    "questions": [
+      {
+        "question": "¿En qué ciudad nació Jesús según los Evangelios?",
+        "options": ["Nazaret", "Jerusalén", "Belén", "Capernaúm"],
+        "correctIndex": 2,
+        "explanation": "Mateo 2:1 / Lucas 2:4-7 — Jesús nació en Belén de Judea, cumpliendo la profecía de Miqueas 5:2."
+      },
+      {
+        "question": "¿Cuál fue el primer milagro público de Jesús registrado en el Evangelio de Juan?",
+        "options": ["Caminar sobre el agua", "Multiplicar los panes y los peces", "Convertir el agua en vino en Caná", "Sanar a un ciego de nacimiento"],
+        "correctIndex": 2,
+        "explanation": "Juan 2:1-11 — Este principio de señales hizo Jesús en Caná de Galilea, y manifestó su gloria."
+      },
+      {
+        "question": "¿Qué apóstol caminó brevemente sobre el agua hacia Jesús antes de comenzar a hundirse por dudar?",
+        "options": ["Juan", "Andrés", "Pedro", "Tomás"],
+        "correctIndex": 2,
+        "explanation": "Mateo 14:28-31 — Pedro descendió de la barca y anduvo sobre las aguas para ir a Jesús."
+      },
+      {
+        "question": "¿Con cuántos panes y peces alimentó Jesús a una multitud de cinco mil hombres?",
+        "options": ["7 panes y 3 peces", "5 panes y 2 peces", "12 panes y 5 peces", "3 panes y 2 peces"],
+        "correctIndex": 1,
+        "explanation": "Mateo 14:17-21 — Tomando los cinco panes y los dos peces, levantando los ojos al cielo, bendijo y partió."
+      }
+    ]
+  }
+]
+  </script>
+
+  <!-- ========================================================================
+       LÓGICA DE LA APLICACIÓN (JAVASCRIPT PURO Y AUTÓNOMO)
+       ======================================================================== -->
+  <script>
+    const STORAGE_KEY = 'biblia_trivia_quizzes_v1';
+    const COPYRIGHT_KEY = 'biblia_trivia_copyright_owner_v1';
+    let quizzes = [];
+
+    // Estado de la partida actual
+    let currentGame = {
+      quiz: null,
+      questionIndex: 0,
+      score: 0,
+      answered: false,
+      timerEnabled: false,
+      totalSeconds: 0,
+      timeLeft: 0,
+      timedOut: false,
+      timerInterval: null
+    };
+
+    // Callback para modal de confirmación
+    let pendingConfirmAction = null;
+
+    /* --------------------------------------------------------------------------
+       INICIALIZACIÓN Y ALMACENAMIENTO LOCAL / INCRUSTADO
+       -------------------------------------------------------------------------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCopyrightOwner();
+      loadQuizzes();
+      renderLobby();
+      renderManageList();
+      resetEditorToNew();
+    });
+
+    function loadCopyrightOwner() {
+      const yearEl = document.getElementById('copyright-year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      const displayEl = document.getElementById('copyright-owner-display');
+      const inputEl = document.getElementById('copyright-owner-input');
+      const savedOwner = localStorage.getItem(COPYRIGHT_KEY);
+
+      if (savedOwner && savedOwner.trim() !== '') {
+        displayEl.textContent = savedOwner.trim();
+        inputEl.value = savedOwner.trim();
+      } else if (displayEl && displayEl.textContent.trim() !== 'Tu Nombre') {
+        inputEl.value = displayEl.textContent.trim();
+      }
+    }
+
+    function saveCopyrightOwner() {
+      const inputEl = document.getElementById('copyright-owner-input');
+      const displayEl = document.getElementById('copyright-owner-display');
+      const name = inputEl.value.trim();
+
+      if (!name) {
+        showToast('Por favor escribe tu nombre para el copyright.', 'error');
+        inputEl.focus();
+        return;
+      }
+
+      displayEl.textContent = name;
+      localStorage.setItem(COPYRIGHT_KEY, name);
+      showToast(`Copyright actualizado a nombre de "${name}".`, 'success');
+    }
+
+    function getEmbeddedQuizzes() {
+      try {
+        const raw = document.getElementById('embedded-quizzes-data').textContent.trim();
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error('Error leyendo cuestionarios incrustados:', e);
+        return [];
+      }
+    }
+
+    function loadQuizzes() {
+      const embedded = getEmbeddedQuizzes();
+      const savedRaw = localStorage.getItem(STORAGE_KEY);
+
+      if (savedRaw) {
+        try {
+          const saved = JSON.parse(savedRaw);
+          if (Array.isArray(saved) && saved.length > 0) {
+            // Combinar los incrustados nuevos (si el archivo fue compartido) con los guardados localmente
+            const map = new Map();
+            embedded.forEach(q => map.set(q.id, q));
+            saved.forEach(q => map.set(q.id, q));
+            quizzes = Array.from(map.values());
+            saveQuizzesToStorage();
+            return;
+          }
+        } catch (e) {
+          console.error('Error parseando localStorage:', e);
+        }
+      }
+
+      quizzes = embedded;
+      saveQuizzesToStorage();
+    }
+
+    function saveQuizzesToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(quizzes));
+      } catch (e) {
+        showToast('No se pudo guardar en el almacenamiento local.', 'error');
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       NAVEGACIÓN ENTRE PESTAÑAS
+       -------------------------------------------------------------------------- */
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.view-section').forEach(sec => {
+        sec.classList.remove('active');
+      });
+      document.getElementById('view-' + tabName).classList.add('active');
+
+      if (tabName === 'play') {
+        exitGame();
+        renderLobby();
+      } else if (tabName === 'create') {
+        renderManageList();
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       SECCIÓN 1: JUGAR TRIVIA
+       -------------------------------------------------------------------------- */
+    function formatSecondsMMSS(totalSec) {
+      const safe = Math.max(0, Math.floor(totalSec));
+      const mins = Math.floor(safe / 60);
+      const secs = safe % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function formatDurationLabel(totalSec) {
+      if (!totalSec || totalSec <= 0) return 'Sin límite';
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      if (mins > 0 && secs > 0) return `${mins}m ${secs}s`;
+      if (mins > 0) return `${mins} min`;
+      return `${secs} seg`;
+    }
+
+    function toggleLobbyCustomMinutes() {
+      const mode = document.getElementById('lobby-time-override').value;
+      const customInp = document.getElementById('lobby-custom-minutes');
+      customInp.style.display = (mode === 'custom') ? 'inline-block' : 'none';
+    }
+
+    function renderLobby() {
+      const container = document.getElementById('quiz-list-container');
+      container.innerHTML = '';
+
+      if (quizzes.length === 0) {
+        container.innerHTML = `
+          <div class="card" style="grid-column: 1 / -1; text-align: center;">
+            <p style="margin-bottom: 1rem;">Aún no hay cuestionarios disponibles.</p>
+            <button class="btn btn-primary" onclick="switchTab('create')">Crear mi primer cuestionario</button>
+          </div>
+        `;
+        return;
+      }
+
+      quizzes.forEach(quiz => {
+        const quizSec = Number(quiz.tiempoTotalSegundos) || 0;
+        const timeText = quizSec > 0 ? `⏱️ ${formatDurationLabel(quizSec)}` : '⏱️ Tiempo libre';
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.innerHTML = `
+          <div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.65rem;">
+              <span class="quiz-badge" style="margin-bottom: 0;">📖 ${quiz.questions.length} ${quiz.questions.length === 1 ? 'pregunta' : 'preguntas'}</span>
+              <span class="quiz-badge" style="margin-bottom: 0; background: #eef2ff; color: var(--primary-navy);">${timeText}</span>
+            </div>
+            <h3>${escapeHTML(quiz.title)}</h3>
+            <p>${escapeHTML(quiz.description || 'Cuestionario interactivo sobre la Biblia.')}</p>
+          </div>
+          <div class="quiz-card-actions">
+            <button class="btn btn-primary" style="flex: 1;" onclick="startQuiz('${quiz.id}')">▶ Jugar Ahora</button>
+            <button class="btn btn-outline btn-sm" title="Editar cuestionario" onclick="editQuiz('${quiz.id}')">✏️</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function startQuiz(quizId) {
+      const found = quizzes.find(q => q.id === quizId);
+      if (!found || !found.questions || found.questions.length === 0) {
+        showToast('Este cuestionario no tiene preguntas válidas.', 'error');
+        return;
+      }
+
+      clearGameTimer();
+
+      // Determinar el tiempo límite global (del cuestionario o ajustado por el anfitrión en el lobby)
+      const overrideMode = document.getElementById('lobby-time-override').value;
+      let effectiveSeconds = Number(found.tiempoTotalSegundos) || 0;
+
+      if (overrideMode === '0') {
+        effectiveSeconds = 0;
+      } else if (overrideMode === 'custom') {
+        const customMins = parseFloat(document.getElementById('lobby-custom-minutes').value);
+        effectiveSeconds = (!isNaN(customMins) && customMins > 0) ? Math.round(customMins * 60) : 0;
+      }
+
+      currentGame = {
+        quiz: found,
+        questionIndex: 0,
+        score: 0,
+        answered: false,
+        timerEnabled: effectiveSeconds > 0,
+        totalSeconds: effectiveSeconds,
+        timeLeft: effectiveSeconds,
+        timedOut: false,
+        timerInterval: null
+      };
+
+      document.getElementById('play-lobby').style.display = 'none';
+      document.getElementById('play-results').style.display = 'none';
+      document.getElementById('play-active').style.display = 'block';
+
+      document.getElementById('active-quiz-title').textContent = found.title;
+      startGlobalQuizTimer();
+      renderCurrentQuestion();
+    }
+
+    function clearGameTimer() {
+      if (currentGame.timerInterval) {
+        clearInterval(currentGame.timerInterval);
+        currentGame.timerInterval = null;
+      }
+    }
+
+    function updateGlobalTimerVisuals() {
+      const badge = document.getElementById('timer-badge');
+      const dispSpan = document.getElementById('timer-display');
+      dispSpan.textContent = formatSecondsMMSS(currentGame.timeLeft);
+
+      badge.classList.remove('amber', 'warning');
+      if (currentGame.timeLeft <= 30) {
+        badge.classList.add('warning');
+      } else if (currentGame.timeLeft <= Math.max(60, Math.floor(currentGame.totalSeconds * 0.25))) {
+        badge.classList.add('amber');
+      }
+    }
+
+    function startGlobalQuizTimer() {
+      clearGameTimer();
+      const badge = document.getElementById('timer-badge');
+
+      if (!currentGame.timerEnabled || currentGame.totalSeconds <= 0) {
+        badge.style.display = 'none';
+        return;
+      }
+
+      badge.style.display = 'inline-flex';
+      updateGlobalTimerVisuals();
+
+      currentGame.timerInterval = setInterval(() => {
+        currentGame.timeLeft -= 1;
+        updateGlobalTimerVisuals();
+
+        if (currentGame.timeLeft <= 0) {
+          clearGameTimer();
+          handleGlobalTimeOut();
+        }
+      }, 1000);
+    }
+
+    function handleGlobalTimeOut() {
+      currentGame.timedOut = true;
+      currentGame.answered = true;
+      showToast('⏰ ¡Se acabó el tiempo límite del cuestionario!', 'error');
+      showResults();
+    }
+
+    function renderCurrentQuestion() {
+      const { quiz, questionIndex, score } = currentGame;
+      const q = quiz.questions[questionIndex];
+      const total = quiz.questions.length;
+
+      currentGame.answered = false;
+
+      document.getElementById('current-score').textContent = score;
+      document.getElementById('question-counter').textContent = `Pregunta ${questionIndex + 1} de ${total}`;
+      document.getElementById('question-display').textContent = q.question;
+
+      // Actualizar barra de progreso
+      const progressPct = ((questionIndex) / total) * 100;
+      document.getElementById('game-progress-bar').style.width = `${progressPct}%`;
+
+      // Limpiar feedback y ocultar botón siguiente
+      const feedbackArea = document.getElementById('feedback-area');
+      feedbackArea.className = 'feedback-box';
+      feedbackArea.style.display = 'none';
+      document.getElementById('next-question-btn').style.display = 'none';
+
+      // Renderizar opciones
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `
+          <span class="option-letter">${letters[idx]}</span>
+          <span>${escapeHTML(optText)}</span>
+        `;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selectedIndex) {
+      if (currentGame.answered) return;
+      currentGame.answered = true;
+
+      const { quiz, questionIndex } = currentGame;
+      const q = quiz.questions[questionIndex];
+      const isCorrect = selectedIndex === q.correctIndex;
+
+      if (isCorrect) {
+        currentGame.score += 1;
+        document.getElementById('current-score').textContent = currentGame.score;
+      }
+
+      // Colorear botones
+      const buttons = document.querySelectorAll('#options-container .option-btn');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        } else if (idx === selectedIndex && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Mostrar retroalimentación
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackExp = document.getElementById('feedback-explanation');
+
+      feedbackArea.className = 'feedback-box ' + (isCorrect ? 'correct' : 'wrong');
+      feedbackArea.style.display = 'block';
+      feedbackTitle.textContent = isCorrect
+        ? '✅ ¡Respuesta Correcta!'
+        : `❌ Incorrecto. La respuesta correcta es: "${q.options[q.correctIndex]}"`;
+
+      feedbackExp.textContent = q.explanation ? `📖 ${q.explanation}` : '';
+
+      // Actualizar barra de progreso al completar esta pregunta
+      const progressPct = ((questionIndex + 1) / quiz.questions.length) * 100;
+      document.getElementById('game-progress-bar').style.width = `${progressPct}%`;
+
+      // Botón siguiente o finalizar
+      const nextBtn = document.getElementById('next-question-btn');
+      nextBtn.style.display = 'inline-flex';
+      nextBtn.textContent = (questionIndex + 1 < quiz.questions.length)
+        ? 'Siguiente Pregunta →'
+        : 'Ver Resultados Finales 🏆';
+    }
+
+    function nextQuestion() {
+      currentGame.questionIndex += 1;
+      if (currentGame.questionIndex < currentGame.quiz.questions.length) {
+        renderCurrentQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      clearGameTimer();
+      document.getElementById('play-active').style.display = 'none';
+      document.getElementById('play-results').style.display = 'block';
+
+      const { quiz, score, timedOut } = currentGame;
+      const total = quiz.questions.length;
+      const pct = Math.round((score / total) * 100);
+
+      document.getElementById('results-heading').textContent = timedOut
+        ? '⏰ ¡Se acabó el tiempo!'
+        : '¡Juego Completado!';
+      document.getElementById('results-quiz-name').textContent = quiz.title;
+      document.getElementById('results-score-text').textContent = `${score} / ${total} (${pct}%)`;
+
+      let icon = timedOut ? '⏰' : '🌟';
+      let msg = timedOut
+        ? `El tiempo límite terminó. Lograste responder ${score} de ${total} preguntas correctamente antes de que finalizara el reloj.`
+        : '¡Buen intento! Sigue explorando las Escrituras y vuelve a intentarlo.';
+
+      if (!timedOut && pct === 100) {
+        icon = '👑';
+        msg = '¡Excelente! Has respondido todas las preguntas correctamente. ¡Gran conocimiento bíblico!';
+        launchConfetti();
+      } else if (!timedOut && pct >= 70) {
+        icon = '🏆';
+        msg = '¡Muy bien hecho! Tienes un sólido conocimiento de estos relatos bíblicos.';
+        launchConfetti();
+      } else if (!timedOut && pct >= 40) {
+        icon = '📜';
+        msg = '¡Nada mal! Vas por buen camino, puedes repasar las citas y volver a jugar.';
+      }
+
+      document.getElementById('results-icon').textContent = icon;
+      document.getElementById('results-message').textContent = msg;
+    }
+
+    function restartCurrentQuiz() {
+      if (currentGame.quiz) {
+        startQuiz(currentGame.quiz.id);
+      }
+    }
+
+    function exitGame() {
+      clearGameTimer();
+      document.getElementById('play-active').style.display = 'none';
+      document.getElementById('play-results').style.display = 'none';
+      document.getElementById('play-lobby').style.display = 'block';
+    }
+
+    function launchConfetti() {
+      const colors = ['#c59b27', '#1e3a5f', '#4a6b53', '#eab308', '#3b82f6'];
+      for (let i = 0; i < 45; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+        piece.style.animationDelay = (Math.random() * 0.4) + 's';
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 4500);
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       SECCIÓN 1.5: MOTOR GENERADOR DE PREGUNTAS DESDE HISTORIA BÍBLICA (OFFLINE)
+       -------------------------------------------------------------------------- */
+    const SPANISH_STOPWORDS = new Set([
+      'para', 'como', 'pero', 'porque', 'cuando', 'donde', 'quien', 'quienes', 'cual', 'cuales',
+      'sobre', 'entre', 'hasta', 'desde', 'hacia', 'contra', 'según', 'segun', 'durante', 'mediante',
+      'había', 'habia', 'tenía', 'tenia', 'estaba', 'fueron', 'eran', 'siendo', 'sido', 'hacer',
+      'dijo', 'dijeron', 'respondió', 'respondio', 'entonces', 'después', 'despues', 'antes',
+      'todos', 'todas', 'todo', 'toda', 'otros', 'otras', 'otro', 'otra', 'mismo', 'misma',
+      'aquel', 'aquella', 'aquellos', 'aquellas', 'este', 'esta', 'estos', 'estas', 'ese', 'esa',
+      'ellos', 'ellas', 'nosotros', 'vosotros', 'ustedes', 'también', 'tambien', 'además', 'ademas',
+      'muy', 'más', 'mas', 'menos', 'mucho', 'mucha', 'muchos', 'muchas', 'poco', 'poca',
+      'cada', 'algún', 'algun', 'alguna', 'ningún', 'ningun', 'ninguna', 'jehová', 'jehova', 'dios', 'señor', 'senor'
+    ]);
+
+    const BIBLICAL_DISTRACTOR_BANK = {
+      names: [
+        'Moisés', 'Abraham', 'Isaac', 'Jacob', 'José', 'Josué', 'Gedeón', 'Sansón',
+        'Samuel', 'Saúl', 'David', 'Salomón', 'Elías', 'Eliseo', 'Isaías', 'Jeremías',
+        'Ezequiel', 'Daniel', 'Jonás', 'Nehemías', 'Pedro', 'Juan', 'Pablo', 'Bernabé',
+        'Timoteo', 'Lázaro', 'Zaqueo', 'Nicodemo', 'Ester', 'Rut', 'Débora', 'María', 'Marta'
+      ],
+      places: [
+        'Jerusalén', 'Belén', 'Nazaret', 'Egipto', 'Babilonia', 'Jericó', 'Samaria',
+        'Galilea', 'Judea', 'Sinaí', 'Nínive', 'Damasco', 'Antioquía', 'Caná', 'Betania', 'Gaza'
+      ],
+      numbers: [
+        '3', '5', '7', '10', '12', '30', '40', '50', '70', '100', '120', '300', '400', '5000'
+      ],
+      keywords: [
+        'alianza', 'ofrenda', 'profecía', 'templo', 'ejército', 'desierto', 'montaña',
+        'milagro', 'oración', 'sabiduría', 'justicia', 'misericordia', 'espada', 'túnica',
+        'altar', 'testimonio', 'pueblo', 'reino', 'promesa', 'bendición', 'victoria'
+      ]
+    };
+
+    function setGenCount(val) {
+      document.getElementById('gen-count-input').value = val;
+    }
+
+    function setGenTime(mins) {
+      document.getElementById('gen-time-minutes').value = mins;
+    }
+
+    function setEditorTime(mins) {
+      document.getElementById('quiz-time-minutes').value = mins;
+    }
+
+    function fillExampleStory() {
+      document.getElementById('gen-title-input').value = 'David y Goliat';
+      document.getElementById('gen-verse-input').value = '1 Samuel 17:4-50';
+      document.getElementById('gen-count-input').value = '8';
+      document.getElementById('gen-time-minutes').value = '4';
+      document.getElementById('gen-story-textarea').value =
+        'Salió entonces del campamento de los filisteos un paladín llamado Goliat, oriundo de Gat, que medía seis codos y un palmo de altura. ' +
+        'Durante cuarenta días, Goliat desafiaba mañana y tarde al ejército de Israel pidiendo un hombre que peleara contra él. ' +
+        'El rey Saúl y todos los soldados de Israel tenían mucho temor al escuchar las palabras del gigante. ' +
+        'David, un joven pastor de Belén hijo de Isaí, fue al campamento para llevar provisiones a sus hermanos mayores y se ofreció a pelear contra el filisteo. ' +
+        'David rechazó la armadura de bronce de Saúl, tomó su cayado, escogió cinco piedras lisas del arroyo y avanzó con su honda en la mano. ' +
+        'David declaró que venía en el nombre del Señor de los ejércitos, metió su mano en el zurrón, tomó una piedra y la lanzó con la honda. ' +
+        'La piedra se clavó en la frente de Goliat, quien cayó rostro en tierra, logrando así David una gran victoria para Israel.';
+      showToast('Historia de ejemplo cargada. Pulsa "Generar Cuestionario Automáticamente".', 'info');
+    }
+
+    function clearGeneratorForm() {
+      document.getElementById('gen-title-input').value = '';
+      document.getElementById('gen-verse-input').value = '';
+      document.getElementById('gen-count-input').value = '5';
+      document.getElementById('gen-time-minutes').value = '3';
+      document.getElementById('gen-story-textarea').value = '';
+      document.getElementById('generated-preview-card').style.display = 'none';
+      document.getElementById('generated-questions-list').innerHTML = '';
+    }
+
+    function generateQuizFromStory() {
+      const title = document.getElementById('gen-title-input').value.trim();
+      const verse = document.getElementById('gen-verse-input').value.trim();
+      const rawText = document.getElementById('gen-story-textarea').value.trim();
+      const countInput = document.getElementById('gen-count-input');
+      let targetCount = parseInt(countInput.value, 10);
+
+      if (isNaN(targetCount) || targetCount < 1) {
+        targetCount = 1;
+        countInput.value = '1';
+      } else if (targetCount > 50) {
+        targetCount = 50;
+        countInput.value = '50';
+      }
+
+      if (!rawText || rawText.length < 30) {
+        showToast('Por favor escribe o pega una historia bíblica un poco más detallada.', 'error');
+        document.getElementById('gen-story-textarea').focus();
+        return;
+      }
+
+      if (!title) {
+        document.getElementById('gen-title-input').value = verse ? `Estudio de ${verse}` : 'Cuestionario Bíblico';
+      }
+
+      const generatedQuestions = runHeuristicBiblicalNLP(rawText, verse, targetCount);
+
+      if (generatedQuestions.length === 0) {
+        showToast('No se pudieron extraer suficientes datos del texto. Intenta añadir más oraciones.', 'error');
+        return;
+      }
+
+      renderGeneratedPreview(generatedQuestions);
+      document.getElementById('generated-preview-card').style.display = 'block';
+      document.getElementById('generated-preview-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast(`¡Se generaron ${generatedQuestions.length} preguntas a partir del pasaje!`, 'success');
+    }
+
+    /**
+     * Motor heurístico de PLN en español (100% offline):
+     * Extrae múltiples ángulos (personajes/lugares, números, acciones/verbos,
+     * palabras clave, orden de eventos y comprensión contextual) para generar
+     * hasta la cantidad exacta solicitada evitando duplicados.
+     */
+    function runHeuristicBiblicalNLP(text, verseRef, desiredCount) {
+      const refLabel = verseRef || 'el pasaje bíblico';
+      const cleanText = text.replace(/\s+/g, ' ').trim();
+
+      // Dividir en oraciones o cláusulas significativas
+      let sentences = cleanText
+        .split(/(?<=[.!?])\s+/)
+        .map(s => s.trim())
+        .filter(s => s.split(' ').length >= 5);
+
+      if (sentences.length < 2 && cleanText.includes(',')) {
+        const clauses = cleanText.split(/[,;]\s+/).map(s => s.trim()).filter(s => s.split(' ').length >= 4);
+        if (clauses.length > sentences.length) {
+          sentences = clauses;
+        }
+      }
+
+      if (sentences.length === 0) {
+        sentences.push(cleanText);
+      }
+
+      // Extraer entidades globales del pasaje para distractores coherentes
+      const properNounsSet = new Set();
+      const numbersSet = new Set();
+      const keywordsSet = new Set();
+
+      sentences.forEach(sentence => {
+        const words = sentence.replace(/[.,;:¡!¿?"'()«»]/g, '').split(' ');
+        words.forEach((w, idx) => {
+          if (idx > 0 && /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}$/.test(w) && !SPANISH_STOPWORDS.has(w.toLowerCase())) {
+            properNounsSet.add(w);
+          }
+          if (/^\d+$/.test(w) || /^(uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|doce|cuarenta|cincuenta|setenta|cien|mil)$/i.test(w)) {
+            numbersSet.add(w.toLowerCase());
+          }
+          const lower = w.toLowerCase();
+          if (lower.length >= 5 && !SPANISH_STOPWORDS.has(lower) && !/^[A-ZÁÉÍÓÚÑ]/.test(w)) {
+            keywordsSet.add(lower);
+          }
+        });
+      });
+
+      const textNames = Array.from(properNounsSet);
+      const textNumbers = Array.from(numbersSet);
+      const textKeywords = Array.from(keywordsSet);
+
+      const candidates = [];
+      const seenQuestions = new Set();
+
+      const addCandidate = (qObj) => {
+        const key = qObj.question.toLowerCase().replace(/\s+/g, ' ').trim();
+        if (!seenQuestions.has(key)) {
+          seenQuestions.add(key);
+          candidates.push(qObj);
+        }
+      };
+
+      // Ángulo 1: Nombres propios (personajes o lugares) dentro de cada oración
+      sentences.forEach(sentence => {
+        const words = sentence.replace(/[.,;:¡!¿?"'()«»]/g, '').split(' ');
+        const foundNames = words.filter((w, idx) =>
+          idx > 0 && /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}$/.test(w) && !SPANISH_STOPWORDS.has(w.toLowerCase())
+        );
+
+        foundNames.forEach(targetName => {
+          const maskedSentence = replaceWholeWord(sentence, targetName, '________');
+          if (maskedSentence !== sentence) {
+            const distractors = pickDistractors(
+              targetName,
+              textNames,
+              [...BIBLICAL_DISTRACTOR_BANK.names, ...BIBLICAL_DISTRACTOR_BANK.places],
+              3
+            );
+            const built = buildShuffledOptions(targetName, distractors);
+            addCandidate({
+              question: `Según ${refLabel}, ¿qué personaje o lugar completa la siguiente frase?\n"${maskedSentence}"`,
+              options: built.options,
+              correctIndex: built.correctIndex,
+              explanation: `${refLabel} — "${sentence}"`
+            });
+          }
+        });
+      });
+
+      // Ángulo 2: Datos numéricos, medidas o cantidades
+      sentences.forEach(sentence => {
+        const numMatch = sentence.match(/\b(\d+|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|doce|cuarenta|cincuenta|setenta|cien|mil)\b/i);
+        if (numMatch) {
+          const targetNum = numMatch[1];
+          const maskedSentence = replaceWholeWord(sentence, targetNum, '____');
+          if (maskedSentence !== sentence) {
+            const isWordNum = isNaN(Number(targetNum));
+            const fallbackPool = isWordNum
+              ? ['dos', 'tres', 'cinco', 'siete', 'diez', 'doce', 'cuarenta', 'setenta']
+              : BIBLICAL_DISTRACTOR_BANK.numbers;
+            const distractors = pickDistractors(targetNum, textNumbers, fallbackPool, 3);
+            const built = buildShuffledOptions(targetNum, distractors);
+            addCandidate({
+              question: `De acuerdo con ${refLabel}, ¿qué cantidad o número corresponde en este detalle?\n"${maskedSentence}"`,
+              options: built.options,
+              correctIndex: built.correctIndex,
+              explanation: `${refLabel} — "${sentence}"`
+            });
+          }
+        }
+      });
+
+      // Ángulo 3: Palabras clave y acciones relevantes
+      sentences.forEach(sentence => {
+        const words = sentence.replace(/[.,;:¡!¿?"'()«»]/g, '').split(' ');
+        const contentWords = words.filter((w, idx) =>
+          idx > 0 && w.length >= 6 && !SPANISH_STOPWORDS.has(w.toLowerCase()) && !/^[A-ZÁÉÍÓÚÑ]/.test(w)
+        );
+
+        contentWords.forEach(targetWord => {
+          const maskedSentence = replaceWholeWord(sentence, targetWord, '________');
+          if (maskedSentence !== sentence) {
+            const distractors = pickDistractors(targetWord, textKeywords, BIBLICAL_DISTRACTOR_BANK.keywords, 3);
+            const built = buildShuffledOptions(targetWord, distractors);
+            addCandidate({
+              question: `Completa la palabra clave según el relato de ${refLabel}:\n"${maskedSentence}"`,
+              options: built.options,
+              correctIndex: built.correctIndex,
+              explanation: `${refLabel} — "${sentence}"`
+            });
+          }
+        });
+      });
+
+      // Ángulo 4: Orden cronológico de eventos (si hay al menos 3 oraciones)
+      if (sentences.length >= 3) {
+        for (let i = 0; i < sentences.length - 1; i++) {
+          const currentEvt = sentences[i].replace(/[.!?]+$/, '');
+          const nextEvt = sentences[i + 1].replace(/[.!?]+$/, '');
+          const otherEvts = sentences
+            .filter((_, idx) => idx !== i && idx !== i + 1)
+            .map(s => s.replace(/[.!?]+$/, '') + '.');
+
+          const fallbacks = [
+            'Todos regresaron inmediatamente a sus casas sin decir palabra.',
+            'El relato concluye sin que ocurriera ningún otro acontecimiento.',
+            'Se levantó una gran muralla alrededor de toda la región.'
+          ];
+          const distractors = pickDistractors(nextEvt + '.', otherEvts, fallbacks, 3);
+          const built = buildShuffledOptions(nextEvt + '.', distractors);
+          addCandidate({
+            question: `En la secuencia de ${refLabel}, ¿qué sucedió inmediatamente después de que "${currentEvt}"?`,
+            options: built.options,
+            correctIndex: built.correctIndex,
+            explanation: `${refLabel} — Secuencia narrativa del pasaje.`
+          });
+        }
+      }
+
+      // Ángulo 5: Comprensión / Afirmación verdadera basada en cada oración del relato
+      sentences.forEach((sentence, idx) => {
+        const cleanSent = sentence.replace(/[.!?]+$/, '');
+        const falseStatements = generatePlausibleFalseStatements(cleanSent, textNames);
+        const built = buildShuffledOptions(cleanSent + '.', falseStatements);
+        addCandidate({
+          question: `Según ${refLabel} (detalle #${idx + 1}), ¿cuál de las siguientes afirmaciones es correcta?`,
+          options: built.options,
+          correctIndex: built.correctIndex,
+          explanation: `${refLabel} — Afirmación fiel al texto bíblico.`
+        });
+      });
+
+      // Completar si el usuario solicitó más preguntas que los candidatos únicos extraídos
+      let loopGuard = 0;
+      while (candidates.length < desiredCount && loopGuard < desiredCount * 2) {
+        const baseSent = sentences[loopGuard % sentences.length].replace(/[.!?]+$/, '');
+        const altFalse = [
+          'El texto afirma exactamente lo contrario a este suceso.',
+          'Ninguno de los protagonistas estuvo presente en ese momento.',
+          'Este hecho sucedió únicamente en tiempos del rey Salomón.'
+        ];
+        const built = buildShuffledOptions(baseSent + '.', altFalse);
+        addCandidate({
+          question: `Repaso de ${refLabel} (punto ${loopGuard + 1}): ¿qué enseñanza o hecho confirma la lectura?`,
+          options: built.options,
+          correctIndex: built.correctIndex,
+          explanation: `${refLabel} — "${baseSent}."`
+        });
+        loopGuard++;
+      }
+
+      return shuffleArray(candidates).slice(0, desiredCount);
+    }
+
+    function replaceWholeWord(sentence, word, replacement) {
+      const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escaped}\\b`);
+      return sentence.replace(regex, replacement);
+    }
+
+    function pickDistractors(correctValue, primaryPool, fallbackPool, count) {
+      const chosen = new Set();
+      const correctLower = String(correctValue).toLowerCase();
+
+      const shuffledPrimary = shuffleArray([...primaryPool]);
+      for (const item of shuffledPrimary) {
+        if (chosen.size >= count) break;
+        if (String(item).toLowerCase() !== correctLower) {
+          chosen.add(item);
+        }
+      }
+
+      const shuffledFallback = shuffleArray([...fallbackPool]);
+      for (const item of shuffledFallback) {
+        if (chosen.size >= count) break;
+        if (String(item).toLowerCase() !== correctLower && !Array.from(chosen).some(c => c.toLowerCase() === String(item).toLowerCase())) {
+          chosen.add(item);
+        }
+      }
+
+      return Array.from(chosen).slice(0, count);
+    }
+
+    function generatePlausibleFalseStatements(trueSentence, textNames) {
+      const distractors = [];
+      const fallbackNames = shuffleArray([...BIBLICAL_DISTRACTOR_BANK.names]);
+
+      // Intentar sustituir un nombre propio por otro personaje bíblico
+      const words = trueSentence.split(' ');
+      const capWord = words.find((w, idx) => idx > 0 && /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}$/.test(w.replace(/[.,;:]/g, '')));
+      if (capWord) {
+        const cleanCap = capWord.replace(/[.,;:]/g, '');
+        const altName = fallbackNames.find(n => n !== cleanCap && !textNames.includes(n)) || 'Gedeón';
+        distractors.push(replaceWholeWord(trueSentence, cleanCap, altName) + '.');
+      }
+
+      // Negación o inversión de contexto
+      distractors.push('Ninguno de los personajes mencionados participó en este suceso.');
+      distractors.push('Este acontecimiento ocurrió únicamente después del exilio en Babilonia.');
+      distractors.push('El relato indica que nadie quiso obedecer ni escuchar el mensaje.');
+
+      return distractors.slice(0, 3);
+    }
+
+    function buildShuffledOptions(correctAnswer, distractors) {
+      const combined = [
+        { text: correctAnswer, isCorrect: true },
+        ...distractors.map(d => ({ text: d, isCorrect: false }))
+      ];
+      const shuffled = shuffleArray(combined);
+      const correctIndex = shuffled.findIndex(item => item.isCorrect);
+      return {
+        options: shuffled.map(item => item.text),
+        correctIndex
+      };
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function renderGeneratedPreview(questions) {
+      const container = document.getElementById('generated-questions-list');
+      container.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const uniqueId = 'genq_' + Date.now() + '_' + idx;
+        const letters = ['A', 'B', 'C', 'D'];
+        let optionsHTML = '';
+
+        for (let i = 0; i < 4; i++) {
+          optionsHTML += `
+            <div class="option-input-row ${i === q.correctIndex ? 'is-correct' : ''}">
+              <input type="radio" name="correct_${uniqueId}" value="${i}" ${i === q.correctIndex ? 'checked' : ''}
+                     title="Marcar como respuesta correcta" onchange="highlightCorrectOption(this)">
+              <strong>${letters[i]}.</strong>
+              <input type="text" class="opt-text-input" value="${escapeAttr(q.options[i] || '')}">
+            </div>
+          `;
+        }
+
+        const block = document.createElement('div');
+        block.className = 'question-editor-item';
+        block.innerHTML = `
+          <div class="question-editor-header">
+            <h4 class="q-item-label">Pregunta Generada #${idx + 1}</h4>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeGeneratedBlock(this)">Eliminar</button>
+          </div>
+          <div class="form-group">
+            <textarea class="form-control q-text-input" rows="2">${escapeHTML(q.question)}</textarea>
+          </div>
+          <div class="options-editor-grid">
+            ${optionsHTML}
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <input type="text" class="form-control q-exp-input" value="${escapeAttr(q.explanation || '')}">
+          </div>
+        `;
+        container.appendChild(block);
+      });
+    }
+
+    function removeGeneratedBlock(btn) {
+      const list = document.getElementById('generated-questions-list');
+      if (list.children.length <= 1) {
+        showToast('Debe quedar al menos una pregunta en el cuestionario.', 'error');
+        return;
+      }
+      btn.closest('.question-editor-item').remove();
+      const items = list.querySelectorAll('.question-editor-item');
+      items.forEach((item, idx) => {
+        item.querySelector('.q-item-label').textContent = `Pregunta Generada #${idx + 1}`;
+      });
+    }
+
+    function saveGeneratedQuiz(playImmediately) {
+      const title = document.getElementById('gen-title-input').value.trim() || 'Cuestionario Bíblico Generado';
+      const verse = document.getElementById('gen-verse-input').value.trim();
+      const minsVal = parseFloat(document.getElementById('gen-time-minutes').value);
+      const tiempoTotalSegundos = (!isNaN(minsVal) && minsVal > 0) ? Math.round(minsVal * 60) : 0;
+
+      const description = verse
+        ? `Cuestionario generado automáticamente a partir de ${verse}.`
+        : 'Cuestionario generado automáticamente a partir de un relato bíblico.';
+
+      const nodes = document.querySelectorAll('#generated-questions-list .question-editor-item');
+      if (nodes.length === 0) {
+        showToast('Primero genera las preguntas a partir de la historia.', 'error');
+        return;
+      }
+
+      const parsedQuestions = [];
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const qText = node.querySelector('.q-text-input').value.trim();
+        const options = Array.from(node.querySelectorAll('.opt-text-input')).map(inp => inp.value.trim());
+        const checkedRadio = node.querySelector('input[type="radio"]:checked');
+        const correctIndex = checkedRadio ? parseInt(checkedRadio.value, 10) : 0;
+        const explanation = node.querySelector('.q-exp-input').value.trim();
+
+        if (!qText || options.some(o => o === '')) {
+          showToast(`Revisa que la Pregunta #${i + 1} y sus 4 opciones estén completas.`, 'error');
+          return;
+        }
+
+        parsedQuestions.push({
+          question: qText,
+          options,
+          correctIndex,
+          explanation
+        });
+      }
+
+      const newQuiz = {
+        id: 'quiz_gen_' + Date.now(),
+        title,
+        description,
+        tiempoTotalSegundos,
+        questions: parsedQuestions
+      };
+
+      quizzes.push(newQuiz);
+      saveQuizzesToStorage();
+      renderLobby();
+      renderManageList();
+
+      showToast('¡Cuestionario guardado en tu biblioteca offline!', 'success');
+
+      if (playImmediately) {
+        document.getElementById('lobby-time-override').value = 'quiz';
+        toggleLobbyCustomMinutes();
+        switchTab('play');
+        startQuiz(newQuiz.id);
+      } else {
+        switchTab('play');
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       SECCIÓN 2: CREAR Y EDITAR CUESTIONARIOS MANUALMENTE
+       -------------------------------------------------------------------------- */
+    function resetEditorToNew() {
+      document.getElementById('edit-quiz-id').value = '';
+      document.getElementById('editor-mode-title').textContent = 'Crear Nuevo Cuestionario';
+      document.getElementById('quiz-title-input').value = '';
+      document.getElementById('quiz-time-minutes').value = '0';
+      document.getElementById('quiz-desc-input').value = '';
+
+      const list = document.getElementById('questions-editor-list');
+      list.innerHTML = '';
+      addQuestionBlock();
+    }
+
+    function addQuestionBlock(data = null) {
+      const list = document.getElementById('questions-editor-list');
+      const uniqueId = 'q_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+
+      const qText = data ? data.question : '';
+      const opts = data ? data.options : ['', '', '', ''];
+      const correctIdx = data ? data.correctIndex : 0;
+      const explanation = data ? (data.explanation || '') : '';
+
+      const item = document.createElement('div');
+      item.className = 'question-editor-item';
+      item.dataset.qid = uniqueId;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      let optionsHTML = '';
+      for (let i = 0; i < 4; i++) {
+        optionsHTML += `
+          <div class="option-input-row ${i === correctIdx ? 'is-correct' : ''}">
+            <input type="radio" name="correct_${uniqueId}" value="${i}" ${i === correctIdx ? 'checked' : ''}
+                   title="Marcar como respuesta correcta" onchange="highlightCorrectOption(this)">
+            <strong>${letters[i]}.</strong>
+            <input type="text" class="opt-text-input" placeholder="Opción ${letters[i]}" value="${escapeAttr(opts[i] || '')}">
+          </div>
+        `;
+      }
+
+      item.innerHTML = `
+        <div class="question-editor-header">
+          <h4 class="q-item-label">Pregunta</h4>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestionBlock(this)">Eliminar</button>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control q-text-input" placeholder="Escribe aquí la pregunta bíblica..." value="${escapeAttr(qText)}">
+        </div>
+        <div class="options-editor-grid">
+          ${optionsHTML}
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <input type="text" class="form-control q-exp-input" placeholder="Cita bíblica o explicación opcional (Ej. Juan 3:16 - Porque de tal manera...)" value="${escapeAttr(explanation)}">
+        </div>
+      `;
+
+      list.appendChild(item);
+      renumberEditorQuestions();
+    }
+
+    function highlightCorrectOption(radioInput) {
+      const parentGrid = radioInput.closest('.options-editor-grid');
+      parentGrid.querySelectorAll('.option-input-row').forEach(row => row.classList.remove('is-correct'));
+      radioInput.closest('.option-input-row').classList.add('is-correct');
+    }
+
+    function removeQuestionBlock(btn) {
+      const list = document.getElementById('questions-editor-list');
+      if (list.children.length <= 1) {
+        showToast('El cuestionario debe tener al menos una pregunta.', 'error');
+        return;
+      }
+      btn.closest('.question-editor-item').remove();
+      renumberEditorQuestions();
+    }
+
+    function renumberEditorQuestions() {
+      const items = document.querySelectorAll('#questions-editor-list .question-editor-item');
+      items.forEach((item, idx) => {
+        item.querySelector('.q-item-label').textContent = `Pregunta #${idx + 1}`;
+      });
+      document.getElementById('editor-q-count').textContent =
+        `${items.length} ${items.length === 1 ? 'pregunta' : 'preguntas'}`;
+    }
+
+    function saveQuizFromEditor() {
+      const title = document.getElementById('quiz-title-input').value.trim();
+      const description = document.getElementById('quiz-desc-input').value.trim();
+      const existingId = document.getElementById('edit-quiz-id').value;
+      const minsVal = parseFloat(document.getElementById('quiz-time-minutes').value);
+      const tiempoTotalSegundos = (!isNaN(minsVal) && minsVal > 0) ? Math.round(minsVal * 60) : 0;
+
+      if (!title) {
+        showToast('Por favor escribe un título para el cuestionario.', 'error');
+        document.getElementById('quiz-title-input').focus();
+        return;
+      }
+
+      const questionNodes = document.querySelectorAll('#questions-editor-list .question-editor-item');
+      const parsedQuestions = [];
+
+      for (let i = 0; i < questionNodes.length; i++) {
+        const node = questionNodes[i];
+        const qText = node.querySelector('.q-text-input').value.trim();
+        const optInputs = node.querySelectorAll('.opt-text-input');
+        const options = Array.from(optInputs).map(inp => inp.value.trim());
+        const checkedRadio = node.querySelector('input[type="radio"]:checked');
+        const correctIndex = checkedRadio ? parseInt(checkedRadio.value, 10) : 0;
+        const explanation = node.querySelector('.q-exp-input').value.trim();
+
+        if (!qText) {
+          showToast(`Falta el texto de la Pregunta #${i + 1}.`, 'error');
+          return;
+        }
+
+        if (options.some(opt => opt === '')) {
+          showToast(`Completa las 4 opciones en la Pregunta #${i + 1}.`, 'error');
+          return;
+        }
+
+        parsedQuestions.push({
+          question: qText,
+          options,
+          correctIndex,
+          explanation
+        });
+      }
+
+      if (existingId) {
+        const idx = quizzes.findIndex(q => q.id === existingId);
+        if (idx !== -1) {
+          quizzes[idx] = {
+            id: existingId,
+            title,
+            description,
+            tiempoTotalSegundos,
+            questions: parsedQuestions
+          };
+        }
+        showToast('¡Cuestionario actualizado con éxito!', 'success');
+      } else {
+        const newQuiz = {
+          id: 'quiz_' + Date.now(),
+          title,
+          description,
+          tiempoTotalSegundos,
+          questions: parsedQuestions
+        };
+        quizzes.push(newQuiz);
+        showToast('¡Nuevo cuestionario guardado!', 'success');
+      }
+
+      saveQuizzesToStorage();
+      renderLobby();
+      renderManageList();
+      resetEditorToNew();
+    }
+
+    function editQuiz(quizId) {
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+
+      switchTab('create');
+
+      document.getElementById('edit-quiz-id').value = quiz.id;
+      document.getElementById('editor-mode-title').textContent = `Editando: ${quiz.title}`;
+      document.getElementById('quiz-title-input').value = quiz.title;
+      const mins = (Number(quiz.tiempoTotalSegundos) || 0) / 60;
+      document.getElementById('quiz-time-minutes').value = mins > 0 ? Number(mins.toFixed(2)) : '0';
+      document.getElementById('quiz-desc-input').value = quiz.description || '';
+
+      const list = document.getElementById('questions-editor-list');
+      list.innerHTML = '';
+      quiz.questions.forEach(q => addQuestionBlock(q));
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderManageList() {
+      const container = document.getElementById('manage-quizzes-list');
+      container.innerHTML = '';
+
+      if (quizzes.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No hay cuestionarios guardados.</p>';
+        return;
+      }
+
+      quizzes.forEach(q => {
+        const timeInfo = formatDurationLabel(Number(q.tiempoTotalSegundos) || 0);
+        const row = document.createElement('div');
+        row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); flex-wrap: wrap;';
+        row.innerHTML = `
+          <div>
+            <strong style="color: var(--primary-navy);">${escapeHTML(q.title)}</strong>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">${q.questions.length} preguntas • ⏱️ ${timeInfo}</div>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-outline btn-sm" onclick="editQuiz('${q.id}')">✏️ Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteQuiz('${q.id}')">🗑️ Eliminar</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function confirmDeleteQuiz(quizId) {
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+
+      openConfirmModal(
+        'Eliminar Cuestionario',
+        `¿Estás seguro de que deseas eliminar "${quiz.title}"? Esta acción no se puede deshacer.`,
+        () => {
+          quizzes = quizzes.filter(q => q.id !== quizId);
+          saveQuizzesToStorage();
+          renderLobby();
+          renderManageList();
+          if (document.getElementById('edit-quiz-id').value === quizId) {
+            resetEditorToNew();
+          }
+          showToast('Cuestionario eliminado.', 'success');
+        }
+      );
+    }
+
+    /* --------------------------------------------------------------------------
+       SECCIÓN 3: EXPORTAR HTML AUTÓNOMO E IMPORTAR / EXPORTAR JSON
+       -------------------------------------------------------------------------- */
+    function downloadStandaloneHTML() {
+      try {
+        // Clonar el documento HTML actual
+        const docClone = document.documentElement.cloneNode(true);
+
+        // Limpiar el contenido dinámico renderizado en el clon para que inicie limpio
+        const lobbyClone = docClone.querySelector('#quiz-list-container');
+        if (lobbyClone) lobbyClone.innerHTML = '';
+
+        const editorListClone = docClone.querySelector('#questions-editor-list');
+        if (editorListClone) editorListClone.innerHTML = '';
+
+        const genPreviewClone = docClone.querySelector('#generated-preview-card');
+        if (genPreviewClone) genPreviewClone.style.display = 'none';
+
+        const genListClone = docClone.querySelector('#generated-questions-list');
+        if (genListClone) genListClone.innerHTML = '';
+
+        const manageListClone = docClone.querySelector('#manage-quizzes-list');
+        if (manageListClone) manageListClone.innerHTML = '';
+
+        const toastClone = docClone.querySelector('#toast-container');
+        if (toastClone) toastClone.innerHTML = '';
+
+        // Asegurar que la pestaña "Jugar" esté activa por defecto en el archivo exportado
+        docClone.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'play'));
+        docClone.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id === 'view-play'));
+        const playLobby = docClone.querySelector('#play-lobby');
+        const playActive = docClone.querySelector('#play-active');
+        const playResults = docClone.querySelector('#play-results');
+        if (playLobby) playLobby.style.display = 'block';
+        if (playActive) playActive.style.display = 'none';
+        if (playResults) playResults.style.display = 'none';
+
+        // Inyectar todos los cuestionarios actuales dentro de la etiqueta <script id="embedded-quizzes-data">
+        const embeddedScript = docClone.querySelector('#embedded-quizzes-data');
+        embeddedScript.textContent = '\n' + JSON.stringify(quizzes, null, 2) + '\n  ';
+
+        // Conservar el nombre de copyright configurado al exportar el HTML compartido
+        const currentOwner = document.getElementById('copyright-owner-display').textContent.trim();
+        const cloneOwnerDisplay = docClone.querySelector('#copyright-owner-display');
+        const cloneOwnerInput = docClone.querySelector('#copyright-owner-input');
+        if (cloneOwnerDisplay) cloneOwnerDisplay.textContent = currentOwner;
+        if (cloneOwnerInput) cloneOwnerInput.setAttribute('value', currentOwner !== 'Tu Nombre' ? currentOwner : '');
+
+        const fullHTML = '<!DOCTYPE html>\n' + docClone.outerHTML;
+        const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'BibliaTrivia_Interactivo.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('¡Archivo .HTML generado! Ya puedes compartirlo sin internet.', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Ocurrió un error al generar el archivo HTML.', 'error');
+      }
+    }
+
+    function exportJSON() {
+      const dataStr = JSON.stringify(quizzes, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'preguntas_biblia_respaldo.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Respaldo JSON descargado correctamente.', 'success');
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!Array.isArray(imported)) {
+            throw new Error('Formato inválido');
+          }
+
+          let addedCount = 0;
+          imported.forEach(item => {
+            if (item && item.title && Array.isArray(item.questions) && item.questions.length > 0) {
+              // Asignar un nuevo ID si ya existe uno igual para no sobrescribir accidentalmente
+              const exists = quizzes.some(q => q.id === item.id);
+              const quizToAdd = {
+                ...item,
+                id: exists ? 'imported_' + Date.now() + '_' + Math.floor(Math.random() * 1000) : item.id
+              };
+              quizzes.push(quizToAdd);
+              addedCount++;
+            }
+          });
+
+          if (addedCount > 0) {
+            saveQuizzesToStorage();
+            renderLobby();
+            renderManageList();
+            showToast(`Se importaron ${addedCount} cuestionario(s) con éxito.`, 'success');
+          } else {
+            showToast('No se encontraron cuestionarios válidos en el archivo.', 'error');
+          }
+        } catch (err) {
+          showToast('El archivo seleccionado no es un JSON válido.', 'error');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    /* --------------------------------------------------------------------------
+       UTILIDADES: TOASTS, MODAL DE CONFIRMACIÓN Y ESCAPE HTML
+       -------------------------------------------------------------------------- */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function openConfirmModal(title, message, onConfirm) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      pendingConfirmAction = onConfirm;
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.remove('open');
+      pendingConfirmAction = null;
+    }
+
+    document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+      if (typeof pendingConfirmAction === 'function') {
+        pendingConfirmAction();
+      }
+      closeConfirmModal();
+    });
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttr(str) {
+      return escapeHTML(str);
+    }
+  </script>
+</body>
+</html>
