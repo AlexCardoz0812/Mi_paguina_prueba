@@ -101,6 +101,9 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
+        <button onclick="togglePraisePiano()" id="btn-praise-piano" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-slate-200 text-xs sm:text-sm font-bold transition flex items-center gap-1.5" title="Activar o silenciar melodía de alabanza en piano">
+          <span id="piano-icon">🎹</span> <span id="piano-label">Piano: OFF</span>
+        </button>
         <button onclick="triggerAppInstall()" id="btn-install-app" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-amber-500/25 transition flex items-center gap-1.5" title="Instalar BibliaTrivia como aplicación en tu dispositivo">
           <span>📲</span> <span id="btn-install-label">Instalar App</span>
         </button>
@@ -2161,6 +2164,123 @@
         return;
       }
     });
+
+    // =========================================================================
+    // MELODÍA RELAJANTE DE ALABANZA EN PIANO (100% OFFLINE - WEB AUDIO API)
+    // =========================================================================
+    let pianoAudioCtx = null;
+    let isPianoPlaying = false;
+    let pianoTimer = null;
+    let pianoStep = 0;
+
+    // Progresión suave y melodía inspirada en "Sublime Gracia / Cuan Grande Es Él" (Do Mayor - Fa - Sol - Lam)
+    const PRAISE_MELODY_SEQUENCE = [
+      // Compás 1: Do Mayor (C) - Arpegio suave + nota melódica
+      { notes: [130.81, 196.00, 261.63, 392.00], dur: 1.4 }, // C3, G3, C4, G4
+      { notes: [329.63], dur: 0.7 },                         // E4
+      { notes: [261.63], dur: 0.7 },                         // C4
+      // Compás 2: Fa Mayor (F)
+      { notes: [174.61, 220.00, 261.63, 440.00], dur: 1.4 }, // F3, A3, C4, A4
+      { notes: [392.00], dur: 0.7 },                         // G4
+      { notes: [329.63], dur: 0.7 },                         // E4
+      // Compás 3: La menor (Am)
+      { notes: [110.00, 164.81, 220.00, 329.63], dur: 1.4 }, // A2, E3, A3, E4
+      { notes: [293.66], dur: 0.7 },                         // D4
+      { notes: [261.63], dur: 0.7 },                         // C4
+      // Compás 4: Sol Mayor (G) - Resolución cálida
+      { notes: [98.00, 146.83, 196.00, 293.66], dur: 1.4 },  // G2, D3, G3, D4
+      { notes: [246.94], dur: 0.7 },                         // B3
+      { notes: [196.00], dur: 0.7 }                          // G3
+    ];
+
+    function playSoftPianoNote(freq, duration) {
+      if (!pianoAudioCtx) return;
+      const now = pianoAudioCtx.currentTime;
+
+      // Oscilador principal cálido (onda triangular + seno suave para timbre de piano eléctrico/acústico)
+      const oscMain = pianoAudioCtx.createOscillator();
+      const oscHarmonic = pianoAudioCtx.createOscillator();
+      const gainNode = pianoAudioCtx.createGain();
+      const filter = pianoAudioCtx.createBiquadFilter();
+
+      oscMain.type = 'triangle';
+      oscMain.frequency.setValueAtTime(freq, now);
+
+      oscHarmonic.type = 'sine';
+      oscHarmonic.frequency.setValueAtTime(freq * 2, now); // Armónico de octava muy sutil
+
+      // Filtro paso bajo para quitar brillo agresivo y hacerlo relajante
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(950, now);
+      filter.frequency.exponentialRampToValueAtTime(320, now + duration * 1.4);
+
+      // Envolvente ADSR tipo piano suave (ataque dulce y caída larga con pedal)
+      const harmonicGain = pianoAudioCtx.createGain();
+      harmonicGain.gain.setValueAtTime(0.12, now);
+
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.linearRampToValueAtTime(0.055, now + 0.04); // Volumen bajo y relajante
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration * 1.8);
+
+      oscMain.connect(filter);
+      oscHarmonic.connect(harmonicGain);
+      harmonicGain.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(pianoAudioCtx.destination);
+
+      oscMain.start(now);
+      oscHarmonic.start(now);
+      oscMain.stop(now + duration * 1.9);
+      oscHarmonic.stop(now + duration * 1.9);
+    }
+
+    function scheduleNextPraiseStep() {
+      if (!isPianoPlaying) return;
+      const stepData = PRAISE_MELODY_SEQUENCE[pianoStep % PRAISE_MELODY_SEQUENCE.length];
+
+      // Tocar notas del acorde con un micro-retardo tipo arpegio manual de pianista
+      stepData.notes.forEach((freq, idx) => {
+        setTimeout(() => {
+          if (isPianoPlaying) playSoftPianoNote(freq, stepData.dur);
+        }, idx * 95);
+      });
+
+      pianoStep++;
+      pianoTimer = setTimeout(scheduleNextPraiseStep, stepData.dur * 1000);
+    }
+
+    function togglePraisePiano() {
+      const btn = document.getElementById('btn-praise-piano');
+      const icon = document.getElementById('piano-icon');
+      const label = document.getElementById('piano-label');
+
+      if (!isPianoPlaying) {
+        if (!pianoAudioCtx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          pianoAudioCtx = new AudioCtx();
+        }
+        if (pianoAudioCtx.state === 'suspended') {
+          pianoAudioCtx.resume();
+        }
+
+        isPianoPlaying = true;
+        pianoStep = 0;
+        scheduleNextPraiseStep();
+
+        btn.classList.remove('bg-white/10', 'text-slate-200');
+        btn.classList.add('bg-amber-500/25', 'border-amber-400/50', 'text-amber-200');
+        icon.textContent = '🎶';
+        label.textContent = 'Piano: ON';
+      } else {
+        isPianoPlaying = false;
+        clearTimeout(pianoTimer);
+
+        btn.classList.remove('bg-amber-500/25', 'border-amber-400/50', 'text-amber-200');
+        btn.classList.add('bg-white/10', 'text-slate-200');
+        icon.textContent = '🎹';
+        label.textContent = 'Piano: OFF';
+      }
+    }
 
     // =========================================================================
     // ARRANQUE INICIAL DE LA APLICACIÓN
