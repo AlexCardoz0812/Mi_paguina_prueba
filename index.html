@@ -1617,6 +1617,152 @@
     .activity-log-item:last-child {
       border-bottom: none;
     }
+
+    /* ==========================================================================
+       MODO AULA EN VIVO (SINCRONIZACIÓN MAESTRO Y ALUMNO)
+       ========================================================================== */
+    .classroom-btn-header {
+      background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .classroom-btn-header:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.45);
+    }
+
+    .classroom-role-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 720px) {
+      .classroom-role-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .classroom-panel-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .classroom-panel-card.teacher-theme {
+      border-top: 6px solid var(--primary-navy);
+    }
+
+    .classroom-panel-card.student-theme {
+      border-top: 6px solid #10b981;
+    }
+
+    .class-code-banner {
+      background: linear-gradient(135deg, #1e3a5f 0%, #312e81 100%);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .class-code-digits {
+      font-family: monospace;
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #fde68a;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 0.25rem 0.75rem;
+      border-radius: 10px;
+      border: 1px dashed rgba(253, 230, 138, 0.6);
+    }
+
+    .live-results-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 0.85rem;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+
+    .live-results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    .live-results-table th {
+      background: var(--bg-subtle);
+      color: var(--primary-navy);
+      padding: 0.65rem 0.85rem;
+      font-weight: 700;
+      border-bottom: 1.5px solid var(--border-color);
+    }
+
+    .live-results-table td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+      background: #ffffff;
+    }
+
+    .live-grade-pill {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .live-grade-pill.high {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .live-grade-pill.mid {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .live-grade-pill.low {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .active-assignment-strip {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1.5px solid #34d399;
+      color: #065f46;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -1635,11 +1781,14 @@
           <button type="button" id="open-easy-menu-btn" class="easy-menu-trigger-btn" onclick="openEasyMenuModal()" title="Abrir el asistente rápido para elegir historia, quiz y cantidad de preguntas">
             ⚡ Menú Fácil
           </button>
+          <button type="button" class="classroom-btn-header" onclick="switchTab('classroom')" title="Sincronizar evaluaciones en vivo entre Maestro y Alumnos">
+            🎓 Aula Maestro/Alumno
+          </button>
           <button type="button" id="install-pwa-btn" class="install-app-btn" onclick="triggerPWAInstall()" title="Instalar como aplicación en tu dispositivo">
             📲 Instalar App
           </button>
           <span class="offline-badge" title="Funciona completamente sin conexión a internet">
-            <span class="dot-online"></span> 100% Sin Internet (Offline)
+            <span class="dot-online"></span> <span id="sync-status-label">Listo • Sincronización Activa</span>
           </span>
         </div>
       </div>
@@ -1647,6 +1796,9 @@
       <nav class="nav-tabs" role="tablist">
         <button class="tab-btn active" data-tab="play" onclick="switchTab('play')">
           <span>📋</span> Listado de Evaluaciones
+        </button>
+        <button class="tab-btn" data-tab="classroom" onclick="switchTab('classroom')">
+          <span>🎓</span> Aula en Vivo (Maestro / Alumno)
         </button>
         <button class="tab-btn" data-tab="create" onclick="switchTab('create')">
           <span>✏️</span> Crear / Editar Manual
@@ -1704,6 +1856,11 @@
       <!-- Sub-vista 1B: Partida en Curso -->
       <div id="play-active" style="display: none;">
         <div class="card">
+          <div id="student-exam-banner" class="active-assignment-strip" style="display: none;">
+            <span id="student-exam-info-text">🧑‍🎓 Alumno en Evaluación Asignada</span>
+            <span id="student-exam-code-badge" style="background: #065f46; color: #ffffff; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.78rem;">AULA</span>
+          </div>
+
           <div class="game-top-bar">
             <button class="btn btn-outline btn-sm" onclick="exitGame()">← Volver al listado</button>
             <strong id="active-quiz-title" style="color: var(--primary-navy);">Título</strong>
@@ -1745,12 +1902,150 @@
           <div class="results-score-big" id="results-score-text">8 / 10</div>
           <p id="results-message" style="max-width: 480px; margin: 0 auto 1.5rem; color: var(--text-main);"></p>
 
+          <div id="student-sync-receipt-box" style="display: none; max-width: 520px; margin: 0 auto 1.35rem; background: #ecfdf5; border: 1.5px solid #34d399; border-radius: 14px; padding: 1rem; text-align: left;">
+            <div style="font-weight: 800; color: #065f46; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>✅ Calificación Sincronizada con el Maestro</span>
+              <span id="receipt-sync-status" style="font-size: 0.76rem; background: #059669; color: #fff; padding: 0.15rem 0.55rem; border-radius: 999px;">Enviado en vivo</span>
+            </div>
+            <p id="receipt-details-text" style="font-size: 0.86rem; color: #064e3b; margin-bottom: 0.75rem;"></p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-olive btn-sm" onclick="copyStudentResultSummary()">📋 Copiar Boleta para WhatsApp</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="switchTab('classroom')">🎓 Ver Tabla de la Clase</button>
+            </div>
+          </div>
+
           <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-            <button class="btn btn-gold" onclick="restartCurrentQuiz()">🔄 Volver a Jugar</button>
+            <button class="btn btn-gold" id="btn-restart-quiz" onclick="restartCurrentQuiz()">🔄 Volver a Jugar</button>
             <button class="btn btn-olive" onclick="openEasyMenuModal()">⚡ Elegir Otro en Menú Fácil</button>
             <button class="btn btn-outline" onclick="exitGame()">📋 Volver al Listado</button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PESTAÑA NUEVA: AULA EN VIVO (SINCRONIZACIÓN MAESTRO Y ALUMNO)
+         ====================================================================== -->
+    <section id="view-classroom" class="view-section">
+      <div class="section-header">
+        <h2>🎓 Aula en Vivo: Sincronización Maestro y Alumno</h2>
+        <p>El maestro asigna una historia bíblica con un <strong>Código de Clase</strong> y recibe al instante las notas de todos los alumnos conforme van terminando.</p>
+      </div>
+
+      <div class="classroom-role-grid">
+        <!-- COLUMNA 1: PANEL DEL MAESTRO -->
+        <div class="classroom-panel-card teacher-theme">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.65rem;">
+            <span style="font-size: 1.5rem;">👨‍🏫</span>
+            <h3 style="font-family: var(--font-serif); color: var(--primary-navy);">Soy Maestro (Asignar Evaluación)</h3>
+          </div>
+          <p style="font-size: 0.87rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Configura la historia o quiz que tus alumnos van a responder y genera un código sincronizado en tiempo real.
+          </p>
+
+          <div class="form-group">
+            <label for="teacher-name-input">Nombre del Maestro / Clase</label>
+            <input type="text" id="teacher-name-input" class="form-control" placeholder="Ej. Prof. Samuel • Escuela Dominical">
+          </div>
+
+          <div class="form-group">
+            <label for="teacher-quiz-select">1. Historia Bíblica o Quiz a Evaluar</label>
+            <select id="teacher-quiz-select" class="form-control" onchange="onTeacherQuizSelectChange()"></select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem;">
+            <div>
+              <label for="teacher-count-select" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 0.35rem;">2. Cantidad de Preguntas</label>
+              <select id="teacher-count-select" class="form-control"></select>
+            </div>
+            <div>
+              <label for="teacher-diff-select" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 0.35rem;">3. Dificultad / Tiempo</label>
+              <select id="teacher-diff-select" class="form-control">
+                <option value="facil">🟢 Fácil (40s/preg.)</option>
+                <option value="media" selected>🟡 Media (25s/preg.)</option>
+                <option value="dificil">🔴 Difícil (15s/preg.)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.85rem;">
+            <label style="display: flex; align-items: center; gap: 0.45rem; cursor: pointer;">
+              <input type="checkbox" id="teacher-random-chk" checked style="width: 16px; height: 16px; accent-color: var(--primary-navy);">
+              Mezclar orden de preguntas y cartas para evitar copias
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.45rem; cursor: pointer;">
+              <input type="checkbox" id="teacher-lock-retry-chk" checked style="width: 16px; height: 16px; accent-color: var(--primary-navy);">
+              Permitir un único intento oficial por alumno
+            </label>
+          </div>
+
+          <button type="button" class="btn btn-primary" style="width: 100%;" onclick="createLiveClassroomSession()">
+            🚀 Publicar Evaluación y Generar Código
+          </button>
+
+          <!-- Resultado del Código Generado -->
+          <div id="teacher-active-code-box" style="display: none;" class="class-code-banner">
+            <div>
+              <div style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.6px; opacity: 0.85;">Código de Clase Activo</div>
+              <div class="class-code-digits" id="teacher-generated-code">BIB-000</div>
+              <div id="teacher-active-summary" style="font-size: 0.8rem; margin-top: 0.35rem; color: #e2e8f0;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <button type="button" class="btn btn-gold btn-sm" onclick="copyClassroomInvite()">📋 Copiar Invitación</button>
+              <button type="button" class="btn btn-outline btn-sm" style="color: #fff; border-color: rgba(255,255,255,0.4);" onclick="exportClassroomResultsCSV()">📊 Descargar Notas (.CSV)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 2: PANEL DEL ALUMNO -->
+        <div class="classroom-panel-card student-theme">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.65rem;">
+            <span style="font-size: 1.5rem;">🧑‍🎓</span>
+            <h3 style="font-family: var(--font-serif); color: #065f46;">Soy Alumno (Unirme a Evaluación)</h3>
+          </div>
+          <p style="font-size: 0.87rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Ingresa el <strong>Código de Clase</strong> que te dio tu maestro y tu nombre completo para iniciar la evaluación asignada.
+          </p>
+
+          <div class="form-group">
+            <label for="student-join-code-input" style="color: #065f46;">Código de Clase *</label>
+            <input type="text" id="student-join-code-input" class="form-control" style="text-transform: uppercase; font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px;" placeholder="Ej. BIB-482">
+          </div>
+
+          <div class="form-group">
+            <label for="student-fullname-input" style="color: #065f46;">Tu Nombre Completo *</label>
+            <input type="text" id="student-fullname-input" class="form-control" placeholder="Ej. María Fernanda López">
+          </div>
+
+          <div class="form-group">
+            <label for="student-group-input" style="color: #065f46;">Grado / Grupo (Opcional)</label>
+            <input type="text" id="student-group-input" class="form-control" placeholder="Ej. Jóvenes A / 6° Grado">
+          </div>
+
+          <button type="button" class="btn btn-olive" style="width: 100%; font-size: 1rem;" onclick="joinLiveClassroomAsStudent()">
+            ▶ Entrar y Comenzar Evaluación Asignada
+          </button>
+
+          <div id="student-code-preview-box" style="display: none; margin-top: 0.9rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 0.75rem; font-size: 0.85rem; color: #166534;"></div>
+        </div>
+      </div>
+
+      <!-- TABLERO EN VIVO DE CALIFICACIONES DEL AULA -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h3 style="font-family: var(--font-serif); color: var(--primary-navy);">📊 Tablero de Resultados en Tiempo Real</h3>
+            <p id="live-board-subtitle" style="font-size: 0.86rem; color: var(--text-muted);">
+              Las calificaciones de los alumnos aparecen aquí automáticamente al completar la evaluación.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="board-filter-code-input" class="form-control" style="width: 150px; padding: 0.4rem 0.65rem; font-size: 0.85rem; text-transform: uppercase;" placeholder="Código (BIB-...)" oninput="renderLiveClassroomBoard()">
+            <button type="button" class="btn btn-outline btn-sm" onclick="refreshLiveClassroomBoard()">🔄 Actualizar</button>
+          </div>
+        </div>
+
+        <div id="live-results-container" class="live-results-table-wrap"></div>
       </div>
     </section>
 
@@ -2207,6 +2502,57 @@
   <!-- ========================================================================
        LÓGICA DE LA APLICACIÓN (JAVASCRIPT PURO Y AUTÓNOMO)
        ======================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    window.__firebaseBridge = {
+      ready: false,
+      db: null,
+      auth: null,
+      user: null,
+      appId: typeof __app_id !== 'undefined' ? __app_id : 'bibliatrivia-default',
+      doc,
+      setDoc,
+      getDoc,
+      onSnapshot,
+      collection
+    };
+
+    async function bootCloudSync() {
+      try {
+        if (typeof __firebase_config === 'undefined' || !__firebase_config) return;
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        window.__firebaseBridge.db = db;
+        window.__firebaseBridge.auth = auth;
+        window.__firebaseBridge.user = auth.currentUser;
+        window.__firebaseBridge.ready = true;
+
+        const statusLabel = document.getElementById('sync-status-label');
+        if (statusLabel) statusLabel.textContent = 'En Línea • Sincronización en Vivo';
+
+        if (typeof window.onCloudSyncReady === 'function') {
+          window.onCloudSyncReady();
+        }
+      } catch (err) {
+        console.warn('Modo local activo (sin nube):', err);
+      }
+    }
+
+    bootCloudSync();
+  </script>
+
   <script>
     const STORAGE_KEY = 'biblia_trivia_quizzes_v2';
     const COPYRIGHT_KEY = 'biblia_trivia_copyright_owner_v1';
@@ -2215,59 +2561,57 @@
     const USER_LIKED_KEY = 'biblia_trivia_user_liked_v1';
     const VISITOR_PROFILE_KEY = 'biblia_trivia_visitor_profile_v1';
     const EASY_MENU_AUTO_KEY = 'biblia_trivia_easy_menu_auto_v1';
+    const CLASSROOM_SESSIONS_KEY = 'biblia_trivia_classroom_sessions_v1';
+    const CLASSROOM_SUBMISSIONS_KEY = 'biblia_trivia_classroom_submissions_v1';
 
-    /* ==========================================================================
-       BIBLIOTECA INTEGRADA DE HISTORIAS DE LA BIBLIA (ANTIGUO Y NUEVO TESTAMENTO)
-       El motor genera automáticamente hasta 50 preguntas según la extensión del relato.
-       ========================================================================== */
     const BIBLICAL_STORIES_LIBRARY = [
       // ANTIGUO TESTAMENTO
       {
-        id: 'at-creacion',
+        id: 'at-creacion-eden',
         testament: 'AT',
-        title: 'La Creación del Mundo y el Edén',
+        title: 'La Creación y el Huerto del Edén',
         verse: 'Génesis 1:1 - 2:25',
-        story: 'En el principio creó Dios los cielos y la tierra cuando la tierra estaba desordenada y vacía y las tinieblas cubrían la faz del abismo. El primer día dijo Dios que fuera la luz y separó la luz de las tinieblas, llamando a la luz Día y a las tinieblas Noche. El segundo día formó la expansión en medio de las aguas y la llamó Cielos. El tercer día reunió las aguas debajo de los cielos en un lugar llamado Mares, descubrió lo seco llamado Tierra y produjo hierba verde, plantas con semilla y árboles frutales según su género. El cuarto día puso dos grandes lumbreras en la expansión de los cielos: el sol para señorear en el día, la luna para señorear en la noche y también las estrellas. El quinto día creó los grandes monstruos marinos, los peces del mar y toda ave alada según su especie. El sexto día formó los animales terrestres y creó al ser humano, Adán y Eva, a su imagen y semejanza, colocándolos en el huerto de Edén regado por cuatro ríos y descansando el séptimo día de toda su obra.'
+        story: 'En el principio creó Dios los cielos y la tierra, ordenando la luz, el firmamento, los mares, las plantas, el sol, la luna, las estrellas, las aves, los peces y los animales terrestres en seis días, y reposando el séptimo día. Luego Dios formó al hombre del polvo de la tierra, sopló en su nariz aliento de vida y lo puso en el huerto del Edén para que lo labrara y lo guardase. Dios plantó allí el árbol de la vida y el árbol de la ciencia del bien y del mal, y creó a Eva como ayuda idónea para Adán.'
       },
       {
-        id: 'at-noe',
+        id: 'at-noe-arca',
         testament: 'AT',
-        title: 'Noé y el Arca del Diluvio',
+        title: 'Noé y el Gran Diluvio',
         verse: 'Génesis 6:9 - 9:17',
-        story: 'Al ver que la maldad de los hombres se había multiplicado en la tierra y todo designio de sus pensamientos era de continuo el mal, Dios halló gracia en Noé, un varón justo y perfecto en sus generaciones que caminaba con Dios. El Señor ordenó a Noé construir un arca de madera de gofer calafateada con brea, de trescientos codos de longitud, cincuenta codos de anchura y treinta codos de altura, con tres pisos y una ventana. Noé entró en el arca a los seiscientos años de edad junto con su esposa, sus tres hijos Sem, Cam y Jafet, y sus tres nueras, además de parejas de todo ser viviente y siete parejas de los animales limpios. Llovió sobre la tierra durante cuarenta días y cuarenta noches hasta que las aguas prevalecieron ciento cincuenta días y cubrieron los montes más altos. Al descender las aguas, el arca reposó sobre los montes de Ararat; Noé envió primero un cuervo y luego una paloma que regresó con una hoja verde de olivo en el pico. Al salir del arca, Noé edificó un altar al Señor y Dios puso un arcoíris en las nubes como señal de su pacto eterno.'
+        story: 'Al ver Dios que la maldad de los hombres era mucha en la tierra, halló gracia Noé, varón justo que caminaba con Dios junto con sus hijos Sem, Cam y Jafet. Dios ordenó a Noé construir un arca de madera de gofer de trescientos codos de longitud y hacer entrar parejas de cada especie animal. Llovió cuarenta días y cuarenta noches hasta cubrir los montes más altos, y tras reposar el arca en los montes de Ararat y enviar una paloma que volvió con una hoja de olivo, Dios puso su arco iris en las nubes como señal de pacto eterno.'
       },
       {
-        id: 'at-babel',
+        id: 'at-torre-babel',
         testament: 'AT',
         title: 'La Torre de Babel',
         verse: 'Génesis 11:1-9',
-        story: 'Toda la tierra tenía entonces una sola lengua y unas mismas palabras. Al salir de oriente y hallar una llanura en la tierra de Sinar, los hombres se establecieron allí y decidieron fabricar ladrillos cocidos al fuego y usar asfalto en lugar de mezcla. Dijeron entre sí que edificarían una ciudad y una torre cuya cúspide llegara hasta el cielo para hacerse un nombre y evitar ser esparcidos sobre la faz de toda la tierra. Descendió el Señor para ver la ciudad y la torre que edificaban los hijos de los hombres, y observó que al ser un solo pueblo con un mismo lenguaje nada les haría desistir de lo que habían pensado hacer. Por eso el Señor confundió allí su lenguaje para que ninguno entendiera el habla de su compañero, dispersándolos desde Babel sobre toda la faz de la tierra y deteniendo la construcción de la ciudad.'
+        story: 'Tenía entonces toda la tierra una sola lengua y unas mismas palabras. Al llegar a una llanura en la tierra de Sinar, los hombres decidieron fabricar ladrillos cocidos al fuego y edificar una ciudad y una torre cuya cúspide llegara al cielo para hacerse un nombre y no ser esparcidos sobre la faz de la tierra. Entonces el Señor descendió para ver la ciudad y la torre, confundió allí el lenguaje de toda la tierra para que nadie entendiera el habla de su compañero y los esparció por toda la superficie del mundo.'
       },
       {
-        id: 'at-abraham',
+        id: 'at-abraham-isaac',
         testament: 'AT',
-        title: 'El Llamado de Abraham y el Sacrificio de Isaac',
-        verse: 'Génesis 12:1-7; 22:1-18',
-        story: 'Dios llamó a Abram a salir de su tierra de Ur de los caldeos, de su parentela y de la casa de su padre hacia la tierra de Canaán, prometiéndole hacer de él una nación grande, engrandecer su nombre y bendecir en él a todas las familias de la tierra. Abram obedeció llevando a su esposa Sarai y a su sobrino Lot. En su vejez, cuando Abraham tenía cien años y Sara noventa, recibieron al hijo prometido llamado Isaac. Años después, Dios probó la fe de Abraham pidiéndole tomar a su único hijo Isaac e ir a la tierra de Moriah para ofrecerlo en holocausto sobre un monte. Abraham madrugó, cortó leña, tomó dos siervos y caminó tres días hasta el lugar señalado. Cuando Abraham levantó el cuchillo para sacrificar a su hijo sobre el altar, el ángel del Señor lo detuvo desde el cielo y proveyó un carnero enredado por sus cuernos en un zarzal para el sacrificio.'
+        title: 'La Fe de Abraham y el Sacrificio de Isaac',
+        verse: 'Génesis 12:1-5; 22:1-18',
+        story: 'Dios llamó a Abram a salir de su tierra y de su parentela hacia la tierra de Canaán prometiéndole hacer de él una nación grande y bendecir en él a todas las familias de la tierra. En su ancianidad, Abraham y Sara tuvieron a su hijo prometido Isaac. Años después Dios probó a Abraham pidiéndole ofrecer a Isaac en holocausto en la tierra de Moriah; mientras subían con la leña y el fuego, Isaac preguntó dónde estaba el cordero y Abraham respondió que Dios se proveería de cordero, deteniendo el ángel del Señor su mano al ver un carnero trabado en un zarzal.'
       },
       {
-        id: 'at-jose',
+        id: 'at-jose-egipto',
         testament: 'AT',
-        title: 'José en Egipto: De Esclavo a Gobernador',
-        verse: 'Génesis 37:1 - 45:28',
-        story: 'Jacob amaba a su hijo José más que a todos sus hermanos porque lo había tenido en su vejez, y le hizo una túnica de diversos colores. Llenos de envidia por los sueños proféticos de José donde las gavillas y las estrellas se inclinaban ante él, sus hermanos lo arrojaron en una cisterna vacía en Dotán y lo vendieron por veinte piezas de plata a unos mercaderes ismaelitas que iban hacia Egipto. En Egipto sirvió fielmente en casa de Potifar, capitán de la guardia del faraón, pero fue encarcelado injustamente tras una falsa acusación. En la prisión interpretó los sueños del copero y del panadero del rey. Dos años después fue llamado ante el faraón para interpretar sus sueños sobre siete vacas gordas y siete vacas flacas, anunciando siete años de gran abundancia seguidos por siete años de hambre severa. El faraón nombró a José gobernador sobre toda la tierra de Egipto, permitiéndole almacenar trigo, salvar del hambre a su propia familia y perdonar con lágrimas a sus hermanos.'
+        title: 'José: De la Cisterna al Palacio de Egipto',
+        verse: 'Génesis 37:3-28; 41:14-49',
+        story: 'Israel amaba a José más que a todos sus hijos y le hizo una túnica de diversos colores, lo cual despertó la envidia de sus hermanos quienes lo arrojaron a una cisterna vacía en Dotán y lo vendieron por veinte piezas de plata a mercaderes ismaelitas rumbo a Egipto. Tras servir fielmente en casa de Potifar y ser encarcelado injustamente, José interpretó por sabiduría de Dios los sueños del faraón sobre siete años de abundancia seguidos por siete años de hambre, siendo nombrado gobernador de todo Egipto para administrar el grano y salvar a su propia familia.'
       },
       {
         id: 'at-moises-zarza',
         testament: 'AT',
         title: 'Moisés y la Zarza Ardiente',
-        verse: 'Éxodo 2:1 - 4:17',
-        story: 'Para salvarlo del cruel decreto del faraón que ordenaba arrojar al río a los niños varones hebreos, la madre de Moisés lo escondió tres meses y luego lo colocó en una arquilla de juncos calafateada con asfalto entre los carrizales del río Nilo. Su hermana María vigiló desde lejos hasta que la hija del faraón descendió a lavarse, encontró al niño llorando, tuvo compasión de él y lo adoptó como hijo suyo. Siendo adulto, Moisés huyó a la tierra de Madián donde defendió a las hijas del sacerdote Jetro junto a un pozo, se casó con Séfora y trabajó cuarenta años como pastor de ovejas. Conduciendo el rebaño hasta Horeb, el monte de Dios, el ángel del Señor se le apareció en una llama de fuego en medio de una zarza que ardía sin consumirse. Dios llamó a Moisés por su nombre, le ordenó quitar el calzado de sus pies porque el lugar era tierra santa y lo envió de regreso a Egipto con una vara milagrosa para liberar al pueblo de Israel.'
+        verse: 'Éxodo 2:1-10; 3:1-15',
+        story: 'Para salvar al niño Moisés del decreto del faraón en Egipto, su madre lo colocó en una arquilla de juncos calafateada con asfalto entre los carrizos junto a la orilla del río Nilo, donde fue hallado y adoptado por la hija del faraón. Años más tarde en el desierto de Madián, mientras Moisés apacentaba las ovejas de su suegro Jetro junto al monte Horeb, el ángel del Señor se le apareció en una llama de fuego en medio de una zarza que ardía sin consumirse, llamándolo por su nombre para liberar al pueblo de Israel de la esclavitud.'
       },
       {
-        id: 'at-exodo-mar-rojo',
+        id: 'at-plagas-mar-rojo',
         testament: 'AT',
-        title: 'Las Plagas de Egipto y el Cruce del Mar Rojo',
+        title: 'Las Diez Plagas y el Cruce del Mar Rojo',
         verse: 'Éxodo 7:14 - 14:31',
         story: 'Ante la terquedad del faraón que endureció su corazón y se negó a dejar salir a Israel, Dios envió diez plagas sobre Egipto mediante Moisés y Aarón: las aguas convertidas en sangre, ranas, piojos, moscas, peste en el ganado, úlceras, granizo con fuego, langostas, tres días de tinieblas densas y finalmente la muerte de los primogénitos. En la noche de la Pascua, los israelitas marcaron los postes y el dintel de sus puertas con la sangre de un cordero sin defecto para ser protegidos. Tras salir de Egipto guiados de día por una columna de nube y de noche por una columna de fuego, el pueblo acampó frente al Mar Rojo mientras seiscientos carros escogidos del faraón los perseguían. Moisés extendió su mano y su vara sobre el mar, y el Señor hizo reciar un fuerte viento oriental toda la noche que dividió las aguas formando muros a derecha e izquierda, permitiendo que Israel cruzara en seco antes de que las aguas volvieran y cubrieran al ejército egipcio.'
       },
@@ -2484,6 +2828,11 @@
     let currentLobbyTestamentFilter = 'ALL';
     let easyMenuCategory = 'ALL';
     const perQuizSettings = {};
+    let activeClassroomSession = null;
+    let activeStudentAssignment = null;
+    let lastCompletedStudentReceipt = null;
+    let classroomUnsubscribe = null;
+    let classroomBroadcastChannel = null;
     let communityState = {
       visits: 1,
       likes: 0,
@@ -2524,12 +2873,563 @@
       loadCopyrightOwner();
       initCommunityWidgets();
       loadQuizzes();
+      initClassroomSync();
       initMenu3DScene();
       renderLobby();
       renderManageList();
       resetEditorToNew();
-      initEasyMenuOnLoad();
+      checkURLClassroomInvite();
     });
+
+    /* --------------------------------------------------------------------------
+       SINCRONIZACIÓN EN VIVO MAESTRO <-> ALUMNO (NUBE + PESTAÑAS + OFFLINE)
+       -------------------------------------------------------------------------- */
+    function initClassroomSync() {
+      populateTeacherQuizOptions();
+
+      try {
+        if ('BroadcastChannel' in window) {
+          classroomBroadcastChannel = new BroadcastChannel('bibliatrivia_live_classroom');
+          classroomBroadcastChannel.onmessage = (event) => {
+            if (event.data && event.data.type === 'SUBMISSION_ADDED') {
+              renderLiveClassroomBoard();
+              showToast(`📥 Nuevo resultado recibido de ${event.data.studentName}`, 'success');
+            } else if (event.data && event.data.type === 'SESSION_CREATED') {
+              renderLiveClassroomBoard();
+            }
+          };
+        }
+      } catch (e) {}
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === CLASSROOM_SUBMISSIONS_KEY || e.key === CLASSROOM_SESSIONS_KEY) {
+          renderLiveClassroomBoard();
+        }
+      });
+
+      const savedSessions = getLocalClassroomSessions();
+      const codes = Object.keys(savedSessions);
+      if (codes.length > 0) {
+        const latestCode = codes[codes.length - 1];
+        activeClassroomSession = savedSessions[latestCode];
+        displayActiveTeacherCode(activeClassroomSession);
+        subscribeToClassroomSubmissions(latestCode);
+      }
+
+      renderLiveClassroomBoard();
+    }
+
+    window.onCloudSyncReady = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCode = (urlParams.get('clase') || '').trim().toUpperCase();
+      if (urlCode) {
+        fetchClassroomSessionByCode(urlCode).then(session => {
+          if (session) {
+            const codeInp = document.getElementById('student-join-code-input');
+            if (codeInp) codeInp.value = urlCode;
+            showStudentAssignmentPreview(session);
+          }
+        });
+      }
+      if (activeClassroomSession && activeClassroomSession.code) {
+        subscribeToClassroomSubmissions(activeClassroomSession.code);
+      }
+    };
+
+    function checkURLClassroomInvite() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCode = (urlParams.get('clase') || '').trim().toUpperCase();
+      if (urlCode) {
+        switchTab('classroom');
+        const codeInp = document.getElementById('student-join-code-input');
+        if (codeInp) codeInp.value = urlCode;
+        fetchClassroomSessionByCode(urlCode).then(session => {
+          if (session) {
+            showStudentAssignmentPreview(session);
+          }
+        });
+      } else {
+        initEasyMenuOnLoad();
+      }
+    }
+
+    function getLocalClassroomSessions() {
+      try {
+        return JSON.parse(localStorage.getItem(CLASSROOM_SESSIONS_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveLocalClassroomSession(session) {
+      try {
+        const all = getLocalClassroomSessions();
+        all[session.code] = session;
+        localStorage.setItem(CLASSROOM_SESSIONS_KEY, JSON.stringify(all));
+      } catch (e) {}
+    }
+
+    function getLocalClassroomSubmissions() {
+      try {
+        return JSON.parse(localStorage.getItem(CLASSROOM_SUBMISSIONS_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveLocalClassroomSubmission(sub) {
+      try {
+        const all = getLocalClassroomSubmissions();
+        const idx = all.findIndex(item => item.id === sub.id);
+        if (idx >= 0) all[idx] = sub;
+        else all.unshift(sub);
+        localStorage.setItem(CLASSROOM_SUBMISSIONS_KEY, JSON.stringify(all));
+      } catch (e) {}
+    }
+
+    function populateTeacherQuizOptions() {
+      const sel = document.getElementById('teacher-quiz-select');
+      if (!sel) return;
+      sel.innerHTML = '';
+      quizzes.forEach((q, idx) => {
+        const maxQ = Math.min(50, q.questions.length);
+        const prefix = q.testament === 'AT' ? '📜 ' : q.testament === 'NT' ? '✝️ ' : '⭐ ';
+        const opt = document.createElement('option');
+        opt.value = q.id;
+        opt.textContent = `${idx + 1}. ${prefix}${q.title} (Máx. ${maxQ} preg.)`;
+        sel.appendChild(opt);
+      });
+      onTeacherQuizSelectChange();
+    }
+
+    function onTeacherQuizSelectChange() {
+      const quizSel = document.getElementById('teacher-quiz-select');
+      const countSel = document.getElementById('teacher-count-select');
+      if (!quizSel || !countSel) return;
+
+      const quiz = quizzes.find(q => q.id === quizSel.value);
+      if (!quiz) return;
+
+      const maxQ = Math.min(50, quiz.questions.length);
+      countSel.innerHTML = '';
+      for (let n = 1; n <= maxQ; n++) {
+        const opt = document.createElement('option');
+        opt.value = String(n);
+        opt.textContent = n === maxQ ? `${n} preguntas (Todas)` : `${n} ${n === 1 ? 'pregunta' : 'preguntas'}`;
+        if (n === Math.min(10, maxQ)) opt.selected = true;
+        countSel.appendChild(opt);
+      }
+    }
+
+    async function createLiveClassroomSession() {
+      const teacherName = (document.getElementById('teacher-name-input')?.value || '').trim() || 'Maestro';
+      const quizId = document.getElementById('teacher-quiz-select')?.value;
+      const questionCount = parseInt(document.getElementById('teacher-count-select')?.value, 10) || 10;
+      const difficulty = document.getElementById('teacher-diff-select')?.value || 'media';
+      const randomOrder = !!document.getElementById('teacher-random-chk')?.checked;
+      const singleAttempt = !!document.getElementById('teacher-lock-retry-chk')?.checked;
+
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) {
+        showToast('Selecciona una historia o cuestionario válido.', 'error');
+        return;
+      }
+
+      const randomDigits = Math.floor(100 + Math.random() * 900);
+      const classCode = `BIB-${randomDigits}`;
+
+      const sessionObj = {
+        code: classCode,
+        teacherName,
+        quizId: quiz.id,
+        quizSnapshot: {
+          id: quiz.id,
+          title: quiz.title,
+          description: quiz.description || '',
+          verse: quiz.verse || '',
+          testament: quiz.testament || 'CUSTOM',
+          difficulty,
+          questions: quiz.questions.slice(0, 50)
+        },
+        questionCount: Math.min(questionCount, quiz.questions.length),
+        difficulty,
+        randomOrder,
+        singleAttempt,
+        createdAt: formatNowShort()
+      };
+
+      activeClassroomSession = sessionObj;
+      saveLocalClassroomSession(sessionObj);
+
+      const bridge = window.__firebaseBridge;
+      if (bridge && bridge.ready && bridge.user) {
+        try {
+          const sessionRef = bridge.doc(bridge.db, 'artifacts', bridge.appId, 'public', 'data', 'classroom_sessions', classCode);
+          await bridge.setDoc(sessionRef, sessionObj);
+        } catch (err) {
+          console.warn('No se pudo subir sesión a la nube, operando en red local:', err);
+        }
+      }
+
+      if (classroomBroadcastChannel) {
+        classroomBroadcastChannel.postMessage({ type: 'SESSION_CREATED', code: classCode });
+      }
+
+      displayActiveTeacherCode(sessionObj);
+      subscribeToClassroomSubmissions(classCode);
+      renderLiveClassroomBoard();
+      showToast(`¡Código de clase ${classCode} publicado y listo para los alumnos!`, 'success');
+    }
+
+    function displayActiveTeacherCode(sessionObj) {
+      const box = document.getElementById('teacher-active-code-box');
+      const codeEl = document.getElementById('teacher-generated-code');
+      const summaryEl = document.getElementById('teacher-active-summary');
+      const filterInput = document.getElementById('board-filter-code-input');
+
+      if (!box || !sessionObj) return;
+      box.style.display = 'flex';
+      if (codeEl) codeEl.textContent = sessionObj.code;
+      if (filterInput) filterInput.value = sessionObj.code;
+
+      const diffMeta = getDifficultyMeta(sessionObj.difficulty);
+      const totalSec = calculateTimeByDifficulty(sessionObj.difficulty, sessionObj.questionCount);
+      if (summaryEl) {
+        summaryEl.textContent = `📖 ${sessionObj.quizSnapshot.title} • ${sessionObj.questionCount} preg. • ${diffMeta.label} (${formatDurationLabel(totalSec)})`;
+      }
+    }
+
+    async function fetchClassroomSessionByCode(rawCode) {
+      const code = (rawCode || '').trim().toUpperCase();
+      if (!code) return null;
+
+      const bridge = window.__firebaseBridge;
+      if (bridge && bridge.ready && bridge.user) {
+        try {
+          const sessionRef = bridge.doc(bridge.db, 'artifacts', bridge.appId, 'public', 'data', 'classroom_sessions', code);
+          const snap = await bridge.getDoc(sessionRef);
+          if (snap.exists()) {
+            const data = snap.data();
+            saveLocalClassroomSession(data);
+            return data;
+          }
+        } catch (e) {}
+      }
+
+      const localSessions = getLocalClassroomSessions();
+      return localSessions[code] || null;
+    }
+
+    function showStudentAssignmentPreview(session) {
+      const box = document.getElementById('student-code-preview-box');
+      if (!box || !session) return;
+      const diffMeta = getDifficultyMeta(session.difficulty);
+      box.style.display = 'block';
+      box.innerHTML = `
+        <strong>✅ Evaluación encontrada (${escapeHTML(session.code)}):</strong><br>
+        📖 <strong>${escapeHTML(session.quizSnapshot.title)}</strong><br>
+        👨‍🏫 Maestro: ${escapeHTML(session.teacherName)} • 🔢 ${session.questionCount} preguntas • ${diffMeta.label}
+      `;
+    }
+
+    async function joinLiveClassroomAsStudent() {
+      const codeInp = document.getElementById('student-join-code-input');
+      const nameInp = document.getElementById('student-fullname-input');
+      const groupInp = document.getElementById('student-group-input');
+
+      const code = (codeInp?.value || '').trim().toUpperCase();
+      const studentName = (nameInp?.value || '').trim();
+      const studentGroup = (groupInp?.value || '').trim() || 'General';
+
+      if (!code) {
+        showToast('Ingresa el Código de Clase proporcionado por tu maestro.', 'error');
+        codeInp?.focus();
+        return;
+      }
+      if (!studentName) {
+        showToast('Escribe tu nombre completo para registrar tu calificación.', 'error');
+        nameInp?.focus();
+        return;
+      }
+
+      const session = await fetchClassroomSessionByCode(code);
+      if (!session) {
+        showToast(`No se encontró ninguna evaluación activa con el código "${code}".`, 'error');
+        return;
+      }
+
+      if (session.singleAttempt) {
+        const existingSubs = getLocalClassroomSubmissions();
+        const alreadyDone = existingSubs.some(
+          s => s.code === code && s.studentName.toLowerCase() === studentName.toLowerCase()
+        );
+        if (alreadyDone) {
+          showToast('Ya completaste este intento oficial. Consulta tu calificación en el tablero.', 'error');
+          const filterInp = document.getElementById('board-filter-code-input');
+          if (filterInp) filterInp.value = code;
+          renderLiveClassroomBoard();
+          return;
+        }
+      }
+
+      activeStudentAssignment = {
+        ...session,
+        studentName,
+        studentGroup,
+        startedAtMs: Date.now()
+      };
+
+      const quizToInject = session.quizSnapshot;
+      if (!quizzes.some(q => q.id === quizToInject.id)) {
+        quizzes.push(quizToInject);
+      }
+
+      perQuizSettings[quizToInject.id] = {
+        random: session.randomOrder !== false,
+        questionCount: session.questionCount,
+        difficulty: session.difficulty || 'media'
+      };
+
+      switchTab('play');
+      startQuiz(quizToInject.id);
+    }
+
+    async function syncStudentCompletionResult(score, total, pct, timedOut) {
+      if (!activeStudentAssignment) return;
+
+      const elapsedSec = Math.max(1, Math.round((Date.now() - activeStudentAssignment.startedAtMs) / 1000));
+      const submissionId = `sub_${activeStudentAssignment.code}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+      const record = {
+        id: submissionId,
+        code: activeStudentAssignment.code,
+        quizTitle: activeStudentAssignment.quizSnapshot.title,
+        studentName: activeStudentAssignment.studentName,
+        studentGroup: activeStudentAssignment.studentGroup,
+        score,
+        total,
+        percentage: pct,
+        grade10: ((score / total) * 10).toFixed(1),
+        elapsedSeconds: elapsedSec,
+        timedOut: !!timedOut,
+        submittedAt: formatNowShort()
+      };
+
+      lastCompletedStudentReceipt = record;
+      saveLocalClassroomSubmission(record);
+
+      let syncedToCloud = false;
+      const bridge = window.__firebaseBridge;
+      if (bridge && bridge.ready && bridge.user) {
+        try {
+          const subRef = bridge.doc(bridge.db, 'artifacts', bridge.appId, 'public', 'data', 'classroom_submissions', submissionId);
+          await bridge.setDoc(subRef, record);
+          syncedToCloud = true;
+        } catch (err) {
+          console.warn('Guardado localmente para sincronización:', err);
+        }
+      }
+
+      if (classroomBroadcastChannel) {
+        classroomBroadcastChannel.postMessage({
+          type: 'SUBMISSION_ADDED',
+          code: record.code,
+          studentName: record.studentName
+        });
+      }
+
+      const receiptBox = document.getElementById('student-sync-receipt-box');
+      const receiptStatus = document.getElementById('receipt-sync-status');
+      const receiptDetails = document.getElementById('receipt-details-text');
+      const restartBtn = document.getElementById('btn-restart-quiz');
+
+      if (receiptBox && receiptDetails) {
+        receiptBox.style.display = 'block';
+        if (receiptStatus) {
+          receiptStatus.textContent = syncedToCloud ? '☁️ Sincronizado en la Nube' : '✅ Registrado en Aula';
+        }
+        receiptDetails.innerHTML = `
+          <strong>Alumno:</strong> ${escapeHTML(record.studentName)} (${escapeHTML(record.studentGroup)})<br>
+          <strong>Clase:</strong> ${escapeHTML(record.code)} — ${escapeHTML(record.quizTitle)}<br>
+          <strong>Calificación:</strong> ${record.score}/${record.total} (${record.percentage}% • Nota: ${record.grade10}/10)
+        `;
+      }
+
+      if (restartBtn && activeStudentAssignment.singleAttempt) {
+        restartBtn.style.display = 'none';
+      }
+
+      renderLiveClassroomBoard();
+      activeStudentAssignment = null;
+    }
+
+    function copyStudentResultSummary() {
+      if (!lastCompletedStudentReceipt) return;
+      const r = lastCompletedStudentReceipt;
+      const msg = `📋 *Boleta BibliaTrivia*\n👤 Alumno: ${r.studentName} (${r.studentGroup})\n🎓 Código de Clase: ${r.code}\n📖 Historia: ${r.quizTitle}\n🏆 Resultado: ${r.score}/${r.total} (${r.percentage}% - Nota ${r.grade10}/10)\n🕒 Fecha: ${r.submittedAt}`;
+      copyTextToClipboard(msg, '¡Boleta copiada! Ya puedes pegarla en WhatsApp.');
+    }
+
+    function copyClassroomInvite() {
+      if (!activeClassroomSession) return;
+      const s = activeClassroomSession;
+      const baseUrl = window.location.href.split('?')[0];
+      const inviteUrl = `${baseUrl}?clase=${encodeURIComponent(s.code)}`;
+      const msg = `🎓 *Evaluación Bíblica en BibliaTrivia*\n👨‍🏫 Maestro: ${s.teacherName}\n📖 Historia: ${s.quizSnapshot.title} (${s.questionCount} preguntas)\n🔑 Código de Clase: *${s.code}*\n👉 Entra aquí o ingresa el código en la pestaña "Aula en Vivo": ${inviteUrl}`;
+      copyTextToClipboard(msg, '¡Invitación y código de clase copiados!');
+    }
+
+    function copyTextToClipboard(text, successMsg) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg, 'success');
+      } catch (e) {
+        showToast('No se pudo copiar automáticamente.', 'error');
+      }
+      document.body.removeChild(temp);
+    }
+
+    function subscribeToClassroomSubmissions(classCode) {
+      const bridge = window.__firebaseBridge;
+      if (!bridge || !bridge.ready || !bridge.user) return;
+
+      if (typeof classroomUnsubscribe === 'function') {
+        classroomUnsubscribe();
+      }
+
+      const colRef = bridge.collection(bridge.db, 'artifacts', bridge.appId, 'public', 'data', 'classroom_submissions');
+      classroomUnsubscribe = bridge.onSnapshot(
+        colRef,
+        (snapshot) => {
+          snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data && data.id) {
+              saveLocalClassroomSubmission(data);
+            }
+          });
+          renderLiveClassroomBoard();
+        },
+        (err) => {
+          console.warn('Error escuchando entregas en tiempo real:', err);
+        }
+      );
+    }
+
+    function refreshLiveClassroomBoard() {
+      const filterCode = (document.getElementById('board-filter-code-input')?.value || '').trim().toUpperCase();
+      if (filterCode) {
+        subscribeToClassroomSubmissions(filterCode);
+      }
+      renderLiveClassroomBoard();
+      showToast('Tablero de calificaciones actualizado.', 'info');
+    }
+
+    function renderLiveClassroomBoard() {
+      const container = document.getElementById('live-results-container');
+      const subtitle = document.getElementById('live-board-subtitle');
+      if (!container) return;
+
+      const filterCode = (document.getElementById('board-filter-code-input')?.value || '').trim().toUpperCase();
+      const allSubs = getLocalClassroomSubmissions();
+      const filtered = filterCode
+        ? allSubs.filter(s => (s.code || '').toUpperCase().includes(filterCode))
+        : allSubs;
+
+      if (subtitle) {
+        subtitle.textContent = filterCode
+          ? `Mostrando entregas sincronizadas para el código "${filterCode}" (${filtered.length} alumno${filtered.length === 1 ? '' : 's'}).`
+          : `Mostrando todas las entregas sincronizadas (${filtered.length} registro${filtered.length === 1 ? '' : 's'}).`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 1.35rem; text-align: center; color: var(--text-muted); background: #ffffff;">
+            Aún no hay alumnos que hayan finalizado esta evaluación. Comparte el código de clase para ver sus notas en vivo.
+          </div>
+        `;
+        return;
+      }
+
+      const rowsHTML = filtered.map(item => {
+        const badgeCls = item.percentage >= 80 ? 'high' : item.percentage >= 60 ? 'mid' : 'low';
+        return `
+          <tr>
+            <td><strong>${escapeHTML(item.studentName)}</strong><div style="font-size: 0.76rem; color: var(--text-muted);">${escapeHTML(item.studentGroup || 'General')}</div></td>
+            <td><span style="font-family: monospace; font-weight: 700; color: var(--primary-navy);">${escapeHTML(item.code)}</span></td>
+            <td>${escapeHTML(item.quizTitle)}</td>
+            <td><span class="live-grade-pill ${badgeCls}">${item.score}/${item.total} (${item.percentage}% • ${item.grade10}/10)</span></td>
+            <td style="font-size: 0.82rem; color: var(--text-muted);">${item.elapsedSeconds}s</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(item.submittedAt)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <table class="live-results-table">
+          <thead>
+            <tr>
+              <th>Alumno</th>
+              <th>Código</th>
+              <th>Historia Evaluada</th>
+              <th>Calificación</th>
+              <th>Tiempo</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHTML}</tbody>
+        </table>
+      `;
+    }
+
+    function exportClassroomResultsCSV() {
+      const filterCode = (document.getElementById('board-filter-code-input')?.value || '').trim().toUpperCase();
+      const allSubs = getLocalClassroomSubmissions();
+      const filtered = filterCode
+        ? allSubs.filter(s => (s.code || '').toUpperCase() === filterCode)
+        : allSubs;
+
+      if (filtered.length === 0) {
+        showToast('No hay calificaciones para exportar todavía.', 'error');
+        return;
+      }
+
+      const headers = ['Codigo_Clase', 'Alumno', 'Grupo', 'Historia', 'Aciertos', 'Total_Preguntas', 'Porcentaje', 'Nota_10', 'Tiempo_Segundos', 'Fecha'];
+      const csvRows = [headers.join(',')];
+
+      filtered.forEach(r => {
+        const row = [
+          `"${(r.code || '').replace(/"/g, '""')}"`,
+          `"${(r.studentName || '').replace(/"/g, '""')}"`,
+          `"${(r.studentGroup || '').replace(/"/g, '""')}"`,
+          `"${(r.quizTitle || '').replace(/"/g, '""')}"`,
+          r.score,
+          r.total,
+          `${r.percentage}%`,
+          r.grade10,
+          r.elapsedSeconds,
+          `"${(r.submittedAt || '').replace(/"/g, '""')}"`
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Calificaciones_${filterCode || 'BibliaTrivia'}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Archivo Excel (.CSV) de calificaciones descargado.', 'success');
+    }
 
     /* --------------------------------------------------------------------------
        MENÚ FÁCIL (ASISTENTE INICIAL Y RECURRENTE PARA ELEGIR HISTORIA Y PREGUNTAS)
@@ -3295,6 +4195,9 @@
         renderLobby();
       } else if (tabName === 'create') {
         renderManageList();
+      } else if (tabName === 'classroom') {
+        populateTeacherQuizOptions();
+        renderLiveClassroomBoard();
       }
     }
 
@@ -3566,6 +4469,19 @@
       document.getElementById('play-results').style.display = 'none';
       document.getElementById('play-active').style.display = 'block';
 
+      const studentBanner = document.getElementById('student-exam-banner');
+      const studentInfoText = document.getElementById('student-exam-info-text');
+      const studentCodeBadge = document.getElementById('student-exam-code-badge');
+      if (studentBanner) {
+        if (activeStudentAssignment) {
+          studentBanner.style.display = 'flex';
+          if (studentInfoText) studentInfoText.textContent = `🧑‍🎓 Evaluando a: ${activeStudentAssignment.studentName} (${activeStudentAssignment.studentGroup})`;
+          if (studentCodeBadge) studentCodeBadge.textContent = `AULA: ${activeStudentAssignment.code}`;
+        } else {
+          studentBanner.style.display = 'none';
+        }
+      }
+
       document.getElementById('active-quiz-title').textContent = `${preparedQuiz.title} (${diffMeta.label})`;
       startGlobalQuizTimer();
       renderCurrentQuestion();
@@ -3801,6 +4717,15 @@
 
       document.getElementById('results-icon').textContent = icon;
       document.getElementById('results-message').textContent = msg;
+
+      const receiptBox = document.getElementById('student-sync-receipt-box');
+      const restartBtn = document.getElementById('btn-restart-quiz');
+      if (receiptBox) receiptBox.style.display = 'none';
+      if (restartBtn) restartBtn.style.display = 'inline-flex';
+
+      if (activeStudentAssignment) {
+        syncStudentCompletionResult(score, total, pct, timedOut);
+      }
     }
 
     function restartCurrentQuiz() {
@@ -3812,6 +4737,9 @@
     function exitGame() {
       clearGameTimer();
       closeAnswerPopup();
+      activeStudentAssignment = null;
+      const studentBanner = document.getElementById('student-exam-banner');
+      if (studentBanner) studentBanner.style.display = 'none';
       document.getElementById('play-active').style.display = 'none';
       document.getElementById('play-results').style.display = 'none';
       document.getElementById('play-lobby').style.display = 'block';
