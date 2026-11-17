@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BibliaTrivia" />
   <title>BibliaTrivia - Creador y Juego de Preguntas Bíblicas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -97,6 +101,9 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
+        <button onclick="triggerAppInstall()" id="btn-install-app" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-amber-500/25 transition flex items-center gap-1.5" title="Instalar BibliaTrivia como aplicación en tu dispositivo">
+          <span>📲</span> <span id="btn-install-label">Instalar App</span>
+        </button>
         <button onclick="openRoleModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-indigo-600/25 transition flex items-center gap-1.5">
           <span>🎓</span> <span>Aula Maestro / Alumno</span>
         </button>
@@ -128,6 +135,29 @@
           Salir de Clase
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN MANUAL (iOS / LOCAL FILE) -->
+  <div id="install-guide-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 shadow-2xl border border-amber-400/30 animate-pop-in space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-amber-300 flex items-center gap-2">
+          <span>📲</span> Instalar BibliaTrivia
+        </h3>
+        <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold">✕</button>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+        Puedes instalar <strong>BibliaTrivia</strong> como una aplicación directa en tu pantalla de inicio o escritorio:
+      </p>
+      <div class="space-y-2.5 text-xs text-slate-300 bg-slate-900/75 p-4 rounded-2xl border border-white/10">
+        <p><strong class="text-indigo-300">💻 En PC (Chrome / Edge):</strong> Haz clic en el menú <strong>⋮</strong> (arriba a la derecha) → <em>Guardar y compartir</em> → <strong>Instalar página como aplicación</strong> (o haz clic en el ícono de pantalla en la barra de direcciones).</p>
+        <p><strong class="text-emerald-300">🤖 En Android (Chrome):</strong> Toca el menú <strong>⋮</strong> → <strong>Añadir a pantalla de inicio / Instalar aplicación</strong>.</p>
+        <p><strong class="text-amber-300">🍎 En iPhone / iPad (Safari):</strong> Toca el botón <strong>Compartir</strong> (cuadro con flecha hacia arriba) → <strong>Añadir a pantalla de inicio</strong>.</p>
+      </div>
+      <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm">
+        Entendido
+      </button>
     </div>
   </div>
 
@@ -508,6 +538,77 @@
   </div>
 
   <script>
+    // =========================================================================
+    // INSTALACIÓN PWA (BOTÓN DE INSTALACIÓN DE APLICACIÓN)
+    // =========================================================================
+    let deferredInstallPrompt = null;
+
+    function initPWAInstallSupport() {
+      // Crear ícono SVG embebido para el manifest
+      const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#1e1b4b"/><text x="50%" y="54%" font-size="280" text-anchor="middle" dominant-baseline="middle">📖</text></svg>`;
+      const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+
+      const manifestObj = {
+        name: 'BibliaTrivia - Creador y Juego Bíblico',
+        short_name: 'BibliaTrivia',
+        description: 'Aplicación educativa e interactiva de trivias bíblicas para maestros, alumnos y familias.',
+        start_url: window.location.href,
+        display: 'standalone',
+        background_color: '#0f172a',
+        theme_color: '#1e1b4b',
+        icons: [
+          { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      const linkEl = document.createElement('link');
+      linkEl.rel = 'manifest';
+      linkEl.href = manifestURL;
+      document.head.appendChild(linkEl);
+
+      // Registrar Service Worker dinámico si está en HTTP/HTTPS
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+        const swCode = `
+          self.addEventListener('install', (e) => self.skipWaiting());
+          self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+
+      // Capturar evento nativo de instalación
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        const btn = document.getElementById('btn-install-app');
+        if (btn) btn.classList.remove('hidden');
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        const label = document.getElementById('btn-install-label');
+        if (label) label.textContent = 'App Instalada ✓';
+      });
+    }
+
+    async function triggerAppInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          deferredInstallPrompt = null;
+        }
+      } else {
+        document.getElementById('install-guide-modal')?.classList.remove('hidden');
+      }
+    }
+
     // =========================================================================
     // BIBLIOTECA DE 34 HISTORIAS BÍBLICAS PRE-GENERADAS (AT Y NT)
     // =========================================================================
@@ -1893,7 +1994,6 @@
       const active = document.activeElement;
       const activeId = active ? active.id : '';
 
-      // 1. Si el pop-up de respuesta (Correcto / Incorrecto) está abierto, avanza a la siguiente pregunta
       const feedbackModal = document.getElementById('feedback-modal');
       if (feedbackModal && !feedbackModal.classList.contains('hidden')) {
         event.preventDefault();
@@ -1901,21 +2001,18 @@
         return;
       }
 
-      // 2. Confirmar comentario en la barra inferior
       if (activeId === 'comment-text-input' || activeId === 'comment-author-input') {
         event.preventDefault();
         postCommunityComment();
         return;
       }
 
-      // 3. Confirmar nombre del copyright
       if (activeId === 'copyright-author-input') {
         event.preventDefault();
         savePermanentCopyright();
         return;
       }
 
-      // 4. Confirmar identificación de visitante
       if (activeId === 'visitor-tag-input') {
         event.preventDefault();
         updateVisitorName(active.value);
@@ -1923,14 +2020,12 @@
         return;
       }
 
-      // 5. Confirmar ingreso del alumno en el Aula en Vivo
       if (['student-code-input', 'student-name-input', 'student-group-input'].includes(activeId)) {
         event.preventDefault();
         joinClassroomAsStudent();
         return;
       }
 
-      // 6. Confirmar generación de clase del maestro
       if (activeId === 'teacher-name-input') {
         event.preventDefault();
         createLiveClassroom();
@@ -1942,6 +2037,7 @@
     // ARRANQUE INICIAL DE LA APLICACIÓN
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
+      initPWAInstallSupport();
       loadCopyright();
       loadVisitorStats();
       loadQuizzes();
