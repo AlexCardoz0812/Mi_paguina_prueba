@@ -10,7 +10,6 @@
   <title>BibliaTrivia - Creador y Juego de Preguntas Bíblicas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -86,10 +85,14 @@
 </head>
 <body class="antialiased selection:bg-indigo-500 selection:text-white pb-20">
 
+  <!-- ELEMENTO DE AUDIO MP3 OCULTO CON BUCLE CONTINUO -->
+  <audio id="praise-mp3-player" loop preload="none"></audio>
+  <input type="file" id="custom-mp3-file-input" accept="audio/*" multiple class="hidden" onchange="handleCustomMP3Upload(event)">
+
   <!-- ENCABEZADO COMPACTO -->
   <header class="w-full border-b border-white/10 bg-slate-950/75 backdrop-blur-md">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()" title="Volver al catálogo principal">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-indigo-600 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/20">
           📖
         </div>
@@ -102,23 +105,33 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <!-- REPRODUCTOR DE ARPA CELESTIAL ORQUESTAL (10 ALABANZAS) -->
+        <!-- REPRODUCTOR DE ALABANZAS MP3 + CARGA LOCAL + VOLUMEN -->
         <div class="flex items-center bg-white/10 border border-white/15 rounded-xl overflow-hidden">
-          <select id="praise-melody-select" onchange="changePraiseHarpMelody()" class="bg-transparent text-slate-200 text-xs sm:text-sm font-semibold px-2.5 py-2 focus:outline-none cursor-pointer max-w-[185px] sm:max-w-[235px]" title="Elegir alabanza en Arpa Celestial Orquestal">
-            <option value="sumergeme" class="bg-slate-900 text-white">🪕 1. Sumérgeme (J.A. Romero)</option>
-            <option value="cuangrande" class="bg-slate-900 text-white">🪕 2. Cuán Grande Es Dios</option>
-            <option value="inchristalone" class="bg-slate-900 text-white">🪕 3. In Christ Alone</option>
-            <option value="tenthousand" class="bg-slate-900 text-white">🪕 4. 10,000 Reasons</option>
-            <option value="ninadetusojo" class="bg-slate-900 text-white">🪕 5. La Niña de Tus Ojos</option>
-            <option value="howdeep" class="bg-slate-900 text-white">🪕 6. How Deep The Father's Love</option>
-            <option value="quierolevantar" class="bg-slate-900 text-white">🪕 7. Quiero Levantar Mis Manos</option>
-            <option value="whatafriend" class="bg-slate-900 text-white">🪕 8. ¡Oh, Qué Amigo Nos Es Cristo!</option>
-            <option value="tedoygloria" class="bg-slate-900 text-white">🪕 9. Te Doy Gloria (Hillsong)</option>
-            <option value="waymaker" class="bg-slate-900 text-white">🪕 10. Way Maker (Hacedor de Camino)</option>
+          <select id="praise-mp3-select" onchange="changePraiseMP3Track()" class="bg-transparent text-slate-200 text-xs sm:text-sm font-semibold px-2.5 py-2 focus:outline-none cursor-pointer max-w-[165px] sm:max-w-[215px]" title="Elegir alabanza MP3">
+            <option value="musica/1-sumergeme.mp3" class="bg-slate-900 text-white">🎵 1. Sumérgeme (J.A. Romero)</option>
+            <option value="musica/2-cuan-grande-es-dios.mp3" class="bg-slate-900 text-white">🎵 2. Cuán Grande Es Dios</option>
+            <option value="musica/3-in-christ-alone.mp3" class="bg-slate-900 text-white">🎵 3. In Christ Alone</option>
+            <option value="musica/4-10000-reasons.mp3" class="bg-slate-900 text-white">🎵 4. 10,000 Reasons</option>
+            <option value="musica/5-la-nina-de-tus-ojos.mp3" class="bg-slate-900 text-white">🎵 5. La Niña de Tus Ojos</option>
+            <option value="musica/6-how-deep-the-fathers-love.mp3" class="bg-slate-900 text-white">🎵 6. How Deep The Father's Love</option>
+            <option value="musica/7-quiero-levantar-mis-manos.mp3" class="bg-slate-900 text-white">🎵 7. Quiero Levantar Mis Manos</option>
+            <option value="musica/8-oh-que-amigo.mp3" class="bg-slate-900 text-white">🎵 8. ¡Oh, Qué Amigo Nos Es Cristo!</option>
+            <option value="musica/9-te-doy-gloria.mp3" class="bg-slate-900 text-white">🎵 9. Te Doy Gloria (Hillsong)</option>
+            <option value="musica/10-way-maker.mp3" class="bg-slate-900 text-white">🎵 10. Way Maker (Hacedor de Camino)</option>
           </select>
-          <button onclick="togglePraiseHarp()" id="btn-praise-harp" class="px-3 py-2 bg-white/5 hover:bg-white/15 border-l border-white/15 text-slate-200 text-xs sm:text-sm font-bold transition flex items-center gap-1" title="Activar o silenciar Arpa Celestial">
-            <span id="harp-icon">🪕</span> <span id="harp-label">OFF</span>
+
+          <button onclick="document.getElementById('custom-mp3-file-input').click()" class="px-2.5 py-2 bg-white/5 hover:bg-white/15 border-l border-white/15 text-amber-300 text-xs sm:text-sm font-bold transition" title="Cargar tus propios archivos MP3 desde tu dispositivo">
+            📂
           </button>
+
+          <button onclick="togglePraiseMP3()" id="btn-praise-mp3" class="px-3 py-2 bg-white/5 hover:bg-white/15 border-l border-white/15 text-slate-200 text-xs sm:text-sm font-bold transition flex items-center gap-1" title="Reproducir o pausar alabanza MP3">
+            <span id="mp3-icon">▶️</span> <span id="mp3-label">OFF</span>
+          </button>
+
+          <div class="hidden md:flex items-center px-2 border-l border-white/15" title="Volumen de música de fondo">
+            <span class="text-xs mr-1">🔉</span>
+            <input type="range" id="mp3-volume-slider" min="0" max="1" step="0.05" value="0.45" oninput="updatePraiseMP3Volume(this.value)" class="w-14 accent-amber-400 cursor-pointer">
+          </div>
         </div>
 
         <button onclick="triggerAppInstall()" id="btn-install-app" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-amber-500/25 transition flex items-center gap-1.5" title="Instalar BibliaTrivia como aplicación en tu dispositivo">
@@ -139,6 +152,12 @@
       </div>
     </div>
   </header>
+
+  <!-- AVISO DISCRETO SI NO SE ENCUENTRA EL ARCHIVO EN LA CARPETA MUSICA/ -->
+  <div id="mp3-missing-toast" class="hidden bg-amber-950/90 border-b border-amber-400/40 px-4 py-2 text-center text-xs text-amber-200">
+    ⚠️ No se encontró el archivo en la carpeta <code class="bg-black/40 px-1.5 py-0.5 rounded text-amber-300">musica/</code>. Coloca ahí tus MP3 o pulsa el botón <strong>📂</strong> arriba para elegir una canción desde tu equipo.
+    <button onclick="document.getElementById('mp3-missing-toast').classList.add('hidden')" class="ml-3 underline font-bold">Cerrar</button>
+  </div>
 
   <!-- BANNER DE CLASE ACTIVA -->
   <div id="active-class-banner" class="hidden bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-slate-900/90 border-b border-indigo-400/30 px-4 py-2.5">
@@ -607,245 +626,96 @@
 
   <script>
     // =========================================================================
-    // MOTOR DE ARPA CELESTIAL ORQUESTAL (10 ALABANZAS + RESPALDO OFFLINE)
+    // REPRODUCTOR DE ALABANZAS MP3 (CARPETA LOCAL MUSICA/ + ARCHIVOS PROPIOS)
     // =========================================================================
-    let harpAudioCtx = null;
-    let celestialHarpInstrument = null;
-    let isHarpPlaying = false;
-    let harpTimer = null;
-    let harpStep = 0;
+    let isMP3Playing = false;
 
-    // Frecuencias de respaldo por si no hay conexión a internet para descargar muestras de estudio
-    const NOTE_FREQ_FALLBACK = {
-      C2: 65.41, D2: 73.42, E2: 82.41, F2: 87.31, 'F#2': 92.50, G2: 98.00, 'G#2': 103.83, A2: 110.00, Bb2: 116.54, B2: 123.47,
-      C3: 130.81, 'C#3': 138.59, D3: 146.83, Eb3: 155.56, E3: 164.81, F3: 174.61, 'F#3': 185.00, G3: 196.00, 'G#3': 207.65, A3: 220.00, Bb3: 233.08, B3: 246.94,
-      C4: 261.63, 'C#4': 277.18, D4: 293.66, Eb4: 311.13, E4: 329.63, F4: 349.23, 'F#4': 369.99, G4: 392.00, 'G#4': 415.30, A4: 440.00, Bb4: 466.16, B4: 493.88,
-      C5: 523.25, 'C#5': 554.37, D5: 587.33, Eb5: 622.25, E5: 659.25, F5: 698.46, 'F#5': 739.99, G5: 783.99
-    };
-
-    const HARP_PRAISE_SONGBOOK = {
-      // 1. Sumérgeme (Jesús Adrián Romero) - Arpegios dulces en Sol Mayor
-      sumergeme: [
-        { chord: ['G2', 'D3', 'B3'], melody: ['B3', 'D4', 'G4'], dur: 1.50 },
-        { chord: ['G3', 'B3', 'D4'], melody: ['F#4', 'E4', 'D4'], dur: 1.45 },
-        { chord: ['E2', 'B2', 'G3'], melody: ['B3', 'E4', 'G4'], dur: 1.50 },
-        { chord: ['E3', 'G3', 'B3'], melody: ['F#4', 'E4', 'D4'], dur: 1.45 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'D4', 'C4'], dur: 1.50 },
-        { chord: ['A2', 'E3', 'C4'], melody: ['B3', 'C4', 'D4'], dur: 1.45 },
-        { chord: ['D3', 'A3', 'F#4'], melody: ['A4', 'G4', 'F#4'], dur: 1.55 },
-        { chord: ['G2', 'D3', 'B3', 'D4'], melody: ['G4'], dur: 1.95 }
-      ],
-      // 2. Cuán Grande Es Dios (Chris Tomlin / Hillsong)
-      cuangrande: [
-        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'E4'], dur: 1.40 },
-        { chord: ['C3', 'G3', 'C4'], melody: ['C4', 'D4', 'E4'], dur: 1.40 },
-        { chord: ['A2', 'E3', 'C4'], melody: ['E4', 'C4'], dur: 1.40 },
-        { chord: ['A2', 'E3', 'A3'], melody: ['A3', 'B3', 'C4'], dur: 1.40 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['F4', 'E4', 'D4'], dur: 1.45 },
-        { chord: ['F3', 'A3', 'C4'], melody: ['C4', 'D4', 'E4'], dur: 1.45 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'C4', 'B3'], dur: 1.50 },
-        { chord: ['C3', 'G3', 'E4', 'G4'], melody: ['C4'], dur: 1.95 }
-      ],
-      // 3. In Christ Alone (Keith Getty & Stuart Townend)
-      inchristalone: [
-        { chord: ['F2', 'C3', 'A3'], melody: ['C4', 'F4'], dur: 1.35 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'A4', 'G4'], dur: 1.40 },
-        { chord: ['Bb2', 'F3', 'D4'], melody: ['F4', 'D4'], dur: 1.35 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['C4'], dur: 1.45 },
-        { chord: ['D3', 'A3', 'F4'], melody: ['F4', 'G4', 'A4'], dur: 1.40 },
-        { chord: ['Bb2', 'F3', 'D4'], melody: ['Bb4', 'A4', 'G4'], dur: 1.40 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'F4', 'E4'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3', 'C4'], melody: ['F4'], dur: 1.95 }
-      ],
-      // 4. 10,000 Reasons / Diez Mil Razones (Matt Redman)
-      tenthousand: [
-        { chord: ['C3', 'G3', 'E4'], melody: ['B4', 'A4', 'G4'], dur: 1.35 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'G4'], dur: 1.40 },
-        { chord: ['D3', 'A3', 'F#4'], melody: ['A4', 'G4', 'F#4'], dur: 1.35 },
-        { chord: ['E2', 'B2', 'G3'], melody: ['E4', 'D4'], dur: 1.45 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'F#4', 'G4'], dur: 1.35 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['B4', 'A4', 'G4'], dur: 1.40 },
-        { chord: ['D3', 'A3', 'F#4'], melody: ['A4', 'F#4'], dur: 1.40 },
-        { chord: ['G2', 'D3', 'B3', 'D4'], melody: ['G4'], dur: 1.95 }
-      ],
-      // 5. La Niña de Tus Ojos (Daniel Calveti)
-      ninadetusojo: [
-        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'G4', 'G4'], dur: 1.40 },
-        { chord: ['C3', 'G3', 'C4'], melody: ['A4', 'G4', 'E4'], dur: 1.40 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'G4', 'G4'], dur: 1.40 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['A4', 'G4', 'D4'], dur: 1.40 },
-        { chord: ['A2', 'E3', 'C4'], melody: ['C4', 'E4', 'E4'], dur: 1.40 },
-        { chord: ['A2', 'E3', 'C4'], melody: ['F4', 'E4', 'C4'], dur: 1.40 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['C4', 'D4', 'E4', 'D4'], dur: 1.50 },
-        { chord: ['C3', 'G3', 'E4', 'G4'], melody: ['C4'], dur: 1.95 }
-      ],
-      // 6. How Deep The Father's Love For Us (Stuart Townend)
-      howdeep: [
-        { chord: ['F2', 'C3', 'A3'], melody: ['F4', 'G4', 'A4'], dur: 1.45 },
-        { chord: ['Bb2', 'F3', 'D4'], melody: ['Bb4', 'A4', 'G4'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['F4', 'D4', 'C4'], dur: 1.50 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['G4'], dur: 1.55 },
-        { chord: ['D3', 'A3', 'F4'], melody: ['F4', 'G4', 'A4'], dur: 1.45 },
-        { chord: ['Bb2', 'F3', 'D4'], melody: ['D5', 'C5', 'Bb4'], dur: 1.50 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['A4', 'G4'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3', 'C4'], melody: ['F4'], dur: 2.00 }
-      ],
-      // 7. Quiero Levantar a Ti Mis Manos (Danilo Montero)
-      quierolevantar: [
-        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'G4', 'A4'], dur: 1.40 },
-        { chord: ['B2', 'F#3', 'D4'], melody: ['B4', 'A4', 'G4'], dur: 1.40 },
-        { chord: ['E2', 'B2', 'G3'], melody: ['G4', 'F#4', 'E4'], dur: 1.45 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'D4', 'C4'], dur: 1.40 },
-        { chord: ['A2', 'E3', 'C4'], melody: ['C4', 'E4', 'G4'], dur: 1.40 },
-        { chord: ['D3', 'A3', 'F#4'], melody: ['F#4', 'E4', 'D4'], dur: 1.45 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'F#4', 'A4'], dur: 1.45 },
-        { chord: ['G2', 'D3', 'B3', 'D4'], melody: ['G4'], dur: 1.95 }
-      ],
-      // 8. What A Friend We Have In Jesus / ¡Oh, Qué Amigo Nos Es En Cristo!
-      whatafriend: [
-        { chord: ['F2', 'C3', 'A3'], melody: ['C5', 'C5', 'D5', 'C5'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['A4', 'F4', 'F4', 'D4'], dur: 1.45 },
-        { chord: ['Bb2', 'F3', 'D4'], melody: ['C4', 'F4', 'A4', 'C5'], dur: 1.45 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['A4', 'G4'], dur: 1.55 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['C5', 'C5', 'D5', 'C5'], dur: 1.45 },
-        { chord: ['Bb2', 'F3', 'D4'], melody: ['A4', 'F4', 'D5'], dur: 1.45 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['C5', 'A4', 'G4'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3', 'C4'], melody: ['F4'], dur: 1.95 }
-      ],
-      // 9. Te Doy Gloria (Hillsong En Español)
-      tedoygloria: [
-        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'G4', 'A4', 'G4'], dur: 1.45 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['G4', 'E4', 'D4'], dur: 1.45 },
-        { chord: ['A2', 'E3', 'C4'], melody: ['E4', 'E4', 'F4', 'E4'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['D4', 'C4'], dur: 1.50 },
-        { chord: ['C3', 'G3', 'E4'], melody: ['C5', 'B4', 'G4'], dur: 1.45 },
-        { chord: ['G2', 'D3', 'B3'], melody: ['A4', 'G4', 'D4'], dur: 1.45 },
-        { chord: ['F2', 'C3', 'A3'], melody: ['E4', 'D4', 'C4'], dur: 1.50 },
-        { chord: ['C3', 'G3', 'E4', 'G4'], melody: ['C4'], dur: 1.95 }
-      ],
-      // 10. Way Maker / Hacedor de Camino (Sinach)
-      waymaker: [
-        { chord: ['A2', 'E3', 'C#4'], melody: ['G#4', 'A4', 'B4'], dur: 1.50 },
-        { chord: ['A2', 'E3', 'C#4'], melody: ['A4', 'G#4', 'E4'], dur: 1.50 },
-        { chord: ['E2', 'B2', 'G#3'], melody: ['G#4', 'A4', 'B4'], dur: 1.50 },
-        { chord: ['E2', 'B2', 'G#3'], melody: ['G#4', 'F#4', 'E4'], dur: 1.50 },
-        { chord: ['B2', 'F#3', 'Eb4'], melody: ['F#4', 'G#4', 'F#4'], dur: 1.50 },
-        { chord: ['B2', 'F#3', 'Eb4'], melody: ['E4', 'Eb4'], dur: 1.50 },
-        { chord: ['C#3', 'G#3', 'E4'], melody: ['E4', 'F#4', 'G#4'], dur: 1.50 },
-        { chord: ['C#3', 'G#3', 'E4', 'G#4'], melody: ['E4'], dur: 1.95 }
-      ]
-    };
-
-    function playFallbackPluckedHarpNote(noteName, duration, isMelody) {
-      if (!harpAudioCtx) return;
-      const freq = NOTE_FREQ_FALLBACK[noteName] || 261.63;
-      const now = harpAudioCtx.currentTime;
-      const osc = harpAudioCtx.createOscillator();
-      const gain = harpAudioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(isMelody ? 0.065 : 0.035, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 1.9);
-      osc.connect(gain);
-      gain.connect(harpAudioCtx.destination);
-      osc.start(now);
-      osc.stop(now + duration * 2.0);
+    function getMP3Elements() {
+      return {
+        audio: document.getElementById('praise-mp3-player'),
+        select: document.getElementById('praise-mp3-select'),
+        btn: document.getElementById('btn-praise-mp3'),
+        icon: document.getElementById('mp3-icon'),
+        label: document.getElementById('mp3-label'),
+        toast: document.getElementById('mp3-missing-toast')
+      };
     }
 
-    function playHarpSingleNote(noteName, duration, isMelody = false) {
-      if (!harpAudioCtx) return;
-      if (celestialHarpInstrument) {
-        celestialHarpInstrument.play(noteName, harpAudioCtx.currentTime, {
-          duration: duration * 1.75,
-          gain: isMelody ? 0.85 : 0.42
-        });
-      } else {
-        playFallbackPluckedHarpNote(noteName, duration, isMelody);
-      }
-    }
-
-    function scheduleNextHarpStep() {
-      if (!isHarpPlaying) return;
-      const selectedKey = document.getElementById('praise-melody-select')?.value || 'sumergeme';
-      const song = HARP_PRAISE_SONGBOOK[selectedKey] || HARP_PRAISE_SONGBOOK.sumergeme;
-      const stepData = song[harpStep % song.length];
-
-      // 1. Arpegio envolvente de Arpa Celestial en los bajos/acordes
-      stepData.chord.forEach((noteName, idx) => {
-        setTimeout(() => {
-          if (isHarpPlaying) playHarpSingleNote(noteName, stepData.dur * 1.35, false);
-        }, idx * 95);
-      });
-
-      // 2. Melodía principal dulce en las cuerdas agudas del arpa
-      const melStepDelay = (stepData.dur * 1000) / Math.max(1, stepData.melody.length);
-      stepData.melody.forEach((noteName, idx) => {
-        setTimeout(() => {
-          if (isHarpPlaying) playHarpSingleNote(noteName, stepData.dur * 1.15, true);
-        }, idx * melStepDelay);
-      });
-
-      harpStep++;
-      harpTimer = setTimeout(scheduleNextHarpStep, stepData.dur * 1000);
-    }
-
-    function changePraiseHarpMelody() {
-      harpStep = 0;
-      if (isHarpPlaying) {
-        clearTimeout(harpTimer);
-        scheduleNextHarpStep();
-      } else {
-        togglePraiseHarp();
-      }
-    }
-
-    async function togglePraiseHarp() {
-      const btn = document.getElementById('btn-praise-harp');
-      const icon = document.getElementById('harp-icon');
-      const label = document.getElementById('harp-label');
-
-      if (!isHarpPlaying) {
-        if (!harpAudioCtx) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          harpAudioCtx = new AudioCtx();
-        }
-        if (harpAudioCtx.state === 'suspended') {
-          await harpAudioCtx.resume();
-        }
-
-        isHarpPlaying = true;
+    function setMP3UIState(playing) {
+      const { btn, icon, label } = getMP3Elements();
+      isMP3Playing = playing;
+      if (playing) {
         btn.classList.remove('bg-white/5', 'text-slate-200');
-        btn.classList.add('bg-amber-500/30', 'text-amber-200');
-
-        if (!celestialHarpInstrument && typeof Soundfont !== 'undefined') {
-          label.textContent = '...';
-          try {
-            celestialHarpInstrument = await Soundfont.instrument(harpAudioCtx, 'orchestral_harp', {
-              soundfont: 'MusyngKite'
-            });
-          } catch (e) {
-            celestialHarpInstrument = null; // Usa respaldo offline automático si no hay internet
-          }
-        }
-
-        if (!isHarpPlaying) return; // Por si el usuario canceló mientras cargaba
-        icon.textContent = '🎶';
+        btn.classList.add('bg-emerald-500/30', 'text-emerald-200');
+        icon.textContent = '⏸️';
         label.textContent = 'ON';
-        harpStep = 0;
-        scheduleNextHarpStep();
       } else {
-        isHarpPlaying = false;
-        clearTimeout(harpTimer);
-        if (celestialHarpInstrument && celestialHarpInstrument.stop) {
-          celestialHarpInstrument.stop();
-        }
-
-        btn.classList.remove('bg-amber-500/30', 'text-amber-200');
+        btn.classList.remove('bg-emerald-500/30', 'text-emerald-200');
         btn.classList.add('bg-white/5', 'text-slate-200');
-        icon.textContent = '🪕';
+        icon.textContent = '▶️';
         label.textContent = 'OFF';
       }
+    }
+
+    function playSelectedMP3() {
+      const { audio, select, toast } = getMP3Elements();
+      const volume = parseFloat(document.getElementById('mp3-volume-slider')?.value || '0.45');
+      audio.volume = volume;
+
+      if (!audio.src || !audio.src.endsWith(encodeURI(select.value))) {
+        audio.src = select.value;
+      }
+
+      toast.classList.add('hidden');
+      audio.play().then(() => {
+        setMP3UIState(true);
+      }).catch(() => {
+        setMP3UIState(false);
+        toast.classList.remove('hidden');
+      });
+    }
+
+    function togglePraiseMP3() {
+      const { audio } = getMP3Elements();
+      if (!isMP3Playing) {
+        playSelectedMP3();
+      } else {
+        audio.pause();
+        setMP3UIState(false);
+      }
+    }
+
+    function changePraiseMP3Track() {
+      const { audio, select } = getMP3Elements();
+      audio.src = select.value;
+      playSelectedMP3();
+    }
+
+    function updatePraiseMP3Volume(val) {
+      const { audio } = getMP3Elements();
+      if (audio) audio.volume = parseFloat(val);
+    }
+
+    function handleCustomMP3Upload(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      const { select } = getMP3Elements();
+      files.forEach((file, idx) => {
+        const objectUrl = URL.createObjectURL(file);
+        const cleanName = file.name.replace(/\.[^/.]+$/, '');
+        const opt = document.createElement('option');
+        opt.value = objectUrl;
+        opt.textContent = `🎧 ${cleanName}`;
+        opt.className = 'bg-slate-900 text-amber-200';
+        select.insertBefore(opt, select.firstChild);
+        if (idx === 0) {
+          select.value = objectUrl;
+        }
+      });
+
+      changePraiseMP3Track();
+      event.target.value = '';
     }
 
     // =========================================================================
