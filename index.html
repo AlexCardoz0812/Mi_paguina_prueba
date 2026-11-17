@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BibliaTrivia" />
+  <title>BibliaTrivia - Creador y Juego de Preguntas Bíblicas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-display: 'Fredoka', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      font-family: var(--font-body);
+      background: radial-gradient(circle at top left, #0f172a, #1e1b4b 45%, #090d16 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display {
+      font-family: var(--font-display);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .answer-btn {
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.32), 0 12px 24px rgba(0, 0, 0, 0.35);
+    }
+    .answer-btn:hover:not(:disabled) {
+      transform: translateY(-4px) scale(1.015);
+      filter: brightness(1.08);
+    }
+    .answer-btn:active:not(:disabled) {
+      transform: translateY(3px) scale(0.985);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+    }
+    .btn-sapphire {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border: 2px solid #60a5fa;
+    }
+    .btn-amber {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      border: 2px solid #fbbf24;
+    }
+    .btn-emerald {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      border: 2px solid #34d399;
+    }
+    .btn-amethyst {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+      border: 2px solid #a78bfa;
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.82) translateY(18px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-pop-in {
+      animation: popIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shake 0.42s ease-in-out;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+  </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white pb-20">
+
+  <!-- ENCABEZADO COMPACTO -->
+  <header class="w-full border-b border-white/10 bg-slate-950/75 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-indigo-600 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/20">
+          📖
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-200 via-white to-indigo-200 bg-clip-text text-transparent">
+            BibliaTrivia
+          </h1>
+          <p class="text-[11px] text-slate-400 leading-none">Aprende, juega y evalúa las Escrituras</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- REPRODUCTOR DE ARPA CELESTIAL ORQUESTAL (10 ALABANZAS) -->
+        <div class="flex items-center bg-white/10 border border-white/15 rounded-xl overflow-hidden">
+          <select id="praise-melody-select" onchange="changePraiseHarpMelody()" class="bg-transparent text-slate-200 text-xs sm:text-sm font-semibold px-2.5 py-2 focus:outline-none cursor-pointer max-w-[185px] sm:max-w-[235px]" title="Elegir alabanza en Arpa Celestial Orquestal">
+            <option value="sumergeme" class="bg-slate-900 text-white">🪕 1. Sumérgeme (J.A. Romero)</option>
+            <option value="cuangrande" class="bg-slate-900 text-white">🪕 2. Cuán Grande Es Dios</option>
+            <option value="inchristalone" class="bg-slate-900 text-white">🪕 3. In Christ Alone</option>
+            <option value="tenthousand" class="bg-slate-900 text-white">🪕 4. 10,000 Reasons</option>
+            <option value="ninadetusojo" class="bg-slate-900 text-white">🪕 5. La Niña de Tus Ojos</option>
+            <option value="howdeep" class="bg-slate-900 text-white">🪕 6. How Deep The Father's Love</option>
+            <option value="quierolevantar" class="bg-slate-900 text-white">🪕 7. Quiero Levantar Mis Manos</option>
+            <option value="whatafriend" class="bg-slate-900 text-white">🪕 8. ¡Oh, Qué Amigo Nos Es Cristo!</option>
+            <option value="tedoygloria" class="bg-slate-900 text-white">🪕 9. Te Doy Gloria (Hillsong)</option>
+            <option value="waymaker" class="bg-slate-900 text-white">🪕 10. Way Maker (Hacedor de Camino)</option>
+          </select>
+          <button onclick="togglePraiseHarp()" id="btn-praise-harp" class="px-3 py-2 bg-white/5 hover:bg-white/15 border-l border-white/15 text-slate-200 text-xs sm:text-sm font-bold transition flex items-center gap-1" title="Activar o silenciar Arpa Celestial">
+            <span id="harp-icon">🪕</span> <span id="harp-label">OFF</span>
+          </button>
+        </div>
+
+        <button onclick="triggerAppInstall()" id="btn-install-app" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-amber-500/25 transition flex items-center gap-1.5" title="Instalar BibliaTrivia como aplicación en tu dispositivo">
+          <span>📲</span> <span id="btn-install-label">Instalar App</span>
+        </button>
+
+        <button onclick="openRoleModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-indigo-600/25 transition flex items-center gap-1.5">
+          <span>🎓</span> <span>Aula Maestro / Alumno</span>
+        </button>
+
+        <button onclick="switchMainView('creator')" id="nav-btn-creator" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 text-xs sm:text-sm font-semibold transition">
+          ✏️ Crear Quiz
+        </button>
+
+        <button onclick="exportStandaloneHTML()" class="px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/35 border border-emerald-400/30 text-emerald-200 text-xs sm:text-sm font-semibold transition" title="Descargar aplicación completa para compartir">
+          💾 Compartir App
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- BANNER DE CLASE ACTIVA -->
+  <div id="active-class-banner" class="hidden bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-slate-900/90 border-b border-indigo-400/30 px-4 py-2.5">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-bold text-xs">● EN VIVO</span>
+        <span id="active-class-banner-text" class="font-medium text-indigo-100"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openRoleModal()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold">
+          Abrir Panel Aula
+        </button>
+        <button onclick="exitClassroomSession()" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 text-xs font-semibold">
+          Salir de Clase
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN MANUAL -->
+  <div id="install-guide-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 shadow-2xl border border-amber-400/30 animate-pop-in space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-amber-300 flex items-center gap-2">
+          <span>📲</span> Instalar BibliaTrivia
+        </h3>
+        <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold">✕</button>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+        Puedes instalar <strong>BibliaTrivia</strong> como una aplicación directa en tu pantalla de inicio o escritorio:
+      </p>
+      <div class="space-y-2.5 text-xs text-slate-300 bg-slate-900/75 p-4 rounded-2xl border border-white/10">
+        <p><strong class="text-indigo-300">💻 En PC (Chrome / Edge):</strong> Haz clic en el menú <strong>⋮</strong> (arriba a la derecha) → <em>Guardar y compartir</em> → <strong>Instalar página como aplicación</strong>.</p>
+        <p><strong class="text-emerald-300">🤖 En Android (Chrome):</strong> Toca el menú <strong>⋮</strong> → <strong>Añadir a pantalla de inicio / Instalar aplicación</strong>.</p>
+        <p><strong class="text-amber-300">🍎 En iPhone / iPad (Safari):</strong> Toca el botón <strong>Compartir</strong> → <strong>Añadir a pantalla de inicio</strong>.</p>
+      </div>
+      <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm">
+        Entendido
+      </button>
+    </div>
+  </div>
+
+  <!-- VENTANA INICIAL DE SELECCIÓN DE ROL: MAESTRO O ALUMNO -->
+  <div id="role-start-modal" class="fixed inset-0 z-50 bg-slate-950/88 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="glass-card w-full max-w-4xl rounded-3xl p-5 sm:p-8 shadow-2xl border border-indigo-400/25 animate-pop-in my-auto">
+      
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-bold mb-2">
+            ✨ Bienvenido a BibliaTrivia
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white">¿Cómo deseas ingresar hoy?</h2>
+          <p class="text-slate-300 text-xs sm:text-sm mt-1">Selecciona tu rol para asignar evaluaciones en vivo o responder una trivia asignada.</p>
+        </div>
+        <button onclick="closeRoleModal()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs sm:text-sm font-semibold transition shrink-0">
+          Explorar Libre ✕
+        </button>
+      </div>
+
+      <!-- Tarjetas de Selección de Rol -->
+      <div id="role-selector-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <button onclick="selectStartRole('teacher')" class="text-left p-5 rounded-2xl bg-gradient-to-br from-indigo-600/30 to-blue-900/40 hover:from-indigo-600/45 hover:to-blue-800/50 border-2 border-indigo-400/40 hover:border-indigo-300 transition group shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-4xl">👨‍🏫</span>
+            <span class="px-2.5 py-1 rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-bold group-hover:bg-indigo-500 group-hover:text-white transition">🔒 Acceso Protegido</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-1">Soy Maestro</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Asigna una historia bíblica, define cantidad de preguntas y dificultad, genera un código de clase y observa las calificaciones en vivo.
+          </p>
+        </button>
+
+        <button onclick="selectStartRole('student')" class="text-left p-5 rounded-2xl bg-gradient-to-br from-emerald-600/30 to-teal-900/40 hover:from-emerald-600/45 hover:to-teal-800/50 border-2 border-emerald-400/40 hover:border-emerald-300 transition group shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-4xl">🧑‍🎓</span>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-500/30 text-emerald-200 text-xs font-bold group-hover:bg-emerald-500 group-hover:text-white transition">Acceso Evaluación</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-1">Soy Alumno</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Ingresa el código de clase proporcionado por tu maestro, escribe tu nombre y realiza tu evaluación bíblica sincronizada.
+          </p>
+        </button>
+      </div>
+
+      <!-- PANTALLA DE CONTRASEÑA PARA MAESTRO -->
+      <div id="role-panel-teacher-auth" class="hidden border-t border-white/15 pt-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg sm:text-xl font-bold text-indigo-300 flex items-center gap-2">
+            <span>🔐</span> Verificación de Seguridad del Maestro
+          </h3>
+          <button onclick="selectStartRole('none')" class="text-xs text-slate-400 hover:text-white underline">← Cambiar rol</button>
+        </div>
+
+        <div id="teacher-setup-pass-box" class="hidden bg-slate-900/75 p-5 rounded-2xl border border-amber-400/30 space-y-4">
+          <p class="text-xs sm:text-sm text-amber-200">
+            🛡️ <strong>Primera vez en modo Maestro:</strong> Crea una contraseña privada para evitar que los alumnos entren al panel docente o modifiquen calificaciones.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Nueva Contraseña (mín. 4 caracteres)</label>
+              <input type="password" id="teacher-new-pass-input" placeholder="••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Confirmar Contraseña</label>
+              <input type="password" id="teacher-confirm-pass-input" placeholder="••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span id="teacher-setup-feedback" class="text-xs text-rose-300 font-semibold"></span>
+            <button onclick="setupTeacherPassword()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-sm shadow-lg">
+              🔒 Guardar Contraseña y Entrar
+            </button>
+          </div>
+        </div>
+
+        <div id="teacher-login-pass-box" class="hidden bg-slate-900/75 p-5 rounded-2xl border border-indigo-400/30 space-y-4">
+          <p class="text-xs sm:text-sm text-slate-300">
+            Ingresa la contraseña de maestro para desbloquear la asignación de evaluaciones y el tablero en vivo.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="password" id="teacher-login-pass-input" placeholder="Contraseña de maestro..." class="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 border border-indigo-400/40 text-white text-sm focus:outline-none focus:border-indigo-300">
+            <button onclick="verifyTeacherPassword()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-sm shadow-lg">
+              🔓 Desbloquear Panel
+            </button>
+          </div>
+          <p id="teacher-login-feedback" class="text-xs text-rose-300 font-semibold"></p>
+        </div>
+      </div>
+
+      <!-- PANEL DEL MAESTRO (DESBLOQUEADO) -->
+      <div id="role-panel-teacher" class="hidden border-t border-white/15 pt-5 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-lg sm:text-xl font-bold text-indigo-300 flex items-center gap-2">
+            <span>👨‍🏫</span> Configuración de Clase y Tablero en Vivo
+          </h3>
+          <div class="flex items-center gap-3">
+            <button onclick="lockTeacherSession()" class="text-xs text-amber-300 hover:underline">🔒 Bloquear Panel</button>
+            <button onclick="selectStartRole('none')" class="text-xs text-slate-400 hover:text-white underline">← Cambiar rol</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/65 p-4 rounded-2xl border border-white/10">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Nombre del Maestro / Clase</label>
+            <input type="text" id="teacher-name-input" placeholder="Ej. Prof. Carlos - Jóvenes" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-indigo-400">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Historia o Cuestionario a Evaluar</label>
+            <select id="teacher-quiz-select" onchange="updateTeacherQuestionLimit()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-indigo-400"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Cantidad de Preguntas</label>
+            <select id="teacher-qcount-select" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-indigo-400"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Dificultad (Tiempo Automático)</label>
+            <select id="teacher-difficulty-select" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-indigo-400">
+              <option value="facil">🟢 Fácil (40 seg/preg.)</option>
+              <option value="media" selected>🟡 Media (25 seg/preg.)</option>
+              <option value="dificil">🔴 Difícil (15 seg/preg.)</option>
+            </select>
+          </div>
+          <div class="md:col-span-2 flex flex-wrap items-center justify-between gap-3 pt-1">
+            <label class="inline-flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="teacher-shuffle-check" checked class="rounded text-indigo-500">
+              <span>Mezclar orden de preguntas por alumno</span>
+            </label>
+            <button onclick="createLiveClassroom()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-sm shadow-lg transition">
+              🚀 Generar Código de Clase
+            </button>
+          </div>
+        </div>
+
+        <div id="teacher-created-box" class="hidden bg-indigo-950/75 border border-indigo-400/40 rounded-2xl p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs text-indigo-300 font-semibold">Código de Clase Activo:</p>
+              <div class="flex items-center gap-3 mt-1">
+                <span id="teacher-code-display" class="text-2xl sm:text-3xl font-extrabold tracking-widest text-amber-300 font-display">BIB-000</span>
+                <button onclick="copyClassCode()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold text-white">📋 Copiar Código</button>
+                <button onclick="copyClassInviteLink()" class="px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/40 text-xs font-bold text-emerald-200">🔗 Copiar Enlace</button>
+              </div>
+            </div>
+            <button onclick="exportGradesCSV()" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 border border-amber-400/40 text-amber-200 text-xs font-bold">
+              📥 Exportar Notas (.CSV)
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/65 rounded-2xl p-4 border border-white/10">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-sm font-bold text-white">📊 Resultados de Alumnos en Tiempo Real</h4>
+            <button onclick="clearLiveGrades()" class="text-xs text-rose-300 hover:underline">Limpiar tablero</button>
+          </div>
+          <div class="overflow-x-auto max-h-48">
+            <table class="w-full text-left text-xs">
+              <thead class="text-slate-400 border-b border-white/10">
+                <tr>
+                  <th class="pb-2">Alumno</th>
+                  <th class="pb-2">Grupo</th>
+                  <th class="pb-2">Evaluación</th>
+                  <th class="pb-2">Aciertos</th>
+                  <th class="pb-2">Nota</th>
+                  <th class="pb-2">Hora</th>
+                </tr>
+              </thead>
+              <tbody id="live-grades-tbody" class="divide-y divide-white/5 text-slate-200">
+                <tr><td colspan="6" class="py-4 text-center text-slate-400">Aún no hay alumnos registrados en esta sesión.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL DEL ALUMNO -->
+      <div id="role-panel-student" class="hidden border-t border-white/15 pt-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg sm:text-xl font-bold text-emerald-300 flex items-center gap-2">
+            <span>🧑‍🎓</span> Ingreso del Alumno a Evaluación
+          </h3>
+          <button onclick="selectStartRole('none')" class="text-xs text-slate-400 hover:text-white underline">← Cambiar rol</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/65 p-4 rounded-2xl border border-white/10">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Código de Clase *</label>
+            <input type="text" id="student-code-input" placeholder="Ej. BIB-482" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-emerald-400/40 text-amber-300 font-bold uppercase tracking-wider text-sm focus:outline-none focus:border-emerald-400">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Tu Nombre Completo *</label>
+            <input type="text" id="student-name-input" placeholder="Ej. María José López" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-emerald-400">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Grupo / Grado (Opcional)</label>
+            <input type="text" id="student-group-input" placeholder="Ej. Grupo B" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-emerald-400">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p id="student-join-feedback" class="text-xs text-slate-400">Pide el código de clase a tu maestro y presiona Enter o el botón para iniciar.</p>
+          <button onclick="joinClassroomAsStudent()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 transition">
+            ▶ Comenzar Evaluación Asignada
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="max-w-6xl mx-auto px-4 pt-6">
+
+    <!-- VISTA 1: LISTADO DE HISTORIAS Y EVALUACIONES -->
+    <section id="view-lobby" class="space-y-5">
+      <div class="glass-card rounded-3xl p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white">Catálogo de Evaluaciones Bíblicas</h2>
+          <p class="text-slate-300 text-xs sm:text-sm mt-1">Selecciona la historia, elige cuántas preguntas deseas responder y la dificultad.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="search-quiz-input" oninput="renderLobby()" placeholder="🔍 Buscar historia o cita..." class="px-3.5 py-2 rounded-xl bg-slate-900/80 border border-white/15 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-400">
+          <select id="filter-category-select" onchange="renderLobby()" class="px-3 py-2 rounded-xl bg-slate-900/80 border border-white/15 text-sm text-white focus:outline-none focus:border-indigo-400">
+            <option value="all">Todas las categorías</option>
+            <option value="Antiguo Testamento">Antiguo Testamento</option>
+            <option value="Nuevo Testamento">Nuevo Testamento</option>
+            <option value="Personalizado">Mis Cuestionarios</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="quizzes-list-container" class="space-y-3"></div>
+    </section>
+
+    <!-- VISTA 2: CREADOR DE CUESTIONARIOS PROPIOS -->
+    <section id="view-creator" class="hidden space-y-5">
+      <div class="glass-card rounded-3xl p-5 sm:p-7">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h2 class="text-2xl font-bold text-white">Crear Cuestionario Personalizado</h2>
+            <p class="text-xs sm:text-sm text-slate-300">Agrega tus propias preguntas bíblicas para usarlas en clase o compartirlas.</p>
+          </div>
+          <button onclick="switchMainView('lobby')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold">← Volver al listado</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Título del Quiz *</label>
+            <input type="text" id="new-quiz-title" placeholder="Ej. Reyes de Israel" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-white/15 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Cita Bíblica / Referencia</label>
+            <input type="text" id="new-quiz-verse" placeholder="Ej. 1 y 2 Reyes" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-white/15 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Categoría</label>
+            <select id="new-quiz-category" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-white/15 text-sm text-white">
+              <option value="Antiguo Testamento">Antiguo Testamento</option>
+              <option value="Nuevo Testamento">Nuevo Testamento</option>
+              <option value="Personalizado" selected>Personalizado</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="editor-questions-container" class="space-y-4 mb-5"></div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <button onclick="addEditorQuestionBlock()" class="px-4 py-2.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-400/40 text-indigo-200 text-sm font-bold">
+            + Agregar Otra Pregunta
+          </button>
+          <button onclick="saveCustomQuiz()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-sm font-bold shadow-lg">
+            💾 Guardar Cuestionario
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 3: PANTALLA DE JUEGO / EVALUACIÓN -->
+    <section id="view-game" class="hidden max-w-4xl mx-auto space-y-5">
+      <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span id="game-quiz-title" class="text-sm sm:text-base font-bold text-amber-300 block">Historia</span>
+          <span id="game-progress-text" class="text-xs text-slate-300">Pregunta 1 de 10</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <span class="block text-[10px] uppercase tracking-wider text-slate-400">Puntos</span>
+            <span id="game-score-display" class="text-lg font-extrabold text-emerald-400">0</span>
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-amber-400/40 text-center">
+            <span class="block text-[10px] uppercase tracking-wider text-slate-400">Tiempo</span>
+            <span id="game-timer-display" class="text-lg font-extrabold text-amber-300 font-mono">00:00</span>
+          </div>
+          <button onclick="abortGame()" class="px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 text-xs font-bold">
+            Salir
+          </button>
+        </div>
+      </div>
+
+      <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+        <div id="game-progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-indigo-500 transition-all duration-300" style="width: 10%;"></div>
+      </div>
+
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center shadow-xl">
+        <span id="game-verse-badge" class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold mb-3">
+          Cita Bíblica
+        </span>
+        <h3 id="game-question-text" class="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug">
+          ¿Pregunta?
+        </h3>
+      </div>
+
+      <div id="game-answers-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- VISTA 4: RESULTADOS Y BOLETA DE CALIFICACIÓN -->
+    <section id="view-results" class="hidden max-w-3xl mx-auto">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center space-y-5 animate-pop-in">
+        <div id="results-emoji" class="text-6xl">🏆</div>
+        <div>
+          <h2 id="results-title" class="text-3xl font-bold text-white">¡Evaluación Completada!</h2>
+          <p id="results-subtitle" class="text-sm text-slate-300 mt-1">Resumen de tu desempeño</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto">
+          <div class="bg-slate-900/75 p-3.5 rounded-2xl border border-white/10">
+            <span class="block text-xs text-slate-400">Aciertos</span>
+            <span id="res-correct" class="text-2xl font-extrabold text-emerald-400">0/0</span>
+          </div>
+          <div class="bg-slate-900/75 p-3.5 rounded-2xl border border-white/10">
+            <span class="block text-xs text-slate-400">Nota (0 - 10)</span>
+            <span id="res-grade" class="text-2xl font-extrabold text-amber-300">10.0</span>
+          </div>
+          <div class="bg-slate-900/75 p-3.5 rounded-2xl border border-white/10">
+            <span class="block text-xs text-slate-400">Tiempo</span>
+            <span id="res-time" class="text-2xl font-extrabold text-indigo-300">0s</span>
+          </div>
+        </div>
+
+        <div id="student-receipt-box" class="hidden bg-emerald-950/60 border border-emerald-400/40 rounded-2xl p-4 text-left space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">✅ Calificación Sincronizada con el Maestro</span>
+            <span id="receipt-code-tag" class="text-xs font-mono bg-black/30 px-2 py-0.5 rounded text-amber-300"></span>
+          </div>
+          <p id="receipt-summary-text" class="text-xs sm:text-sm text-slate-200"></p>
+          <button onclick="shareStudentResultWhatsApp()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition">
+            📲 Enviar Comprobante por WhatsApp al Maestro
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button onclick="retryCurrentQuiz()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm">
+            🔄 Volver a Intentar
+          </button>
+          <button onclick="switchMainView('lobby')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm">
+            📚 Ir al Listado
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE COPYRIGHT -->
+    <footer class="mt-10 text-center text-xs text-slate-400 space-y-2">
+      <div id="copyright-form-box" class="inline-flex flex-wrap items-center justify-center gap-2 bg-slate-900/70 px-3.5 py-2 rounded-xl border border-white/10">
+        <span>© Autor:</span>
+        <input type="text" id="copyright-author-input" placeholder="Tu nombre..." class="px-2.5 py-1 rounded-lg bg-slate-800 border border-white/15 text-white text-xs focus:outline-none">
+        <button onclick="savePermanentCopyright()" class="px-3 py-1 rounded-lg bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 font-bold">
+          Guardar Copyright
+        </button>
+      </div>
+      <p id="copyright-locked-display" class="hidden font-semibold text-slate-300"></p>
+    </footer>
+
+  </main>
+
+  <!-- POP-UP MODAL ANIMADO PARA RESPUESTA CORRECTA / INCORRECTA -->
+  <div id="feedback-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="feedback-modal-card" class="glass-card max-w-md w-full rounded-3xl p-6 text-center shadow-2xl border-2 animate-pop-in">
+      <div id="feedback-icon" class="text-6xl mb-3">🎉</div>
+      <h3 id="feedback-heading" class="text-2xl font-bold text-white mb-1">¡Correcto!</h3>
+      <p id="feedback-detail" class="text-sm text-slate-200 mb-5">Excelente respuesta.</p>
+      <button onclick="nextQuestion()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-base shadow-lg">
+        Continuar (Enter) ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- BARRA INFERIOR DE COMUNIDAD Y REGISTRO (MINIMIZADA POR DEFECTO) -->
+  <div class="fixed bottom-0 inset-x-0 z-40 bg-slate-950/92 backdrop-blur-md border-t border-white/10">
+    <div id="community-drawer" class="hidden max-w-5xl mx-auto px-4 py-4 border-b border-white/10 max-h-72 overflow-y-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-white/10 space-y-2.5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-300">💬 Comentarios y Libro de Visitas</h4>
+          <div class="flex gap-2">
+            <input type="text" id="comment-author-input" placeholder="Tu nombre" class="w-1/3 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-white/10 text-xs text-white">
+            <input type="text" id="comment-text-input" placeholder="Escribe un comentario y pulsa Enter..." class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-white/10 text-xs text-white">
+            <button onclick="postCommunityComment()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">Enviar</button>
+          </div>
+          <div id="comments-list-box" class="space-y-1.5 max-h-36 overflow-y-auto text-xs"></div>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-300">📊 Registro de Visitas y Me Gusta</h4>
+            <input type="text" id="visitor-tag-input" onchange="updateVisitorName(this.value)" placeholder="Identificarme..." class="px-2 py-1 rounded bg-slate-800 border border-white/10 text-[11px] text-white w-32">
+          </div>
+          <div id="activity-log-box" class="space-y-1 max-h-36 overflow-y-auto text-[11px] text-slate-300"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-3">
+        <span class="text-slate-300 font-semibold">👁️ Visitas: <strong id="stat-visits-count" class="text-white">1</strong></span>
+        <button onclick="toggleLikeApp()" id="btn-like-app" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold transition flex items-center gap-1">
+          <span id="like-heart-icon">🤍</span> <span>Me gusta</span> (<strong id="stat-likes-count">0</strong>)
+        </button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleCommunityDrawer()" id="btn-toggle-drawer" class="px-3 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/35 text-indigo-200 font-semibold">
+          💬 Comentarios y Registro ▲
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // MOTOR DE ARPA CELESTIAL ORQUESTAL (10 ALABANZAS + RESPALDO OFFLINE)
+    // =========================================================================
+    let harpAudioCtx = null;
+    let celestialHarpInstrument = null;
+    let isHarpPlaying = false;
+    let harpTimer = null;
+    let harpStep = 0;
+
+    // Frecuencias de respaldo por si no hay conexión a internet para descargar muestras de estudio
+    const NOTE_FREQ_FALLBACK = {
+      C2: 65.41, D2: 73.42, E2: 82.41, F2: 87.31, 'F#2': 92.50, G2: 98.00, 'G#2': 103.83, A2: 110.00, Bb2: 116.54, B2: 123.47,
+      C3: 130.81, 'C#3': 138.59, D3: 146.83, Eb3: 155.56, E3: 164.81, F3: 174.61, 'F#3': 185.00, G3: 196.00, 'G#3': 207.65, A3: 220.00, Bb3: 233.08, B3: 246.94,
+      C4: 261.63, 'C#4': 277.18, D4: 293.66, Eb4: 311.13, E4: 329.63, F4: 349.23, 'F#4': 369.99, G4: 392.00, 'G#4': 415.30, A4: 440.00, Bb4: 466.16, B4: 493.88,
+      C5: 523.25, 'C#5': 554.37, D5: 587.33, Eb5: 622.25, E5: 659.25, F5: 698.46, 'F#5': 739.99, G5: 783.99
+    };
+
+    const HARP_PRAISE_SONGBOOK = {
+      // 1. Sumérgeme (Jesús Adrián Romero) - Arpegios dulces en Sol Mayor
+      sumergeme: [
+        { chord: ['G2', 'D3', 'B3'], melody: ['B3', 'D4', 'G4'], dur: 1.50 },
+        { chord: ['G3', 'B3', 'D4'], melody: ['F#4', 'E4', 'D4'], dur: 1.45 },
+        { chord: ['E2', 'B2', 'G3'], melody: ['B3', 'E4', 'G4'], dur: 1.50 },
+        { chord: ['E3', 'G3', 'B3'], melody: ['F#4', 'E4', 'D4'], dur: 1.45 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'D4', 'C4'], dur: 1.50 },
+        { chord: ['A2', 'E3', 'C4'], melody: ['B3', 'C4', 'D4'], dur: 1.45 },
+        { chord: ['D3', 'A3', 'F#4'], melody: ['A4', 'G4', 'F#4'], dur: 1.55 },
+        { chord: ['G2', 'D3', 'B3', 'D4'], melody: ['G4'], dur: 1.95 }
+      ],
+      // 2. Cuán Grande Es Dios (Chris Tomlin / Hillsong)
+      cuangrande: [
+        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'E4'], dur: 1.40 },
+        { chord: ['C3', 'G3', 'C4'], melody: ['C4', 'D4', 'E4'], dur: 1.40 },
+        { chord: ['A2', 'E3', 'C4'], melody: ['E4', 'C4'], dur: 1.40 },
+        { chord: ['A2', 'E3', 'A3'], melody: ['A3', 'B3', 'C4'], dur: 1.40 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['F4', 'E4', 'D4'], dur: 1.45 },
+        { chord: ['F3', 'A3', 'C4'], melody: ['C4', 'D4', 'E4'], dur: 1.45 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'C4', 'B3'], dur: 1.50 },
+        { chord: ['C3', 'G3', 'E4', 'G4'], melody: ['C4'], dur: 1.95 }
+      ],
+      // 3. In Christ Alone (Keith Getty & Stuart Townend)
+      inchristalone: [
+        { chord: ['F2', 'C3', 'A3'], melody: ['C4', 'F4'], dur: 1.35 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'A4', 'G4'], dur: 1.40 },
+        { chord: ['Bb2', 'F3', 'D4'], melody: ['F4', 'D4'], dur: 1.35 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['C4'], dur: 1.45 },
+        { chord: ['D3', 'A3', 'F4'], melody: ['F4', 'G4', 'A4'], dur: 1.40 },
+        { chord: ['Bb2', 'F3', 'D4'], melody: ['Bb4', 'A4', 'G4'], dur: 1.40 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'F4', 'E4'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3', 'C4'], melody: ['F4'], dur: 1.95 }
+      ],
+      // 4. 10,000 Reasons / Diez Mil Razones (Matt Redman)
+      tenthousand: [
+        { chord: ['C3', 'G3', 'E4'], melody: ['B4', 'A4', 'G4'], dur: 1.35 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'G4'], dur: 1.40 },
+        { chord: ['D3', 'A3', 'F#4'], melody: ['A4', 'G4', 'F#4'], dur: 1.35 },
+        { chord: ['E2', 'B2', 'G3'], melody: ['E4', 'D4'], dur: 1.45 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'F#4', 'G4'], dur: 1.35 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['B4', 'A4', 'G4'], dur: 1.40 },
+        { chord: ['D3', 'A3', 'F#4'], melody: ['A4', 'F#4'], dur: 1.40 },
+        { chord: ['G2', 'D3', 'B3', 'D4'], melody: ['G4'], dur: 1.95 }
+      ],
+      // 5. La Niña de Tus Ojos (Daniel Calveti)
+      ninadetusojo: [
+        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'G4', 'G4'], dur: 1.40 },
+        { chord: ['C3', 'G3', 'C4'], melody: ['A4', 'G4', 'E4'], dur: 1.40 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'G4', 'G4'], dur: 1.40 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['A4', 'G4', 'D4'], dur: 1.40 },
+        { chord: ['A2', 'E3', 'C4'], melody: ['C4', 'E4', 'E4'], dur: 1.40 },
+        { chord: ['A2', 'E3', 'C4'], melody: ['F4', 'E4', 'C4'], dur: 1.40 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['C4', 'D4', 'E4', 'D4'], dur: 1.50 },
+        { chord: ['C3', 'G3', 'E4', 'G4'], melody: ['C4'], dur: 1.95 }
+      ],
+      // 6. How Deep The Father's Love For Us (Stuart Townend)
+      howdeep: [
+        { chord: ['F2', 'C3', 'A3'], melody: ['F4', 'G4', 'A4'], dur: 1.45 },
+        { chord: ['Bb2', 'F3', 'D4'], melody: ['Bb4', 'A4', 'G4'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['F4', 'D4', 'C4'], dur: 1.50 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['G4'], dur: 1.55 },
+        { chord: ['D3', 'A3', 'F4'], melody: ['F4', 'G4', 'A4'], dur: 1.45 },
+        { chord: ['Bb2', 'F3', 'D4'], melody: ['D5', 'C5', 'Bb4'], dur: 1.50 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['A4', 'G4'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3', 'C4'], melody: ['F4'], dur: 2.00 }
+      ],
+      // 7. Quiero Levantar a Ti Mis Manos (Danilo Montero)
+      quierolevantar: [
+        { chord: ['G2', 'D3', 'B3'], melody: ['D4', 'G4', 'A4'], dur: 1.40 },
+        { chord: ['B2', 'F#3', 'D4'], melody: ['B4', 'A4', 'G4'], dur: 1.40 },
+        { chord: ['E2', 'B2', 'G3'], melody: ['G4', 'F#4', 'E4'], dur: 1.45 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'D4', 'C4'], dur: 1.40 },
+        { chord: ['A2', 'E3', 'C4'], melody: ['C4', 'E4', 'G4'], dur: 1.40 },
+        { chord: ['D3', 'A3', 'F#4'], melody: ['F#4', 'E4', 'D4'], dur: 1.45 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['E4', 'F#4', 'A4'], dur: 1.45 },
+        { chord: ['G2', 'D3', 'B3', 'D4'], melody: ['G4'], dur: 1.95 }
+      ],
+      // 8. What A Friend We Have In Jesus / ¡Oh, Qué Amigo Nos Es En Cristo!
+      whatafriend: [
+        { chord: ['F2', 'C3', 'A3'], melody: ['C5', 'C5', 'D5', 'C5'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['A4', 'F4', 'F4', 'D4'], dur: 1.45 },
+        { chord: ['Bb2', 'F3', 'D4'], melody: ['C4', 'F4', 'A4', 'C5'], dur: 1.45 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['A4', 'G4'], dur: 1.55 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['C5', 'C5', 'D5', 'C5'], dur: 1.45 },
+        { chord: ['Bb2', 'F3', 'D4'], melody: ['A4', 'F4', 'D5'], dur: 1.45 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['C5', 'A4', 'G4'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3', 'C4'], melody: ['F4'], dur: 1.95 }
+      ],
+      // 9. Te Doy Gloria (Hillsong En Español)
+      tedoygloria: [
+        { chord: ['C3', 'G3', 'E4'], melody: ['G4', 'G4', 'A4', 'G4'], dur: 1.45 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['G4', 'E4', 'D4'], dur: 1.45 },
+        { chord: ['A2', 'E3', 'C4'], melody: ['E4', 'E4', 'F4', 'E4'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['D4', 'C4'], dur: 1.50 },
+        { chord: ['C3', 'G3', 'E4'], melody: ['C5', 'B4', 'G4'], dur: 1.45 },
+        { chord: ['G2', 'D3', 'B3'], melody: ['A4', 'G4', 'D4'], dur: 1.45 },
+        { chord: ['F2', 'C3', 'A3'], melody: ['E4', 'D4', 'C4'], dur: 1.50 },
+        { chord: ['C3', 'G3', 'E4', 'G4'], melody: ['C4'], dur: 1.95 }
+      ],
+      // 10. Way Maker / Hacedor de Camino (Sinach)
+      waymaker: [
+        { chord: ['A2', 'E3', 'C#4'], melody: ['G#4', 'A4', 'B4'], dur: 1.50 },
+        { chord: ['A2', 'E3', 'C#4'], melody: ['A4', 'G#4', 'E4'], dur: 1.50 },
+        { chord: ['E2', 'B2', 'G#3'], melody: ['G#4', 'A4', 'B4'], dur: 1.50 },
+        { chord: ['E2', 'B2', 'G#3'], melody: ['G#4', 'F#4', 'E4'], dur: 1.50 },
+        { chord: ['B2', 'F#3', 'Eb4'], melody: ['F#4', 'G#4', 'F#4'], dur: 1.50 },
+        { chord: ['B2', 'F#3', 'Eb4'], melody: ['E4', 'Eb4'], dur: 1.50 },
+        { chord: ['C#3', 'G#3', 'E4'], melody: ['E4', 'F#4', 'G#4'], dur: 1.50 },
+        { chord: ['C#3', 'G#3', 'E4', 'G#4'], melody: ['E4'], dur: 1.95 }
+      ]
+    };
+
+    function playFallbackPluckedHarpNote(noteName, duration, isMelody) {
+      if (!harpAudioCtx) return;
+      const freq = NOTE_FREQ_FALLBACK[noteName] || 261.63;
+      const now = harpAudioCtx.currentTime;
+      const osc = harpAudioCtx.createOscillator();
+      const gain = harpAudioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(isMelody ? 0.065 : 0.035, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 1.9);
+      osc.connect(gain);
+      gain.connect(harpAudioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration * 2.0);
+    }
+
+    function playHarpSingleNote(noteName, duration, isMelody = false) {
+      if (!harpAudioCtx) return;
+      if (celestialHarpInstrument) {
+        celestialHarpInstrument.play(noteName, harpAudioCtx.currentTime, {
+          duration: duration * 1.75,
+          gain: isMelody ? 0.85 : 0.42
+        });
+      } else {
+        playFallbackPluckedHarpNote(noteName, duration, isMelody);
+      }
+    }
+
+    function scheduleNextHarpStep() {
+      if (!isHarpPlaying) return;
+      const selectedKey = document.getElementById('praise-melody-select')?.value || 'sumergeme';
+      const song = HARP_PRAISE_SONGBOOK[selectedKey] || HARP_PRAISE_SONGBOOK.sumergeme;
+      const stepData = song[harpStep % song.length];
+
+      // 1. Arpegio envolvente de Arpa Celestial en los bajos/acordes
+      stepData.chord.forEach((noteName, idx) => {
+        setTimeout(() => {
+          if (isHarpPlaying) playHarpSingleNote(noteName, stepData.dur * 1.35, false);
+        }, idx * 95);
+      });
+
+      // 2. Melodía principal dulce en las cuerdas agudas del arpa
+      const melStepDelay = (stepData.dur * 1000) / Math.max(1, stepData.melody.length);
+      stepData.melody.forEach((noteName, idx) => {
+        setTimeout(() => {
+          if (isHarpPlaying) playHarpSingleNote(noteName, stepData.dur * 1.15, true);
+        }, idx * melStepDelay);
+      });
+
+      harpStep++;
+      harpTimer = setTimeout(scheduleNextHarpStep, stepData.dur * 1000);
+    }
+
+    function changePraiseHarpMelody() {
+      harpStep = 0;
+      if (isHarpPlaying) {
+        clearTimeout(harpTimer);
+        scheduleNextHarpStep();
+      } else {
+        togglePraiseHarp();
+      }
+    }
+
+    async function togglePraiseHarp() {
+      const btn = document.getElementById('btn-praise-harp');
+      const icon = document.getElementById('harp-icon');
+      const label = document.getElementById('harp-label');
+
+      if (!isHarpPlaying) {
+        if (!harpAudioCtx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          harpAudioCtx = new AudioCtx();
+        }
+        if (harpAudioCtx.state === 'suspended') {
+          await harpAudioCtx.resume();
+        }
+
+        isHarpPlaying = true;
+        btn.classList.remove('bg-white/5', 'text-slate-200');
+        btn.classList.add('bg-amber-500/30', 'text-amber-200');
+
+        if (!celestialHarpInstrument && typeof Soundfont !== 'undefined') {
+          label.textContent = '...';
+          try {
+            celestialHarpInstrument = await Soundfont.instrument(harpAudioCtx, 'orchestral_harp', {
+              soundfont: 'MusyngKite'
+            });
+          } catch (e) {
+            celestialHarpInstrument = null; // Usa respaldo offline automático si no hay internet
+          }
+        }
+
+        if (!isHarpPlaying) return; // Por si el usuario canceló mientras cargaba
+        icon.textContent = '🎶';
+        label.textContent = 'ON';
+        harpStep = 0;
+        scheduleNextHarpStep();
+      } else {
+        isHarpPlaying = false;
+        clearTimeout(harpTimer);
+        if (celestialHarpInstrument && celestialHarpInstrument.stop) {
+          celestialHarpInstrument.stop();
+        }
+
+        btn.classList.remove('bg-amber-500/30', 'text-amber-200');
+        btn.classList.add('bg-white/5', 'text-slate-200');
+        icon.textContent = '🪕';
+        label.textContent = 'OFF';
+      }
+    }
+
+    // =========================================================================
+    // INSTALACIÓN PWA (BOTÓN DE INSTALACIÓN DE APLICACIÓN)
+    // =========================================================================
+    let deferredInstallPrompt = null;
+
+    function initPWAInstallSupport() {
+      const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#1e1b4b"/><text x="50%" y="54%" font-size="280" text-anchor="middle" dominant-baseline="middle">📖</text></svg>`;
+      const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+
+      const manifestObj = {
+        name: 'BibliaTrivia - Creador y Juego Bíblico',
+        short_name: 'BibliaTrivia',
+        description: 'Aplicación educativa e interactiva de trivias bíblicas para maestros, alumnos y familias.',
+        start_url: window.location.href,
+        display: 'standalone',
+        background_color: '#0f172a',
+        theme_color: '#1e1b4b',
+        icons: [
+          { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      const linkEl = document.createElement('link');
+      linkEl.rel = 'manifest';
+      linkEl.href = manifestURL;
+      document.head.appendChild(linkEl);
+
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+        const swCode = `
+          self.addEventListener('install', (e) => self.skipWaiting());
+          self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        const btn = document.getElementById('btn-install-app');
+        if (btn) btn.classList.remove('hidden');
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        const label = document.getElementById('btn-install-label');
+        if (label) label.textContent = 'App Instalada ✓';
+      });
+    }
+
+    async function triggerAppInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          deferredInstallPrompt = null;
+        }
+      } else {
+        document.getElementById('install-guide-modal')?.classList.remove('hidden');
+      }
+    }
+
+    // =========================================================================
+    // BIBLIOTECA DE 34 HISTORIAS BÍBLICAS PRE-GENERADAS (AT Y NT)
+    // =========================================================================
+    const BIBLICAL_STORIES_LIBRARY = [
+      {
+        id: 'creacion',
+        title: 'La Creación del Mundo',
+        verse: 'Génesis 1 - 2',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué creó Dios en el primer día?', 'La luz, separándola de las tinieblas', 'El sol, la luna y las estrellas', 'Los animales marinos', 'Los árboles frutales'],
+          ['¿Qué creó Dios en el segundo día?', 'La expansión (los cielos) separando las aguas', 'La tierra seca y los mares', 'Las aves del cielo', 'Al hombre y a la mujer'],
+          ['¿En qué día creó Dios el sol, la luna y las estrellas?', 'En el cuarto día', 'En el primer día', 'En el tercer día', 'En el sexto día'],
+          ['¿De qué formó Dios al primer hombre, Adán?', 'Del polvo de la tierra', 'De una roca del Edén', 'De las aguas del río', 'De la luz del alba'],
+          ['¿De qué parte de Adán formó Dios a Eva?', 'De una de sus costillas', 'De su mano derecha', 'De su frente', 'Del polvo junto a él'],
+          ['¿Qué hizo Dios en el séptimo día?', 'Reposó de toda la obra que había hecho', 'Creó los ángeles', 'Plantó el huerto de Edén', 'Puso nombre a los animales'],
+          ['¿De qué árbol prohibió Dios comer en el huerto de Edén?', 'Del árbol de la ciencia del bien y del mal', 'Del árbol de la vida', 'De la higuera del centro', 'Del olivo silvestre'],
+          ['¿Quién recibió la tarea de poner nombre a todos los animales?', 'Adán', 'Eva', 'Noé', 'Enoc']
+        ]
+      },
+      {
+        id: 'arca-noe',
+        title: 'Noé y el Gran Diluvio',
+        verse: 'Génesis 6 - 9',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿De qué madera mandó Dios a Noé construir el arca?', 'Madera de gofer', 'Madera de cedro del Líbano', 'Madera de acacia', 'Madera de roble'],
+          ['¿Cuántos días y noches llovió sobre la tierra durante el diluvio?', '40 días y 40 noches', '7 días y 7 noches', '150 días y 150 noches', '12 días y 12 noches'],
+          ['¿Qué aves envió Noé desde el arca para saber si habían bajado las aguas?', 'Un cuervo y luego una paloma', 'Un águila y un gorrión', 'Dos tórtolas blancas', 'Una golondrina y un halcón'],
+          ['¿Qué trajo la paloma en su pico la segunda vez que Noé la envió?', 'Una hoja verde de olivo', 'Una espiga de trigo', 'Una rama de almendro', 'Una flor del campo'],
+          ['¿Sobre qué montes reposó el arca cuando bajaron las aguas?', 'Los montes de Ararat', 'El monte Sinaí', 'El monte Carmelo', 'El monte Hermón'],
+          ['¿Qué señal puso Dios en las nubes como pacto de no volver a destruir la tierra con diluvio?', 'El arco iris', 'Una estrella brillante', 'Una columna de fuego', 'Una nube blanca'],
+          ['¿Cuántas personas se salvaron dentro del arca de Noé?', 'Ocho personas', 'Cuatro personas', 'Doce personas', 'Seis personas']
+        ]
+      },
+      {
+        id: 'abraham-isaac',
+        title: 'La Fe de Abraham e Isaac',
+        verse: 'Génesis 12 - 22',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿De qué tierra salió Abraham por mandato de Dios?', 'De Ur de los caldeos / Harán', 'De Egipto', 'De Babilonia', 'De Nínive'],
+          ['¿Cómo se llamaba la esposa de Abraham?', 'Sara', 'Rebeca', 'Raquel', 'Lea'],
+          ['¿Qué edad tenía Abraham cuando nació su hijo Isaac?', '100 años', '75 años', '86 años', '120 años'],
+          ['¿En qué monte pidió Dios a Abraham que ofreciera a Isaac?', 'En la tierra de Moriah', 'En el monte Nebo', 'En el monte Tabor', 'En el monte Gilboa'],
+          ['¿Qué proveyó Dios en un zarzal para sustituir a Isaac en el sacrificio?', 'Un carnero trabado por sus cuernos', 'Una paloma blanca', 'Un becerro gordo', 'Un cordero recién nacido'],
+          ['¿Qué significa el nombre "Isaac"?', 'Risa', 'Príncipe', 'Padre de multitudes', 'Escuchado por Dios']
+        ]
+      },
+      {
+        id: 'jose-egipto',
+        title: 'José el Soñador en Egipto',
+        verse: 'Génesis 37 - 45',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué regalo especial le hizo Jacob a su hijo José?', 'Una túnica de diversos colores', 'Un anillo de oro', 'Un cayado de cedro', 'Un caballo blanco'],
+          ['¿Por cuántas piezas de plata fue vendido José a los ismaelitas?', '20 piezas de plata', '30 piezas de plata', '10 piezas de plata', '50 piezas de plata'],
+          ['¿Qué significaban las siete vacas gordas y siete flacas del sueño de Faraón?', '7 años de abundancia y 7 años de hambre', '7 victorias y 7 derrotas', '7 reyes sabios y 7 necios', '7 tribus y 7 ciudades'],
+          ['¿Qué cargo recibió José en Egipto tras interpretar los sueños de Faraón?', 'Gobernador de todo Egipto (segundo después de Faraón)', 'Sumo sacerdote de Heliópolis', 'Capitán de la guardia', 'Escriba real'],
+          ['¿En el costal de qué hermano mandó José esconder su copa de plata?', 'En el de Benjamín', 'En el de Rubén', 'En el de Judá', 'En el de Simeón'],
+          ['¿Cuántos hermanos tenía José en total?', '11 hermanos', '12 hermanos', '10 hermanos', '7 hermanos']
+        ]
+      },
+      {
+        id: 'moises-exodo',
+        title: 'Moisés y la Liberación de Egipto',
+        verse: 'Éxodo 2 - 14',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿En qué río fue puesto Moisés dentro de una arquilla de juncos cuando era bebé?', 'El río Nilo', 'El río Jordán', 'El río Éufrates', 'El río Tigris'],
+          ['¿Cómo se le apareció Dios a Moisés en el monte Horeb?', 'En una llama de fuego en medio de una zarza que no se consumía', 'En un torbellino de viento', 'En un sueño nocturno', 'En forma de águila'],
+          ['¿Cuántas plagas envió Dios sobre Egipto antes de que Faraón dejara salir al pueblo?', 'Diez plagas', 'Siete plagas', 'Doce plagas', 'Nueve plagas'],
+          ['¿Cuál fue la décima y última plaga sobre Egipto?', 'La muerte de los primogénitos', 'Las tinieblas por tres días', 'La plaga de langostas', 'El granizo con fuego'],
+          ['¿Qué mar dividió Dios por medio de la vara de Moisés para que Israel cruzara en seco?', 'El Mar Rojo', 'El Mar Muerto', 'El Mar de Galilea', 'El Mar Mediterráneo'],
+          ['¿Cómo guiaba Dios a Israel de día y de noche en el desierto?', 'Columna de nube de día y columna de fuego de noche', 'Una estrella brillante', 'El sonido de trompetas', 'Un ángel visible']
+        ]
+      },
+      {
+        id: 'diez-mandamientos',
+        title: 'Los Diez Mandamientos y el Tabernáculo',
+        verse: 'Éxodo 19 - 32',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿En qué monte entregó Dios las tablas de la ley a Moisés?', 'En el monte Sinaí', 'En el monte de los Olivos', 'En el monte Sion', 'En el monte Ebal'],
+          ['¿Qué ídolo fabricó Aarón mientras Moisés estaba en el monte?', 'Un becerro de oro', 'Una serpiente de bronce', 'Una estatua de plata', 'Un altar de piedra'],
+          ['¿Qué objetos se guardaban dentro del Arca del Pacto?', 'Las tablas de la ley, una vasija con maná y la vara de Aarón', 'La espada de Josué y el manto de Moisés', 'Los rollos de Génesis y Éxodo', 'Incienso y aceite santo'],
+          ['¿Con qué alimentó Dios al pueblo de Israel cada mañana en el desierto?', 'Con el maná', 'Con pan de cebada', 'Con higos secos', 'Con miel silvestre']
+        ]
+      },
+      {
+        id: 'josue-jerico',
+        title: 'Josué y la Caída de Jericó',
+        verse: 'Josué 1 - 6',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Quién escondió a los dos espías israelitas en Jericó?', 'Rahab', 'Débora', 'Rut', 'Ana'],
+          ['¿Qué señal puso Rahab en su ventana para salvar a su familia?', 'Un cordón de grana (rojo)', 'Una bandera blanca', 'Una lámpara encendida', 'Una rama de palma'],
+          ['¿Cuántos días rodearon los israelitas la ciudad de Jericó?', 'Siete días (una vez por seis días y siete veces el séptimo)', 'Tres días', 'Cuarenta días', 'Doce días'],
+          ['¿Qué hicieron los sacerdotes y el pueblo el séptimo día para que cayeran los muros?', 'Tocaron las bocinas y todo el pueblo gritó a gran voz', 'Cavar túneles bajo el muro', 'Lanzar flechas encendidas', 'Golpear las puertas con arietes']
+        ]
+      },
+      {
+        id: 'gedeon',
+        title: 'Gedeón y los 300 Valientes',
+        verse: 'Jueces 6 - 7',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué señal pidió Gedeón con un vellón de lana?', 'Que el vellón estuviera mojado de rocío y la tierra seca, y luego al revés', 'Que el vellón ardiera sin quemarse', 'Que el vellón cambiara de color', 'Que el viento lo elevara'],
+          ['¿Con cuántos hombres derrotó Gedeón al ejército madianita?', 'Con 300 hombres', 'Con 10,000 hombres', 'Con 1,000 hombres', 'Con 32,000 hombres'],
+          ['¿Qué armas llevaron los 300 hombres de Gedeón al campamento enemigo?', 'Trompetas, cántaros vacíos y antorchas encendidas dentro', 'Espadas largas y escudos de bronce', 'Arcos y flechas de fuego', 'Lanzas y carros de guerra']
+        ]
+      },
+      {
+        id: 'sanson',
+        title: 'Sansón y su Fuerza Extraordinaria',
+        verse: 'Jueces 13 - 16',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué voto especial tenía Sansón desde su nacimiento?', 'Voto de nazareo (no cortar su cabello ni beber vino)', 'Voto de silencio', 'Voto de pobreza', 'Voto de ayuno perpetuo'],
+          ['¿Con qué derrotó Sansón a mil filisteos en Lehi?', 'Con una quijada de asno', 'Con una lanza de hierro', 'Con una honda', 'Con sus manos vacías'],
+          ['¿Quién descubrió el secreto de la fuerza de Sansón?', 'Dalila', 'Jezabel', 'Atalía', 'Mical'],
+          ['¿Dónde terminó Sansón derrotando a más filisteos al morir que en toda su vida?', 'Derribando las columnas del templo de Dagón', 'En las puertas de Gaza', 'En el valle de Sorec', 'En la muralla de Asdod']
+        ]
+      },
+      {
+        id: 'rut-noemi',
+        title: 'Rut y su Lealtad a Noemí',
+        verse: 'Rut 1 - 4',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿De qué tierra era originaria Rut?', 'De Moab', 'De Egipto', 'De Siria', 'De Filistea'],
+          ['¿En los campos de qué pariente redentor espigó Rut en Belén?', 'Booz', 'Elimelec', 'Mahlón', 'Obed'],
+          ['¿Qué famoso rey de Israel fue bisnieto de Rut y Booz?', 'El rey David', 'El rey Saúl', 'El rey Ezequías', 'El rey Josías']
+        ]
+      },
+      {
+        id: 'samuel-saul',
+        title: 'El Profeta Samuel y el Rey Saúl',
+        verse: '1 Samuel 1 - 15',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Cómo se llamaba la madre de Samuel que oró ferventemente por un hijo?', 'Ana', 'Penina', 'Elisabet', 'Abigaíl'],
+          ['¿Quién crió a Samuel en el templo de Silo?', 'El sacerdote Elí', 'El profeta Natán', 'El sacerdote Sadoc', 'El juez Jefté'],
+          ['¿Quién fue el primer rey de Israel ungido por Samuel?', 'Saúl, hijo de Cis', 'David, hijo de Isaí', 'Salomón', 'Jonatán']
+        ]
+      },
+      {
+        id: 'david-goliat',
+        title: 'David y el Gigante Goliat',
+        verse: '1 Samuel 17',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿De qué ciudad era originario el gigante Goliat?', 'De Gat', 'De Gaza', 'De Ecrón', 'De Ascalón'],
+          ['¿Cuántas piedras lisas escogió David del arroyo?', 'Cinco piedras lisas', 'Tres piedras lisas', 'Siete piedras lisas', 'Una sola piedra'],
+          ['¿Con qué arma venció David a Goliat?', 'Con una honda y una piedra', 'Con la armadura del rey Saúl', 'Con una lanza larga', 'Con un arco y flecha'],
+          ['¿Dónde impactó la piedra lanzada por David?', 'En la frente de Goliat', 'En el pecho de Goliat', 'En el hombro derecho', 'En el escudo'],
+          ['¿Qué oficio tenía David antes de enfrentarse a Goliat?', 'Pastor de ovejas', 'Carpintero', 'Soldado de infantería', 'Músico del templo']
+        ]
+      },
+      {
+        id: 'salomon',
+        title: 'La Sabiduría del Rey Salomón',
+        verse: '1 Reyes 3 - 10',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué pidió Salomón a Dios cuando se le apareció en Gabaón?', 'Sabiduría y corazón entendido para gobernar al pueblo', 'Riquezas y oro', 'Larga vida', 'La muerte de sus enemigos'],
+          ['¿Cómo resolvió Salomón la disputa de las dos mujeres por un bebé vivo?', 'Ordenó dividir el niño en dos para descubrir a la verdadera madre por su compasión', 'Lanzó suertes', 'Consultó a los ancianos', 'Dejó que el niño eligiera'],
+          ['¿Qué gran obra arquitectónica construyó Salomón en Jerusalén?', 'El Templo de Jehová', 'La muralla de Jericó', 'Los jardines colgantes', 'El puerto de Jope'],
+          ['¿Qué reina viajó desde lejos para probar la sabiduría de Salomón con preguntas difíciles?', 'La reina de Sabá', 'La reina de Egipto', 'La reina Ester', 'La reina de Tiro']
+        ]
+      },
+      {
+        id: 'elias-carmelo',
+        title: 'Elías y los Profetas de Baal',
+        verse: '1 Reyes 17 - 19',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué aves llevaron pan y carne a Elías junto al arroyo de Querit?', 'Los cuervos', 'Las palomas', 'Las águilas', 'Las cigüeñas'],
+          ['¿En qué monte desafió Elías a los 450 profetas de Baal?', 'En el monte Carmelo', 'En el monte Sinaí', 'En el monte Hermón', 'En el monte Sión'],
+          ['¿Qué ocurrió cuando Elías oró tras empapar su altar con doce cántaros de agua?', 'Cayó fuego de Jehová y consumió el holocausto, la leña, las piedras y el agua', 'Comenzó a llover inmediatamente', 'Un terremoto partió el altar', 'Un viento apagó los altares vecinos'],
+          ['¿Cómo fue llevado Elías al cielo?', 'En un torbellino con un carro de fuego y caballos de fuego', 'Murió de anciano en Jerusalén', 'Desapareció en una nube sobre el mar', 'Fue llevado por ángeles mientras dormía']
+        ]
+      },
+      {
+        id: 'eliseo-naaman',
+        title: 'Eliseo y la Sanidad de Naamán',
+        verse: '2 Reyes 2 - 5',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué pidió Eliseo a Elías antes de que fuera arrebatado?', 'Una doble porción de su espíritu', 'Su manto de oro', 'Riquezas para Israel', 'Poder sobre los reyes'],
+          ['¿Qué enfermedad tenía Naamán, general del ejército de Siria?', 'Lepra', 'Ceguera', 'Parálisis', 'Fiebre mortal'],
+          ['¿Qué le mandó hacer Eliseo a Naamán para ser sano?', 'Lavarse siete veces en el río Jordán', 'Ayunar siete días', 'Traer oro al templo', 'Bañarse en el río Abana']
+        ]
+      },
+      {
+        id: 'ester',
+        title: 'La Reina Ester Salva a su Pueblo',
+        verse: 'Ester 1 - 8',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Quién crió a Ester como su propia hija y la aconsejó en el palacio?', 'Su primo Mardoqueo', 'El profeta Esdras', 'Nehemías', 'Daniel'],
+          ['¿Quién tramó destruir a todos los judíos del imperio persa?', 'Amán', 'Sanbalat', 'Tobías', 'Belsasar'],
+          ['¿Qué frase célebre dijo Mardoqueo a Ester para animarla a hablar con el rey?', '¿Y quién sabe si para esta hora has llegado al reino?', 'El Señor peleará por vosotros', 'No temas ni desmayes', 'Todo lo puedo en Dios']
+        ]
+      },
+      {
+        id: 'job',
+        title: 'La Paciencia y Fidelidad de Job',
+        verse: 'Job 1 - 42',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿De qué tierra era originario Job?', 'De la tierra de Uz', 'De Galilea', 'De Judea', 'De Samaria'],
+          ['¿Qué respondió Job al perder sus bienes y sus hijos?', 'Jehová dio, y Jehová quitó; sea el nombre de Jehová bendito', 'Maldijo el día en que nació inmediatamente', 'Huyó a otro país', 'Dejó de creer en Dios'],
+          ['¿Cuántos amigos fueron a visitar a Job en su aflicción?', 'Tres amigos principales (Elifaz, Bildad y Zofar)', 'Siete amigos', 'Dos hermanos', 'Doce discípulos']
+        ]
+      },
+      {
+        id: 'daniel-leones',
+        title: 'Daniel en el Foso de los Leones',
+        verse: 'Daniel 1 - 6',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué decidieron comer Daniel y sus tres amigos en Babilonia para no contaminarse?', 'Legumbres y agua', 'Carne y vino del rey', 'Pan sin levadura y miel', 'Frutas y leche'],
+          ['¿Quiénes fueron arrojados al horno de fuego ardiente por no adorar la estatua de Nabucodonosor?', 'Sadrac, Mesac y Abed-nego', 'Pedro, Jacobo y Juan', 'Caín, Abel y Set', 'Sem, Cam y Jafet'],
+          ['¿Cuántas veces al día oraba Daniel mirando hacia Jerusalén?', 'Tres veces al día', 'Una vez al día', 'Siete veces al día', 'Cinco veces al día'],
+          ['¿Cómo sobrevivió Daniel dentro del foso de los leones?', 'Dios envió su ángel y cerró la boca de los leones', 'Daniel luchó contra ellos', 'Los leones estaban dormidos por el frío', 'Los guardias lo sacaron de noche']
+        ]
+      },
+      {
+        id: 'jonas',
+        title: 'Jonás y el Gran Pez',
+        verse: 'Jonás 1 - 4',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿A qué gran ciudad envió Dios a Jonás a predicar?', 'Nínive', 'Tarsis', 'Jope', 'Damasco'],
+          ['¿Hacia dónde intentó huir Jonás en un barco?', 'Hacia Tarsis', 'Hacia Egipto', 'Hacia Roma', 'Hacia Creta'],
+          ['¿Cuántos días y noches estuvo Jonás en el vientre del gran pez?', 'Tres días y tres noches', 'Siete días y siete noches', 'Cuarenta días', 'Un día y una noche'],
+          ['¿Qué hicieron los habitantes de Nínive al escuchar el mensaje de Jonás?', 'Creyeron a Dios, proclamaron ayuno y se arrepintieron', 'Expulsaron a Jonás de la ciudad', 'Se burlaron de él', 'Construyeron murallas más altas']
+        ]
+      },
+      {
+        id: 'nacimiento-jesus',
+        title: 'El Nacimiento de Jesús en Belén',
+        verse: 'Mateo 1 - 2 / Lucas 2',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Qué ángel anunció a María que concebiría y daría a luz a Jesús?', 'El ángel Gabriel', 'El arcángel Miguel', 'Un serafín', 'El ángel Rafael'],
+          ['¿En qué ciudad nació Jesús?', 'En Belén de Judea', 'En Nazaret', 'En Jerusalén', 'En Capernaúm'],
+          ['¿Dónde acostó María al niño Jesús porque no había lugar en el mesón?', 'En un pesebre', 'En una cuna de madera', 'En el palacio del gobernador', 'En el templo'],
+          ['¿Qué tres regalos llevaron los magos de oriente al niño Jesús?', 'Oro, incienso y mirra', 'Plata, bronce y seda', 'Pan, vino y aceite', 'Ovejas, palomas y trigo']
+        ]
+      },
+      {
+        id: 'bautismo-tentacion',
+        title: 'Bautismo y Tentación de Jesús',
+        verse: 'Mateo 3 - 4',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Quién bautizó a Jesús en el río Jordán?', 'Juan el Bautista', 'El apóstol Pedro', 'Nicodemo', 'Zacarías'],
+          ['¿En qué forma descendió el Espíritu Santo sobre Jesús al salir del agua?', 'Como paloma', 'Como lengua de fuego', 'Como nube luminosa', 'Como viento recio'],
+          ['¿Cuántos días ayunó Jesús en el desierto antes de ser tentado?', '40 días y 40 noches', '7 días', '12 días', '30 días'],
+          ['¿Con qué respondió Jesús a cada una de las tentaciones del diablo?', 'Con las Escrituras ("Escrito está...")', 'Con silencio absoluto', 'Con milagros de fuego', 'Huyendo hacia Galilea']
+        ]
+      },
+      {
+        id: 'doce-apostoles',
+        title: 'Los Doce Apóstoles y el Sermón del Monte',
+        verse: 'Mateo 5 - 10',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Qué oficio tenían Pedro, Andrés, Jacobo y Juan antes de seguir a Jesús?', 'Eran pescadores', 'Eran recaudadores de impuestos', 'Eran carpinteros', 'Eran médicos'],
+          ['¿Qué oficio tenía Mateo antes de ser llamado por Jesús?', 'Recaudador de impuestos (publicano)', 'Pescador', 'Soldado romano', 'Fariseo'],
+          ['¿Cómo comienza el Sermón del Monte en Mateo capítulo 5?', 'Con las Bienaventuranzas', 'Con la oración del Padre Nuestro', 'Con la parábola del sembrador', 'Con la gran comisión'],
+          ['¿Qué dijo Jesús que son sus discípulos para el mundo?', 'La sal de la tierra y la luz del mundo', 'Los reyes de la tierra', 'Los jueces de Israel', 'Los guardianes del templo']
+        ]
+      },
+      {
+        id: 'milagros-jesus',
+        title: 'Los Grandes Milagros de Jesús',
+        verse: 'Juan 2, 6, 11 / Marcos 4',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Cuál fue el primer milagro público de Jesús en Caná de Galilea?', 'Convertir el agua en vino en una boda', 'Sanar a un ciego', 'Caminar sobre el mar', 'Multiplicar los panes'],
+          ['¿Con cuántos panes y peces alimentó Jesús a cinco mil hombres?', 'Cinco panes de cebada y dos pececillos', 'Siete panes y tres peces', 'Doce panes y doce peces', 'Dos panes y cinco peces'],
+          ['¿Cuántos días llevaba Lázaro en el sepulcro cuando Jesús lo resucitó?', 'Cuatro días', 'Tres días', 'Un día', 'Siete días'],
+          ['¿Qué discípulo caminó brevemente sobre el agua hacia Jesús?', 'Pedro', 'Juan', 'Tomás', 'Felipe']
+        ]
+      },
+      {
+        id: 'parabolas-jesus',
+        title: 'Las Parábolas del Reino',
+        verse: 'Mateo 13 / Lucas 10, 15',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['En la parábola del sembrador, ¿qué representa la semilla?', 'La Palabra de Dios', 'Las riquezas', 'Las buenas obras', 'La fe de los ángeles'],
+          ['En la parábola del buen samaritano, ¿quién ayudó al hombre herido en el camino?', 'Un samaritano', 'Un sacerdote', 'Un levita', 'Un posadero'],
+          ['En la parábola del hijo pródigo, ¿qué hizo el padre al ver regresar a su hijo menor?', 'Corrió, se echó sobre su cuello, lo besó e hizo fiesta', 'Lo puso a trabajar como jornalero', 'Le cerró la puerta', 'Le pidió devolver el dinero primero'],
+          ['¿Cuántas ovejas dejó el buen pastor en el redil para ir a buscar a la perdida?', 'Noventa y nueve ovejas', 'Diez ovejas', 'Doce ovejas', 'Cincuenta ovejas']
+        ]
+      },
+      {
+        id: 'ultima-cena',
+        title: 'La Última Cena y Getsemaní',
+        verse: 'Mateo 26 / Juan 13',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Qué gesto de humildad realizó Jesús con sus discípulos durante la Última Cena?', 'Les lavó los pies', 'Les regaló túnicas nuevas', 'Les ungió la cabeza con oro', 'Les sirvió miel'],
+          ['¿Qué elementos instituyó Jesús en la Cena como símbolo de su cuerpo y su sangre?', 'El pan y la copa (vino)', 'El cordero y las hierbas amargas', 'El agua y el aceite', 'Los higos y las uvas'],
+          ['¿Quién traicionó a Jesús por treinta piezas de plata?', 'Judas Iscariote', 'Simón Pedro', 'Tomás', 'Barrabás'],
+          ['¿Cuántas veces negó Pedro conocer a Jesús antes de que cantara el gallo?', 'Tres veces', 'Dos veces', 'Una vez', 'Siete veces']
+        ]
+      },
+      {
+        id: 'crucifixion-resurreccion',
+        title: 'Crucifixión y Resurrección de Jesús',
+        verse: 'Mateo 27 - 28 / Juan 20',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Quién ayudó a Jesús a cargar la cruz camino al Gólgota?', 'Simón de Cirene', 'José de Arimatea', 'Nicodemo', 'Lázaro'],
+          ['¿Qué ocurrió en el templo en el momento en que Jesús murió en la cruz?', 'El velo del templo se rasgó en dos, de arriba abajo', 'Se apagaron todas las antorchas', 'Cayó nieve sobre Jerusalén', 'Se derrumbó el altar'],
+          ['¿Quién pidió a Pilato el cuerpo de Jesús para sepultarlo en un sepulcro nuevo?', 'José de Arimatea', 'Simón Pedro', 'Juan el amado', 'Gamaliel'],
+          ['¿Al tercer día, quién fue la primera persona en ver a Jesús resucitado junto al sepulcro?', 'María Magdalena', 'Pilato', 'Caifás', 'Herodes']
+        ]
+      },
+      {
+        id: 'pentecostes',
+        title: 'Pentecostés y la Iglesia Primitiva',
+        verse: 'Hechos 1 - 4',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿En qué monte ascendió Jesús al cielo ante sus discípulos?', 'El monte de los Olivos', 'El monte Carmelo', 'El monte Tabor', 'El monte Sinaí'],
+          ['¿Qué apareció sobre los discípulos el día de Pentecostés?', 'Lenguas repartidas como de fuego', 'Una lluvia de maná', 'Un arco iris doble', 'Una columna de humo'],
+          ['¿Cuántas personas se convirtieron y bautizaron tras el primer discurso de Pedro en Pentecostés?', 'Unas tres mil personas', 'Quinientas personas', 'Doce personas', 'Diez mil personas'],
+          ['¿Qué milagro hicieron Pedro y Juan en la puerta del templo llamada La Hermosa?', 'Sanaron a un hombre cojo de nacimiento', 'Multiplicaron panes', 'Resucitaron a un anciano', 'Abrieron las puertas cerradas']
+        ]
+      },
+      {
+        id: 'conversion-pablo',
+        title: 'La Conversión de Saulo de Tarso',
+        verse: 'Hechos 9',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Hacia qué ciudad viajaba Saulo cuando una luz del cielo lo rodeó?', 'Hacia Damasco', 'Hacia Antioquía', 'Hacia Roma', 'Hacia Éfeso'],
+          ['¿Qué le preguntó la voz desde el cielo a Saulo?', 'Saulo, Saulo, ¿por qué me persigues?', '¿A dónde vas, siervo mío?', '¿Por qué temes?', 'Levántate y huye'],
+          ['¿Cuántos días estuvo Saulo sin ver y sin comer ni beber tras esa visión?', 'Tres días', 'Siete días', 'Cuarenta días', 'Un día'],
+          ['¿Qué discípulo envió Dios para orar por Saulo y que recobrara la vista?', 'Ananías', 'Bernabé', 'Silas', 'Timoteo']
+        ]
+      },
+      {
+        id: 'viajes-pablo',
+        title: 'Los Viajes Misioneros de Pablo',
+        verse: 'Hechos 13 - 28',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿Quién acompañó a Pablo en su primer viaje misionero?', 'Bernabé', 'Lucas', 'Tito', 'Filemón'],
+          ['¿Qué ocurrió en la cárcel de Filipos mientras Pablo y Silas oraban y cantaban himnos?', 'Hubo un gran terremoto, se abrieron las puertas y se soltaron las cadenas', 'Los guardias los dejaron escapar en silencio', 'Un ángel los hizo invisibles', 'El gobernador los absolvió'],
+          ['¿En qué isla naufragó Pablo camino a Roma y fue mordido por una víbora sin sufrir daño?', 'En la isla de Malta', 'En la isla de Creta', 'En la isla de Chipre', 'En la isla de Patmos']
+        ]
+      },
+      {
+        id: 'armadura-dios',
+        title: 'La Armadura de Dios y Fruto del Espíritu',
+        verse: 'Efesios 6 / Gálatas 5',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['Según Efesios 6, ¿cuál es "la espada del Espíritu"?', 'La Palabra de Dios', 'La oración constante', 'El ayuno', 'La alabanza'],
+          ['¿Qué pieza de la armadura representa la fe para apagar los dardos de fuego del maligno?', 'El escudo de la fe', 'El yelmo de la salvación', 'La coraza de justicia', 'El cinturón de la verdad'],
+          ['¿Cuál es el primer fruto del Espíritu mencionado en Gálatas 5:22?', 'Amor', 'Paciencia', 'Templanza', 'Benignidad']
+        ]
+      },
+      {
+        id: 'apocalipsis',
+        title: 'Visión de Juan en Patmos (Apocalipsis)',
+        verse: 'Apocalipsis 1 - 22',
+        category: 'Nuevo Testamento',
+        facts: [
+          ['¿En qué isla recibió el apóstol Juan las revelaciones del Apocalipsis?', 'En la isla de Patmos', 'En la isla de Malta', 'En Sicilia', 'En Rodas'],
+          ['¿A cuántas iglesias de Asia van dirigidas las cartas iniciales del Apocalipsis?', 'A siete iglesias', 'A doce iglesias', 'A tres iglesias', 'A diez iglesias'],
+          ['¿Cómo se llama la ciudad celestial que desciende del cielo al final de Apocalipsis?', 'La Nueva Jerusalén', 'La Nueva Sión', 'Belén Celestial', 'El Edén Eterno']
+        ]
+      },
+      {
+        id: 'mujeres-biblia',
+        title: 'Mujeres Valientes de la Biblia',
+        verse: 'Antiguo y Nuevo Testamento',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Quién fue la profetisa y jueza que lideró a Israel junto a Barac?', 'Débora', 'Rut', 'Ester', 'Miriam'],
+          ['¿Qué hermana de Moisés dirigió los cánticos de alabanza tras cruzar el Mar Rojo?', 'María (Miriam)', 'Séfora', 'Agar', 'Raquel'],
+          ['¿Quién fue la mujer que escuchaba atentamente a los pies de Jesús mientras su hermana Marta servía?', 'María de Betania', 'Salomé', 'Priscila', 'Lidia']
+        ]
+      },
+      {
+        id: 'salmos-proverbios',
+        title: 'Sabiduría de Salmos y Proverbios',
+        verse: 'Salmos / Proverbios',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Cómo empieza el famoso Salmo 23?', 'Jehová es mi pastor; nada me faltará', 'Dios es nuestro amparo y fortaleza', 'Alzaré mis ojos a los montes', 'Bendice, alma mía, a Jehová'],
+          ['Según Proverbios 1:7, ¿cuál es el principio de la sabiduría?', 'El temor de Jehová', 'El estudio de las estrellas', 'La acumulación de riquezas', 'La fuerza física'],
+          ['Según el Salmo 119:105, ¿qué es la Palabra de Dios para nuestros pies y camino?', 'Lámpara es a mis pies tu palabra, y lumbrera a mi camino', 'Una espada de doble filo', 'Un muro inexpugnable', 'Un río de agua viva']
+        ]
+      },
+      {
+        id: 'profetas-mayores',
+        title: 'Isaías, Jeremías y Ezequiel',
+        verse: 'Isaías / Jeremías / Ezequiel',
+        category: 'Antiguo Testamento',
+        facts: [
+          ['¿Qué profeta tuvo una visión de un valle de huesos secos que cobraron vida?', 'Ezequiel', 'Isaías', 'Jeremías', 'Oseas'],
+          ['¿Qué profeta anunció: "Porque un niño nos es nacido, hijo nos es dado..."?', 'Isaías', 'Amós', 'Joel', 'Malaquías'],
+          ['¿A qué profeta se le conoce como el "profeta llorón" por lamentar la caída de Jerusalén?', 'Jeremías', 'Habacuc', 'Sofonías', 'Ageo']
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // MOTOR EXPANSIVO DE PREGUNTAS (HASTA 50 SEGÚN EXTENSIÓN DE LA HISTORIA)
+    // =========================================================================
+    function buildExpandedQuestions(story) {
+      const baseQuestions = story.facts.map((f, idx) => ({
+        id: `${story.id}_q_${idx}`,
+        question: f[0],
+        options: [f[1], f[2], f[3], f[4]],
+        correctAnswer: f[1],
+        verse: story.verse,
+        difficulty: idx < 2 ? 'facil' : (idx < 4 ? 'media' : 'dificil')
+      }));
+
+      const extraQuestions = [];
+      story.facts.forEach((f, idx) => {
+        if (baseQuestions.length + extraQuestions.length >= 50) return;
+        extraQuestions.push({
+          id: `${story.id}_v_${idx}`,
+          question: `En el relato "${story.title}" (${story.verse}), respecto a "${f[0].replace('¿', '').replace('?', '')}", ¿cuál afirmación es verdadera?`,
+          options: [
+            f[1],
+            `Ocurrió lo contrario: ${f[2]}`,
+            `Se registra que fue ${f[3]}`,
+            `Ninguna relación, pues fue ${f[4]}`
+          ],
+          correctAnswer: f[1],
+          verse: story.verse,
+          difficulty: 'media'
+        });
+      });
+
+      story.facts.forEach((f, idx) => {
+        if (baseQuestions.length + extraQuestions.length >= 50) return;
+        extraQuestions.push({
+          id: `${story.id}_c_${idx}`,
+          question: `¿A qué pasaje bíblico pertenece el acontecimiento donde la respuesta clave es "${f[1]}"?`,
+          options: [
+            `${story.title} (${story.verse})`,
+            'La Torre de Babel (Génesis 11)',
+            'El Diluvio Universal (Génesis 7)',
+            'La Carta a Filemón (Filemón 1)'
+          ].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4),
+          correctAnswer: `${story.title} (${story.verse})`,
+          verse: story.verse,
+          difficulty: 'dificil'
+        });
+      });
+
+      return [...baseQuestions, ...extraQuestions].slice(0, 50);
+    }
+
+    // =========================================================================
+    // ESTADO GLOBAL DE LA APLICACIÓN Y SEGURIDAD DE MAESTRO
+    // =========================================================================
+    let ALL_QUIZZES = [];
+    let isTeacherUnlocked = false;
+    let currentSession = {
+      quiz: null,
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      correctCount: 0,
+      timerInterval: null,
+      secondsLeft: 0,
+      totalSecondsAllowed: 0,
+      startTime: 0,
+      classroomCode: null,
+      studentName: null,
+      studentGroup: null
+    };
+
+    const STORAGE_KEYS = {
+      CUSTOM_QUIZZES: 'bibliatrivia_custom_quizzes_v2',
+      COPYRIGHT: 'bibliatrivia_locked_copyright_v1',
+      VISITS: 'bibliatrivia_visits_v2',
+      LIKES: 'bibliatrivia_likes_v2',
+      USER_LIKED: 'bibliatrivia_user_liked_v2',
+      COMMENTS: 'bibliatrivia_comments_v2',
+      ACTIVITY_LOG: 'bibliatrivia_activity_v2',
+      VISITOR_NAME: 'bibliatrivia_visitor_name_v2',
+      CLASSROOMS: 'bibliatrivia_classrooms_v2',
+      GRADES: 'bibliatrivia_grades_v2',
+      TEACHER_PASS: 'bibliatrivia_teacher_pass_v1'
+    };
+
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('bibliatrivia_live_sync') : null;
+
+    // =========================================================================
+    // INICIALIZACIÓN Y CARGA DE CATÁLOGO
+    // =========================================================================
+    function loadQuizzes() {
+      const builtIn = BIBLICAL_STORIES_LIBRARY.map(story => ({
+        id: story.id,
+        title: story.title,
+        verse: story.verse,
+        category: story.category,
+        questions: buildExpandedQuestions(story),
+        isCustom: false
+      }));
+
+      let custom = [];
+      try {
+        custom = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOM_QUIZZES) || '[]');
+      } catch (e) { custom = []; }
+
+      ALL_QUIZZES = [...custom, ...builtIn];
+    }
+
+    function getSecondsPerQuestion(difficulty) {
+      if (difficulty === 'facil') return 40;
+      if (difficulty === 'dificil') return 15;
+      return 25;
+    }
+
+    // =========================================================================
+    // RENDERIZADO DEL LISTADO PRINCIPAL
+    // =========================================================================
+    function renderLobby() {
+      const container = document.getElementById('quizzes-list-container');
+      const search = (document.getElementById('search-quiz-input')?.value || '').toLowerCase().trim();
+      const catFilter = document.getElementById('filter-category-select')?.value || 'all';
+
+      const filtered = ALL_QUIZZES.filter(q => {
+        const matchesSearch = q.title.toLowerCase().includes(search) || q.verse.toLowerCase().includes(search);
+        const matchesCat = catFilter === 'all' || q.category === catFilter;
+        return matchesSearch && matchesCat;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="glass-card rounded-2xl p-8 text-center text-slate-400">No se encontraron historias con ese filtro.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map((q, index) => {
+        const totalQ = q.questions.length;
+        const defaultCount = Math.min(10, totalQ);
+        let optionsHTML = '';
+        for (let i = 1; i <= totalQ; i++) {
+          optionsHTML += `<option value="${i}" ${i === defaultCount ? 'selected' : ''}>${i} ${i === 1 ? 'pregunta' : 'preguntas'}${i === totalQ ? ' (Todas)' : ''}</option>`;
+        }
+
+        const badgeColor = q.category === 'Nuevo Testamento'
+          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+          : (q.category === 'Personalizado'
+            ? 'bg-amber-500/20 text-amber-300 border-amber-400/30'
+            : 'bg-indigo-500/20 text-indigo-300 border-indigo-400/30');
+
+        return `
+          <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:border-indigo-400/40 transition">
+            <div class="flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-bold text-amber-300 text-sm shrink-0">
+                #${index + 1}
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${badgeColor}">${q.category}</span>
+                  <span class="text-xs text-slate-400 font-medium">📖 ${q.verse}</span>
+                  <span class="text-xs text-indigo-300 font-semibold">• ${totalQ} disponibles</span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-bold text-white">${q.title}</h3>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+              <select id="qcount-${q.id}" onchange="updateRowTimePreview('${q.id}')" class="px-3 py-2 rounded-xl bg-slate-900/90 border border-white/15 text-xs sm:text-sm text-white font-semibold">
+                ${optionsHTML}
+              </select>
+
+              <select id="qdiff-${q.id}" onchange="updateRowTimePreview('${q.id}')" class="px-3 py-2 rounded-xl bg-slate-900/90 border border-white/15 text-xs sm:text-sm text-white font-semibold">
+                <option value="facil">🟢 Fácil</option>
+                <option value="media" selected>🟡 Media</option>
+                <option value="dificil">🔴 Difícil</option>
+              </select>
+
+              <span id="qtime-${q.id}" class="px-2.5 py-2 rounded-xl bg-white/5 text-xs text-amber-200 font-mono">
+                ⏱️ ${formatTime(defaultCount * 25)}
+              </span>
+
+              <button onclick="startQuizFromLobby('${q.id}')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white text-xs sm:text-sm font-bold shadow-md transition">
+                ▶ Jugar
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateRowTimePreview(quizId) {
+      const count = parseInt(document.getElementById(`qcount-${quizId}`)?.value || '10', 10);
+      const diff = document.getElementById(`qdiff-${quizId}`)?.value || 'media';
+      const totalSec = count * getSecondsPerQuestion(diff);
+      const el = document.getElementById(`qtime-${quizId}`);
+      if (el) el.textContent = `⏱️ ${formatTime(totalSec)}`;
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    // =========================================================================
+    // VENTANA INICIAL MAESTRO / ALUMNO Y PROTECCIÓN CON CONTRASEÑA
+    // =========================================================================
+    function openRoleModal() {
+      populateTeacherQuizOptions();
+      renderLiveClassroomBoard();
+      document.getElementById('role-start-modal').classList.remove('hidden');
+    }
+
+    function closeRoleModal() {
+      document.getElementById('role-start-modal').classList.add('hidden');
+    }
+
+    function selectStartRole(role) {
+      const cards = document.getElementById('role-selector-cards');
+      const authPanel = document.getElementById('role-panel-teacher-auth');
+      const teacherPanel = document.getElementById('role-panel-teacher');
+      const studentPanel = document.getElementById('role-panel-student');
+
+      cards.classList.add('hidden');
+      authPanel.classList.add('hidden');
+      teacherPanel.classList.add('hidden');
+      studentPanel.classList.add('hidden');
+
+      if (role === 'teacher') {
+        if (isTeacherUnlocked) {
+          teacherPanel.classList.remove('hidden');
+          populateTeacherQuizOptions();
+          renderLiveClassroomBoard();
+          setTimeout(() => document.getElementById('teacher-name-input')?.focus(), 50);
+        } else {
+          authPanel.classList.remove('hidden');
+          const savedPass = localStorage.getItem(STORAGE_KEYS.TEACHER_PASS);
+          const setupBox = document.getElementById('teacher-setup-pass-box');
+          const loginBox = document.getElementById('teacher-login-pass-box');
+
+          if (!savedPass) {
+            setupBox.classList.remove('hidden');
+            loginBox.classList.add('hidden');
+            document.getElementById('teacher-setup-feedback').textContent = '';
+            setTimeout(() => document.getElementById('teacher-new-pass-input')?.focus(), 50);
+          } else {
+            setupBox.classList.add('hidden');
+            loginBox.classList.remove('hidden');
+            document.getElementById('teacher-login-feedback').textContent = '';
+            document.getElementById('teacher-login-pass-input').value = '';
+            setTimeout(() => document.getElementById('teacher-login-pass-input')?.focus(), 50);
+          }
+        }
+      } else if (role === 'student') {
+        studentPanel.classList.remove('hidden');
+        setTimeout(() => document.getElementById('student-code-input')?.focus(), 50);
+      } else {
+        cards.classList.remove('hidden');
+      }
+    }
+
+    function setupTeacherPassword() {
+      const p1 = document.getElementById('teacher-new-pass-input').value.trim();
+      const p2 = document.getElementById('teacher-confirm-pass-input').value.trim();
+      const fb = document.getElementById('teacher-setup-feedback');
+
+      if (p1.length < 4) {
+        fb.textContent = '⚠️ La contraseña debe tener al menos 4 caracteres.';
+        return;
+      }
+      if (p1 !== p2) {
+        fb.textContent = '❌ Las contraseñas no coinciden. Inténtalo de nuevo.';
+        return;
+      }
+
+      localStorage.setItem(STORAGE_KEYS.TEACHER_PASS, btoa(p1));
+      isTeacherUnlocked = true;
+      selectStartRole('teacher');
+    }
+
+    function verifyTeacherPassword() {
+      const inputPass = document.getElementById('teacher-login-pass-input').value.trim();
+      const savedPassEncoded = localStorage.getItem(STORAGE_KEYS.TEACHER_PASS);
+      const fb = document.getElementById('teacher-login-feedback');
+
+      if (!inputPass) {
+        fb.textContent = '⚠️ Escribe la contraseña del maestro.';
+        return;
+      }
+
+      if (btoa(inputPass) === savedPassEncoded) {
+        isTeacherUnlocked = true;
+        fb.textContent = '';
+        selectStartRole('teacher');
+      } else {
+        fb.textContent = '❌ Contraseña incorrecta. Acceso denegado.';
+        document.getElementById('teacher-login-pass-input').value = '';
+        document.getElementById('teacher-login-pass-input').focus();
+      }
+    }
+
+    function lockTeacherSession() {
+      isTeacherUnlocked = false;
+      selectStartRole('teacher');
+    }
+
+    function populateTeacherQuizOptions() {
+      const sel = document.getElementById('teacher-quiz-select');
+      if (!sel) return;
+      sel.innerHTML = ALL_QUIZZES.map(q => `<option value="${q.id}">${q.title} (${q.questions.length} preg.)</option>`).join('');
+      updateTeacherQuestionLimit();
+    }
+
+    function updateTeacherQuestionLimit() {
+      const quizId = document.getElementById('teacher-quiz-select')?.value;
+      const quiz = ALL_QUIZZES.find(q => q.id === quizId) || ALL_QUIZZES[0];
+      const qSel = document.getElementById('teacher-qcount-select');
+      if (!quiz || !qSel) return;
+
+      let html = '';
+      for (let i = 1; i <= quiz.questions.length; i++) {
+        html += `<option value="${i}" ${i === Math.min(10, quiz.questions.length) ? 'selected' : ''}>${i} ${i === 1 ? 'pregunta' : 'preguntas'}</option>`;
+      }
+      qSel.innerHTML = html;
+    }
+
+    function getStoredClassrooms() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.CLASSROOMS) || '{}'); } catch { return {}; }
+    }
+
+    function saveStoredClassrooms(data) {
+      localStorage.setItem(STORAGE_KEYS.CLASSROOMS, JSON.stringify(data));
+    }
+
+    function createLiveClassroom() {
+      if (!isTeacherUnlocked) return;
+      const teacherName = document.getElementById('teacher-name-input').value.trim() || 'Maestro';
+      const quizId = document.getElementById('teacher-quiz-select').value;
+      const count = parseInt(document.getElementById('teacher-qcount-select').value, 10) || 10;
+      const difficulty = document.getElementById('teacher-difficulty-select').value || 'media';
+      const shuffle = document.getElementById('teacher-shuffle-check').checked;
+
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      const code = `BIB-${randomNum}`;
+
+      const classrooms = getStoredClassrooms();
+      classrooms[code] = {
+        code,
+        teacherName,
+        quizId,
+        count,
+        difficulty,
+        shuffle,
+        createdAt: new Date().toISOString()
+      };
+      saveStoredClassrooms(classrooms);
+
+      if (syncChannel) {
+        syncChannel.postMessage({ type: 'CLASSROOM_CREATED', classroom: classrooms[code] });
+      }
+
+      document.getElementById('teacher-code-display').textContent = code;
+      document.getElementById('teacher-created-box').classList.remove('hidden');
+
+      const banner = document.getElementById('active-class-banner');
+      banner.classList.remove('hidden');
+      document.getElementById('active-class-banner-text').textContent = `Modo Maestro (${teacherName}) • Código de Clase: ${code}`;
+    }
+
+    function copyClassCode() {
+      const code = document.getElementById('teacher-code-display').textContent;
+      navigator.clipboard?.writeText(code);
+      alert(`Código copiado: ${code}`);
+    }
+
+    function copyClassInviteLink() {
+      const code = document.getElementById('teacher-code-display').textContent;
+      const classrooms = getStoredClassrooms();
+      const cls = classrooms[code];
+      const url = new URL(window.location.href.split('?')[0]);
+      url.searchParams.set('clase', code);
+      if (cls) {
+        url.searchParams.set('q', cls.quizId);
+        url.searchParams.set('n', cls.count);
+        url.searchParams.set('d', cls.difficulty);
+      }
+      navigator.clipboard?.writeText(url.toString());
+      alert('Enlace directo copiado. Compártelo con tus alumnos por WhatsApp o chat.');
+    }
+
+    function checkURLClassroomInvite() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('clase');
+      if (code) {
+        const cleanCode = code.toUpperCase().trim();
+        const classrooms = getStoredClassrooms();
+        if (!classrooms[cleanCode] && params.get('q')) {
+          classrooms[cleanCode] = {
+            code: cleanCode,
+            teacherName: 'Maestro',
+            quizId: params.get('q'),
+            count: parseInt(params.get('n') || '10', 10),
+            difficulty: params.get('d') || 'media',
+            shuffle: true
+          };
+          saveStoredClassrooms(classrooms);
+        }
+        openRoleModal();
+        selectStartRole('student');
+        document.getElementById('student-code-input').value = cleanCode;
+        setTimeout(() => document.getElementById('student-name-input')?.focus(), 80);
+      }
+    }
+
+    function joinClassroomAsStudent() {
+      const code = document.getElementById('student-code-input').value.toUpperCase().trim();
+      const studentName = document.getElementById('student-name-input').value.trim();
+      const studentGroup = document.getElementById('student-group-input').value.trim() || 'General';
+      const feedback = document.getElementById('student-join-feedback');
+
+      if (!code || !studentName) {
+        feedback.textContent = '⚠️ Por favor ingresa el código de clase y tu nombre completo.';
+        feedback.className = 'text-xs text-rose-300 font-semibold';
+        return;
+      }
+
+      const classrooms = getStoredClassrooms();
+      const cls = classrooms[code];
+
+      if (!cls) {
+        feedback.textContent = '❌ Código no encontrado. Verifica el código o abre el enlace directo enviado por tu maestro.';
+        feedback.className = 'text-xs text-rose-300 font-semibold';
+        return;
+      }
+
+      const quiz = ALL_QUIZZES.find(q => q.id === cls.quizId) || ALL_QUIZZES[0];
+      closeRoleModal();
+
+      const banner = document.getElementById('active-class-banner');
+      banner.classList.remove('hidden');
+      document.getElementById('active-class-banner-text').textContent = `Alumno: ${studentName} (${studentGroup}) • Clase: ${code}`;
+
+      startQuizEngine(quiz, cls.count, cls.difficulty, cls.shuffle, {
+        classroomCode: code,
+        studentName,
+        studentGroup
+      });
+    }
+
+    function exitClassroomSession() {
+      currentSession.classroomCode = null;
+      currentSession.studentName = null;
+      currentSession.studentGroup = null;
+      document.getElementById('active-class-banner').classList.add('hidden');
+      switchMainView('lobby');
+    }
+
+    function getStoredGrades() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.GRADES) || '[]'); } catch { return []; }
+    }
+
+    function saveStudentGrade(record) {
+      const grades = getStoredGrades();
+      grades.unshift(record);
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
+      if (syncChannel) {
+        syncChannel.postMessage({ type: 'GRADE_SUBMITTED', record });
+      }
+      renderLiveClassroomBoard();
+    }
+
+    function renderLiveClassroomBoard() {
+      const tbody = document.getElementById('live-grades-tbody');
+      if (!tbody) return;
+      const grades = getStoredGrades();
+      if (grades.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Aún no hay alumnos registrados en esta sesión.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = grades.map(g => `
+        <tr>
+          <td class="py-2 font-bold text-white">${g.studentName}</td>
+          <td class="py-2 text-slate-300">${g.studentGroup}</td>
+          <td class="py-2 text-indigo-200">${g.quizTitle}</td>
+          <td class="py-2">${g.correct}/${g.total}</td>
+          <td class="py-2 font-extrabold text-amber-300">${g.grade}</td>
+          <td class="py-2 text-slate-400">${g.timeStr}</td>
+        </tr>
+      `).join('');
+    }
+
+    function clearLiveGrades() {
+      if (!isTeacherUnlocked) return;
+      localStorage.removeItem(STORAGE_KEYS.GRADES);
+      renderLiveClassroomBoard();
+    }
+
+    function exportGradesCSV() {
+      if (!isTeacherUnlocked) return;
+      const grades = getStoredGrades();
+      if (grades.length === 0) {
+        alert('No hay calificaciones registradas para exportar.');
+        return;
+      }
+      const headers = ['Codigo Clase', 'Alumno', 'Grupo', 'Evaluacion', 'Aciertos', 'Total', 'Nota (0-10)', 'Hora'];
+      const rows = grades.map(g => [
+        g.classroomCode || 'Libre',
+        `"${g.studentName}"`,
+        `"${g.studentGroup}"`,
+        `"${g.quizTitle}"`,
+        g.correct,
+        g.total,
+        g.grade,
+        `"${g.timeStr}"`
+      ].join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Calificaciones_BibliaTrivia_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+
+    function initLiveClassroomSync() {
+      if (!syncChannel) return;
+      syncChannel.onmessage = (event) => {
+        if (event.data?.type === 'CLASSROOM_CREATED' && event.data.classroom) {
+          const classrooms = getStoredClassrooms();
+          classrooms[event.data.classroom.code] = event.data.classroom;
+          saveStoredClassrooms(classrooms);
+        }
+        if (event.data?.type === 'GRADE_SUBMITTED' && event.data.record) {
+          const grades = getStoredGrades();
+          if (!grades.some(g => g.id === event.data.record.id)) {
+            grades.unshift(event.data.record);
+            localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
+          }
+          renderLiveClassroomBoard();
+        }
+      };
+    }
+
+    // =========================================================================
+    // MOTOR DE JUEGO Y EVALUACIÓN
+    // =========================================================================
+    function startQuizFromLobby(quizId) {
+      const quiz = ALL_QUIZZES.find(q => q.id === quizId);
+      if (!quiz) return;
+      const count = parseInt(document.getElementById(`qcount-${quizId}`)?.value || '10', 10);
+      const diff = document.getElementById(`qdiff-${quizId}`)?.value || 'media';
+      startQuizEngine(quiz, count, diff, true, null);
+    }
+
+    function startQuizEngine(quiz, questionCount, difficulty, shuffle, classMeta) {
+      clearInterval(currentSession.timerInterval);
+
+      let pool = [...quiz.questions];
+      if (shuffle) {
+        pool.sort(() => Math.random() - 0.5);
+      }
+      const selectedQuestions = pool.slice(0, Math.min(questionCount, pool.length));
+      const totalSeconds = selectedQuestions.length * getSecondsPerQuestion(difficulty);
+
+      currentSession = {
+        quiz,
+        questions: selectedQuestions,
+        currentIndex: 0,
+        score: 0,
+        correctCount: 0,
+        timerInterval: null,
+        secondsLeft: totalSeconds,
+        totalSecondsAllowed: totalSeconds,
+        startTime: Date.now(),
+        classroomCode: classMeta?.classroomCode || null,
+        studentName: classMeta?.studentName || null,
+        studentGroup: classMeta?.studentGroup || null,
+        lastCount: questionCount,
+        lastDifficulty: difficulty
+      };
+
+      switchMainView('game');
+      document.getElementById('game-quiz-title').textContent = quiz.title;
+      document.getElementById('game-score-display').textContent = '0';
+      updateTimerDisplay();
+
+      currentSession.timerInterval = setInterval(() => {
+        currentSession.secondsLeft--;
+        updateTimerDisplay();
+        if (currentSession.secondsLeft <= 0) {
+          clearInterval(currentSession.timerInterval);
+          finishQuiz();
+        }
+      }, 1000);
+
+      renderCurrentQuestion();
+    }
+
+    function updateTimerDisplay() {
+      const el = document.getElementById('game-timer-display');
+      el.textContent = formatTime(Math.max(0, currentSession.secondsLeft));
+      if (currentSession.secondsLeft <= 15) {
+        el.classList.add('text-rose-400', 'animate-pulse');
+      } else {
+        el.classList.remove('text-rose-400', 'animate-pulse');
+      }
+    }
+
+    function renderCurrentQuestion() {
+      const q = currentSession.questions[currentSession.currentIndex];
+      const total = currentSession.questions.length;
+      const num = currentSession.currentIndex + 1;
+
+      document.getElementById('game-progress-text').textContent = `Pregunta ${num} de ${total}`;
+      document.getElementById('game-progress-bar').style.width = `${(num / total) * 100}%`;
+      document.getElementById('game-verse-badge').textContent = `📖 ${q.verse}`;
+      document.getElementById('game-question-text').textContent = q.question;
+
+      const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+      const cardColors = ['btn-sapphire', 'btn-amber', 'btn-emerald', 'btn-amethyst'];
+
+      const grid = document.getElementById('game-answers-grid');
+      grid.innerHTML = shuffledOptions.map((opt, idx) => `
+        <button onclick="handleAnswerSelection(this)" data-answer="${opt.replace(/"/g, '&quot;')}"
+          class="answer-btn ${cardColors[idx % 4]} rounded-2xl p-5 sm:p-6 text-white font-bold text-base sm:text-lg text-center flex items-center justify-center min-h-[88px] cursor-pointer">
+          <span>${opt}</span>
+        </button>
+      `).join('');
+    }
+
+    function handleAnswerSelection(btn) {
+      const buttons = document.querySelectorAll('#game-answers-grid button');
+      buttons.forEach(b => b.disabled = true);
+
+      const chosen = btn.getAttribute('data-answer');
+      const q = currentSession.questions[currentSession.currentIndex];
+      const isCorrect = chosen === q.correctAnswer;
+
+      const modal = document.getElementById('feedback-modal');
+      const card = document.getElementById('feedback-modal-card');
+      const icon = document.getElementById('feedback-icon');
+      const heading = document.getElementById('feedback-heading');
+      const detail = document.getElementById('feedback-detail');
+
+      card.classList.remove('border-emerald-400', 'border-rose-500', 'animate-shake');
+
+      if (isCorrect) {
+        currentSession.correctCount++;
+        currentSession.score += 100;
+        document.getElementById('game-score-display').textContent = currentSession.score;
+
+        card.classList.add('border-emerald-400');
+        icon.textContent = '🎉';
+        heading.textContent = '¡Respuesta Correcta!';
+        heading.className = 'text-2xl font-bold text-emerald-300 mb-1';
+        detail.textContent = `¡Excelente! (+100 pts) • ${q.verse}`;
+
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 55, spread: 60, origin: { y: 0.65 } });
+        }
+      } else {
+        card.classList.add('border-rose-500', 'animate-shake');
+        icon.textContent = '❌';
+        heading.textContent = 'Respuesta Incorrecta';
+        heading.className = 'text-2xl font-bold text-rose-300 mb-1';
+        detail.innerHTML = `La respuesta correcta era:<br><strong class="text-amber-300">${q.correctAnswer}</strong>`;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      document.getElementById('feedback-modal').classList.add('hidden');
+      currentSession.currentIndex++;
+      if (currentSession.currentIndex < currentSession.questions.length) {
+        renderCurrentQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function abortGame() {
+      clearInterval(currentSession.timerInterval);
+      switchMainView('lobby');
+    }
+
+    function finishQuiz() {
+      clearInterval(currentSession.timerInterval);
+      switchMainView('results');
+
+      const total = currentSession.questions.length;
+      const correct = currentSession.correctCount;
+      const grade = ((correct / total) * 10).toFixed(1);
+      const elapsed = Math.max(1, Math.round((Date.now() - currentSession.startTime) / 1000));
+
+      document.getElementById('res-correct').textContent = `${correct}/${total}`;
+      document.getElementById('res-grade').textContent = grade;
+      document.getElementById('res-time').textContent = `${elapsed}s`;
+
+      if (parseFloat(grade) >= 8.0) {
+        document.getElementById('results-emoji').textContent = '🏆';
+        document.getElementById('results-title').textContent = '¡Sobresaliente!';
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+        }
+      } else if (parseFloat(grade) >= 6.0) {
+        document.getElementById('results-emoji').textContent = '👏';
+        document.getElementById('results-title').textContent = '¡Buen Trabajo!';
+      } else {
+        document.getElementById('results-emoji').textContent = '📖';
+        document.getElementById('results-title').textContent = '¡Sigue Repasando!';
+      }
+
+      const receiptBox = document.getElementById('student-receipt-box');
+      if (currentSession.classroomCode && currentSession.studentName) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const record = {
+          id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+          classroomCode: currentSession.classroomCode,
+          studentName: currentSession.studentName,
+          studentGroup: currentSession.studentGroup || 'General',
+          quizTitle: currentSession.quiz.title,
+          correct,
+          total,
+          grade,
+          timeStr
+        };
+        saveStudentGrade(record);
+
+        receiptBox.classList.remove('hidden');
+        document.getElementById('receipt-code-tag').textContent = currentSession.classroomCode;
+        document.getElementById('receipt-summary-text').textContent =
+          `Alumno: ${record.studentName} (${record.studentGroup}) | Historia: ${record.quizTitle} | Aciertos: ${correct}/${total} | Nota: ${grade}/10`;
+      } else {
+        receiptBox.classList.add('hidden');
+      }
+    }
+
+    function shareStudentResultWhatsApp() {
+      const text = document.getElementById('receipt-summary-text').textContent;
+      const code = document.getElementById('receipt-code-tag').textContent;
+      const msg = encodeURIComponent(`📖 *Boleta BibliaTrivia (${code})*\n${text}`);
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
+
+    function retryCurrentQuiz() {
+      if (!currentSession.quiz) return;
+      startQuizEngine(
+        currentSession.quiz,
+        currentSession.lastCount || 10,
+        currentSession.lastDifficulty || 'media',
+        true,
+        currentSession.classroomCode ? {
+          classroomCode: currentSession.classroomCode,
+          studentName: currentSession.studentName,
+          studentGroup: currentSession.studentGroup
+        } : null
+      );
+    }
+
+    // =========================================================================
+    // CREADOR DE CUESTIONARIOS PERSONALIZADOS
+    // =========================================================================
+    function addEditorQuestionBlock() {
+      const container = document.getElementById('editor-questions-container');
+      const idx = container.children.length + 1;
+      const block = document.createElement('div');
+      block.className = 'bg-slate-900/75 p-4 rounded-2xl border border-white/10 space-y-3 editor-q-block';
+      block.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-amber-300">Pregunta #${idx}</span>
+          ${idx > 1 ? '<button onclick="this.closest(\'.editor-q-block\').remove()" class="text-xs text-rose-400 hover:underline">Eliminar</button>' : ''}
+        </div>
+        <input type="text" placeholder="Escribe la pregunta bíblica..." class="eq-text w-full px-3 py-2 rounded-xl bg-slate-800 border border-white/15 text-sm text-white">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <input type="text" placeholder="✅ Respuesta Correcta" class="eq-opt-0 px-3 py-2 rounded-xl bg-emerald-950/50 border border-emerald-400/40 text-xs text-white">
+          <input type="text" placeholder="Opción Incorrecta 1" class="eq-opt-1 px-3 py-2 rounded-xl bg-slate-800 border border-white/10 text-xs text-white">
+          <input type="text" placeholder="Opción Incorrecta 2" class="eq-opt-2 px-3 py-2 rounded-xl bg-slate-800 border border-white/10 text-xs text-white">
+          <input type="text" placeholder="Opción Incorrecta 3" class="eq-opt-3 px-3 py-2 rounded-xl bg-slate-800 border border-white/10 text-xs text-white">
+        </div>
+      `;
+      container.appendChild(block);
+    }
+
+    function saveCustomQuiz() {
+      const title = document.getElementById('new-quiz-title').value.trim();
+      const verse = document.getElementById('new-quiz-verse').value.trim() || 'Estudio Bíblico';
+      const category = document.getElementById('new-quiz-category').value;
+
+      if (!title) {
+        alert('Por favor escribe un título para el cuestionario.');
+        return;
+      }
+
+      const blocks = document.querySelectorAll('.editor-q-block');
+      const questions = [];
+
+      blocks.forEach((b, i) => {
+        const qText = b.querySelector('.eq-text').value.trim();
+        const o0 = b.querySelector('.eq-opt-0').value.trim();
+        const o1 = b.querySelector('.eq-opt-1').value.trim();
+        const o2 = b.querySelector('.eq-opt-2').value.trim();
+        const o3 = b.querySelector('.eq-opt-3').value.trim();
+
+        if (qText && o0 && o1) {
+          questions.push({
+            id: `custom_${Date.now()}_${i}`,
+            question: qText,
+            options: [o0, o1, o2 || 'Ninguna de las anteriores', o3 || 'No se menciona'],
+            correctAnswer: o0,
+            verse
+          });
+        }
+      });
+
+      if (questions.length === 0) {
+        alert('Agrega al menos una pregunta con su respuesta correcta y una incorrecta.');
+        return;
+      }
+
+      const newQuiz = {
+        id: `custom_${Date.now()}`,
+        title,
+        verse,
+        category,
+        questions,
+        isCustom: true
+      };
+
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOM_QUIZZES) || '[]');
+      existing.unshift(newQuiz);
+      localStorage.setItem(STORAGE_KEYS.CUSTOM_QUIZZES, JSON.stringify(existing));
+
+      loadQuizzes();
+      renderLobby();
+      switchMainView('lobby');
+      alert('¡Cuestionario guardado exitosamente!');
+    }
+
+    // =========================================================================
+    // NAVEGACIÓN ENTRE VISTAS
+    // =========================================================================
+    function switchMainView(viewName) {
+      ['lobby', 'creator', 'game', 'results'].forEach(v => {
+        document.getElementById(`view-${v}`)?.classList.add('hidden');
+      });
+      document.getElementById(`view-${viewName}`)?.classList.remove('hidden');
+    }
+
+    function goHome() {
+      clearInterval(currentSession.timerInterval);
+      switchMainView('lobby');
+    }
+
+    // =========================================================================
+    // BLOQUEO PERMANENTE DE COPYRIGHT Y EXPORTACIÓN AUTÓNOMA
+    // =========================================================================
+    function loadCopyright() {
+      const savedAuthor = localStorage.getItem(STORAGE_KEYS.COPYRIGHT);
+      if (savedAuthor) {
+        applyLockedCopyrightUI(savedAuthor);
+      }
+    }
+
+    function savePermanentCopyright() {
+      const input = document.getElementById('copyright-author-input');
+      const author = input.value.trim();
+      if (!author) return;
+      localStorage.setItem(STORAGE_KEYS.COPYRIGHT, author);
+      applyLockedCopyrightUI(author);
+    }
+
+    function applyLockedCopyrightUI(author) {
+      const formBox = document.getElementById('copyright-form-box');
+      const lockedText = document.getElementById('copyright-locked-display');
+      if (formBox) formBox.remove();
+      if (lockedText) {
+        lockedText.textContent = `© ${new Date().getFullYear()} ${author} — Todos los derechos reservados.`;
+        lockedText.classList.remove('hidden');
+      }
+    }
+
+    function exportStandaloneHTML() {
+      const clone = document.documentElement.cloneNode(true);
+      const author = localStorage.getItem(STORAGE_KEYS.COPYRIGHT);
+      if (author) {
+        const formInClone = clone.querySelector('#copyright-form-box');
+        if (formInClone) formInClone.remove();
+        const lockedInClone = clone.querySelector('#copyright-locked-display');
+        if (lockedInClone) {
+          lockedInClone.textContent = `© ${new Date().getFullYear()} ${author} — Todos los derechos reservados.`;
+          lockedInClone.classList.remove('hidden');
+        }
+      }
+      const htmlContent = '<!DOCTYPE html>\n' + clone.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'BibliaTrivia.html';
+      a.click();
+    }
+
+    // =========================================================================
+    // CONTADOR DE VISITAS, ME GUSTA, COMENTARIOS Y REGISTRO DE ACTIVIDAD
+    // =========================================================================
+    function getDeviceLabel() {
+      const ua = navigator.userAgent;
+      if (/Android/i.test(ua)) return 'Android';
+      if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+      if (/Windows/i.test(ua)) return 'Windows';
+      if (/Mac/i.test(ua)) return 'Mac';
+      return 'Navegador Web';
+    }
+
+    function loadVisitorStats() {
+      let visits = parseInt(localStorage.getItem(STORAGE_KEYS.VISITS) || '0', 10) + 1;
+      localStorage.setItem(STORAGE_KEYS.VISITS, visits);
+      document.getElementById('stat-visits-count').textContent = visits;
+
+      const likes = parseInt(localStorage.getItem(STORAGE_KEYS.LIKES) || '0', 10);
+      document.getElementById('stat-likes-count').textContent = likes;
+
+      const liked = localStorage.getItem(STORAGE_KEYS.USER_LIKED) === 'true';
+      document.getElementById('like-heart-icon').textContent = liked ? '❤️' : '🤍';
+
+      const visitorName = localStorage.getItem(STORAGE_KEYS.VISITOR_NAME) || `Visitante #${visits}`;
+      const tagInput = document.getElementById('visitor-tag-input');
+      if (tagInput && localStorage.getItem(STORAGE_KEYS.VISITOR_NAME)) {
+        tagInput.value = localStorage.getItem(STORAGE_KEYS.VISITOR_NAME);
+      }
+
+      appendActivityLog(`👁️ Visita de ${visitorName} (${getDeviceLabel()})`);
+      renderComments();
+      renderActivityLog();
+    }
+
+    function updateVisitorName(name) {
+      const clean = name.trim();
+      if (!clean) return;
+      localStorage.setItem(STORAGE_KEYS.VISITOR_NAME, clean);
+      appendActivityLog(`🏷️ Visitante identificado como ${clean}`);
+      renderActivityLog();
+    }
+
+    function toggleLikeApp() {
+      let likes = parseInt(localStorage.getItem(STORAGE_KEYS.LIKES) || '0', 10);
+      const liked = localStorage.getItem(STORAGE_KEYS.USER_LIKED) === 'true';
+      const visitor = localStorage.getItem(STORAGE_KEYS.VISITOR_NAME) || 'Un visitante';
+
+      if (liked) {
+        likes = Math.max(0, likes - 1);
+        localStorage.setItem(STORAGE_KEYS.USER_LIKED, 'false');
+        document.getElementById('like-heart-icon').textContent = '🤍';
+      } else {
+        likes++;
+        localStorage.setItem(STORAGE_KEYS.USER_LIKED, 'true');
+        document.getElementById('like-heart-icon').textContent = '❤️';
+        appendActivityLog(`❤️ Me gusta de ${visitor} (${getDeviceLabel()})`);
+      }
+
+      localStorage.setItem(STORAGE_KEYS.LIKES, likes);
+      document.getElementById('stat-likes-count').textContent = likes;
+      renderActivityLog();
+    }
+
+    function appendActivityLog(entry) {
+      const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACTIVITY_LOG) || '[]');
+      const now = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+      logs.unshift(`${now} — ${entry}`);
+      localStorage.setItem(STORAGE_KEYS.ACTIVITY_LOG, JSON.stringify(logs.slice(0, 40)));
+    }
+
+    function renderActivityLog() {
+      const box = document.getElementById('activity-log-box');
+      if (!box) return;
+      const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACTIVITY_LOG) || '[]');
+      box.innerHTML = logs.map(l => `<div class="border-b border-white/5 pb-1">${l}</div>`).join('');
+    }
+
+    function postCommunityComment() {
+      const author = document.getElementById('comment-author-input').value.trim() || 'Anónimo';
+      const text = document.getElementById('comment-text-input').value.trim();
+      if (!text) return;
+
+      if (author !== 'Anónimo') {
+        localStorage.setItem(STORAGE_KEYS.VISITOR_NAME, author);
+      }
+
+      const comments = JSON.parse(localStorage.getItem(STORAGE_KEYS.COMMENTS) || '[]');
+      comments.unshift({
+        author,
+        text,
+        date: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
+      });
+      localStorage.setItem(STORAGE_KEYS.COMMENTS, JSON.stringify(comments.slice(0, 50)));
+      document.getElementById('comment-text-input').value = '';
+      renderComments();
+    }
+
+    function renderComments() {
+      const box = document.getElementById('comments-list-box');
+      if (!box) return;
+      const comments = JSON.parse(localStorage.getItem(STORAGE_KEYS.COMMENTS) || '[]');
+      if (comments.length === 0) {
+        box.innerHTML = `<p class="text-slate-400">Sé el primero en dejar un comentario.</p>`;
+        return;
+      }
+      box.innerHTML = comments.map(c => `
+        <div class="bg-slate-800/70 p-2 rounded-lg">
+          <div class="flex justify-between text-[10px] text-indigo-300 font-bold">
+            <span>${c.author}</span>
+            <span class="text-slate-400 font-normal">${c.date}</span>
+          </div>
+          <p class="text-slate-200 mt-0.5">${c.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function toggleCommunityDrawer() {
+      const drawer = document.getElementById('community-drawer');
+      const btn = document.getElementById('btn-toggle-drawer');
+      const isHidden = drawer.classList.contains('hidden');
+      if (isHidden) {
+        drawer.classList.remove('hidden');
+        btn.textContent = '💬 Ocultar Panel ▼';
+        setTimeout(() => document.getElementById('comment-text-input')?.focus(), 50);
+      } else {
+        drawer.classList.add('hidden');
+        btn.textContent = '💬 Comentarios y Registro ▲';
+      }
+    }
+
+    // =========================================================================
+    // ATAJOS DE TECLADO (CONFIRMAR CON TECLA ENTER EN PC)
+    // =========================================================================
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+
+      const active = document.activeElement;
+      const activeId = active ? active.id : '';
+
+      const feedbackModal = document.getElementById('feedback-modal');
+      if (feedbackModal && !feedbackModal.classList.contains('hidden')) {
+        event.preventDefault();
+        nextQuestion();
+        return;
+      }
+
+      if (activeId === 'teacher-login-pass-input') {
+        event.preventDefault();
+        verifyTeacherPassword();
+        return;
+      }
+
+      if (activeId === 'teacher-new-pass-input' || activeId === 'teacher-confirm-pass-input') {
+        event.preventDefault();
+        setupTeacherPassword();
+        return;
+      }
+
+      if (activeId === 'comment-text-input' || activeId === 'comment-author-input') {
+        event.preventDefault();
+        postCommunityComment();
+        return;
+      }
+
+      if (activeId === 'copyright-author-input') {
+        event.preventDefault();
+        savePermanentCopyright();
+        return;
+      }
+
+      if (activeId === 'visitor-tag-input') {
+        event.preventDefault();
+        updateVisitorName(active.value);
+        active.blur();
+        return;
+      }
+
+      if (['student-code-input', 'student-name-input', 'student-group-input'].includes(activeId)) {
+        event.preventDefault();
+        joinClassroomAsStudent();
+        return;
+      }
+
+      if (activeId === 'teacher-name-input') {
+        event.preventDefault();
+        createLiveClassroom();
+        return;
+      }
+    });
+
+    // =========================================================================
+    // ARRANQUE INICIAL DE LA APLICACIÓN
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      initPWAInstallSupport();
+      loadCopyright();
+      loadVisitorStats();
+      loadQuizzes();
+      renderLobby();
+      addEditorQuestionBlock();
+      initLiveClassroomSync();
+      populateTeacherQuizOptions();
+      renderLiveClassroomBoard();
+      checkURLClassroomInvite();
+    });
+  </script>
+</body>
+</html>

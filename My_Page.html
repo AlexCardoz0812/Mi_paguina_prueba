@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Funciones - Alex</title>
+    <style>
+        :root {
+            --bg-color: #f4f7fb;
+            --bg-gradient: linear-gradient(135deg, #eef4ff 0%, #f8fafc 100%);
+            --text-color: #1f2937;
+            --heading-color: #111827;
+            --nav-bg: linear-gradient(135deg, #1f3a5f 0%, #2d4f6f 100%);
+            --nav-btn-bg: rgba(255, 255, 255, 0.08);
+            --nav-btn-hover: #4ecdc4;
+            --nav-btn-text: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --card-border: rgba(148, 163, 184, 0.2);
+            --shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+            --accent: #3498db;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --menu-bg: linear-gradient(135deg, #3498db, #2c7be5);
+            --muted: #6b7280;
+            --transition-speed: 0.3s;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --bg-gradient: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+            --text-color: #e5e7eb;
+            --heading-color: #f8fafc;
+            --nav-bg: linear-gradient(135deg, #0f172a 0%, #111827 100%);
+            --nav-btn-bg: rgba(148, 163, 184, 0.12);
+            --nav-btn-hover: #f87171;
+            --nav-btn-text: #f8fafc;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --card-border: rgba(148, 163, 184, 0.18);
+            --shadow: 0 12px 32px rgba(2, 6, 23, 0.45);
+            --accent: #60a5fa;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --menu-bg: linear-gradient(135deg, #ef4444, #e11d48);
+            --muted: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px 20px;
+            background: var(--nav-bg);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        nav button {
+            background: var(--nav-btn-bg);
+            color: var(--nav-btn-text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.96rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform var(--transition-speed), background-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        nav button:hover {
+            background: var(--nav-btn-hover);
+            transform: translateY(-2px);
+        }
+
+        main {
+            width: min(900px, calc(100% - 30px));
+            margin: 42px auto 60px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            color: var(--heading-color);
+            font-size: clamp(2rem, 4vw, 3rem);
+        }
+
+        .subtitulo {
+            margin: 0 auto 28px;
+            max-width: 650px;
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .tarjeta-info {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 28px 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(8px);
+            transition: background var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        #titulo-estado {
+            margin: 0 0 12px;
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            color: var(--heading-color);
+        }
+
+        #texto-estado {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        #menu-desplegable {
+            display: none;
+            margin-top: 22px;
+            padding: 18px 16px;
+            border-radius: 12px;
+            background: var(--menu-bg);
+            color: #ffffff;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            animation: slideDown 0.35s ease;
+        }
+
+        #menu-desplegable.visible {
+            display: block;
+        }
+
+        .contacto-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .contacto-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            font-size: 1rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 14px 12px;
+            }
+
+            nav button {
+                width: 100%;
+            }
+
+            .tarjeta-info {
+                padding: 22px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <button id="btn-tema" type="button">🌓 Cambiar tema</button>
+        <button id="btn-contacto" type="button">📞 Contacto</button>
+        <button id="btn-accion" type="button">⚡ Ejecutar acción</button>
+    </nav>
+
+    <main>
+        <h1>Panel de Control Interactivo</h1>
+        <p class="subtitulo">Selecciona una opción en la barra superior para probar cada una de las funciones del panel.</p>
+
+        <div class="tarjeta-info">
+            <h2 id="titulo-estado">Estado: Esperando instrucción...</h2>
+            <p id="texto-estado">Aquí se reflejarán los cambios según los botones que presiones.</p>
+
+            <div id="menu-desplegable" aria-live="polite">
+                <div class="contacto-item"><span class="badge">📧</span><span>Email: desarrollador@ejemplo.com</span></div>
+                <div class="contacto-item"><span class="badge">📱</span><span>Teléfono: +503 0000 0000</span></div>
+                <div class="contacto-item"><span class="badge">📍</span><span>Ubicación: El Salvador</span></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const btnTema = document.getElementById('btn-tema');
+        const btnContacto = document.getElementById('btn-contacto');
+        const btnAccion = document.getElementById('btn-accion');
+        const menuDesplegable = document.getElementById('menu-desplegable');
+        const tituloEstado = document.getElementById('titulo-estado');
+        const textoEstado = document.getElementById('texto-estado');
+
+        function actualizarEstado(titulo, mensaje) {
+            tituloEstado.textContent = titulo;
+            textoEstado.textContent = mensaje;
+        }
+
+        function aplicarTema(theme) {
+            const body = document.body;
+            if (theme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                btnTema.textContent = '🌙 Modo oscuro';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.removeAttribute('data-theme');
+                btnTema.textContent = '☀️ Modo claro';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            aplicarTema('dark');
+        } else {
+            aplicarTema('light');
+        }
+
+        btnTema.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            aplicarTema(newTheme);
+            actualizarEstado(
+                'Preferencia Actualizada',
+                newTheme === 'dark'
+                    ? 'Has activado el modo oscuro para una mejor visualización en entornos bajos de luz.'
+                    : 'Has regresado al modo claro para una vista más luminosa.'
+            );
+        });
+
+        btnContacto.addEventListener('click', () => {
+            const isVisible = menuDesplegable.classList.contains('visible');
+            menuDesplegable.classList.toggle('visible', !isVisible);
+
+            if (!isVisible) {
+                actualizarEstado('Menú Desplegado', 'Has activado la vista de contacto con información de respaldo.');
+            } else {
+                actualizarEstado('Menú Oculto', 'El menú de contacto se ha cerrado correctamente.');
+            }
+        });
+
+        btnAccion.addEventListener('click', () => {
+            actualizarEstado('Acción Finalizada', 'La acción se ejecutó correctamente desde la barra superior.');
+            btnAccion.animate(
+                [
+                    { transform: 'scale(1)' },
+                    { transform: 'scale(1.04)' },
+                    { transform: 'scale(1)' }
+                ],
+                { duration: 250, easing: 'ease-out' }
+            );
+        });
+    </script>
+</body>
+
+</html>
