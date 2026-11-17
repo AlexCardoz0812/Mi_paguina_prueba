@@ -88,6 +88,27 @@
       flex-wrap: wrap;
     }
 
+    .easy-menu-trigger-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .easy-menu-trigger-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
+    }
+
     .install-app-btn {
       background: linear-gradient(135deg, var(--accent-gold) 0%, #eab308 100%);
       color: #1e293b;
@@ -313,6 +334,152 @@
       padding: 0.45rem 0.85rem;
       font-size: 0.85rem;
       min-height: 36px;
+    }
+
+    /* ==========================================================================
+       MODAL DE MENÚ FÁCIL (BIENVENIDA Y ACCESO RÁPIDO RECURRENTE)
+       ========================================================================== */
+    .easy-menu-dialog {
+      background: linear-gradient(180deg, #ffffff 0%, #fcfaf3 100%);
+      border-radius: 22px;
+      max-width: 560px;
+      width: 100%;
+      padding: 1.65rem 1.5rem;
+      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.35);
+      border-top: 8px solid var(--accent-gold);
+      animation: popupScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+
+    .easy-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .easy-menu-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--accent-gold-light);
+      color: #7c5e10;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 0.35rem;
+    }
+
+    .easy-menu-header h3 {
+      font-family: var(--font-serif);
+      color: var(--primary-navy);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    .easy-menu-close {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .easy-menu-close:hover {
+      background: #e5dec9;
+      color: var(--primary-navy);
+    }
+
+    .easy-menu-step {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .easy-menu-step-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .easy-menu-pills {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .easy-cat-pill {
+      padding: 0.32rem 0.7rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-parchment);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .easy-cat-pill.active {
+      background: var(--primary-navy);
+      border-color: var(--primary-navy);
+      color: #ffffff;
+    }
+
+    .easy-menu-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 520px) {
+      .easy-menu-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .easy-menu-summary-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1.5px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 0.75rem 0.95rem;
+      margin-bottom: 1rem;
+      font-size: 0.86rem;
+      color: var(--primary-navy);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .easy-menu-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.82rem;
+      color: var(--text-muted);
     }
 
     /* ==========================================================================
@@ -1078,7 +1245,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(20, 30, 45, 0.55);
+      background: rgba(20, 30, 45, 0.58);
       display: none;
       align-items: center;
       justify-content: center;
@@ -1465,6 +1632,9 @@
           </div>
         </div>
         <div class="header-actions">
+          <button type="button" id="open-easy-menu-btn" class="easy-menu-trigger-btn" onclick="openEasyMenuModal()" title="Abrir el asistente rápido para elegir historia, quiz y cantidad de preguntas">
+            ⚡ Menú Fácil
+          </button>
           <button type="button" id="install-pwa-btn" class="install-app-btn" onclick="triggerPWAInstall()" title="Instalar como aplicación en tu dispositivo">
             📲 Instalar App
           </button>
@@ -1505,6 +1675,7 @@
             <h2>Explora la Palabra Jugando</h2>
             <p>Preguntas generadas automáticamente según la extensión de cada relato bíblico. Despliega la lista de preguntas disponibles y elige cuántas deseas contestar.</p>
             <div class="hero-3d-actions">
+              <button type="button" class="btn btn-olive btn-sm" onclick="openEasyMenuModal()">⚡ Abrir Menú Fácil</button>
               <button type="button" class="btn btn-gold btn-sm" onclick="startRandomQuickGame()">🎲 Evaluación Aleatoria Rápida</button>
               <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.35);" onclick="switchTab('create')">✏️ Crear Nueva Evaluación</button>
             </div>
@@ -1576,6 +1747,7 @@
 
           <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
             <button class="btn btn-gold" onclick="restartCurrentQuiz()">🔄 Volver a Jugar</button>
+            <button class="btn btn-olive" onclick="openEasyMenuModal()">⚡ Elegir Otro en Menú Fácil</button>
             <button class="btn btn-outline" onclick="exitGame()">📋 Volver al Listado</button>
           </div>
         </div>
@@ -1787,6 +1959,91 @@
     </div>
   </section>
 
+  <!-- ==========================================================================
+       MODAL DE MENÚ FÁCIL (DESPLIEGUE INICIAL Y RECURRENTE)
+       ========================================================================== -->
+  <div id="easy-menu-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="easy-menu-title">
+    <div class="easy-menu-dialog">
+      <div class="easy-menu-header">
+        <div>
+          <span class="easy-menu-badge">⚡ MENÚ FÁCIL • INICIO RÁPIDO</span>
+          <h3 id="easy-menu-title">Configura tu Evaluación Bíblica</h3>
+          <p style="font-size: 0.87rem; color: var(--text-muted); margin-top: 0.2rem;">Elige la historia, la cantidad de preguntas y comienza al instante.</p>
+        </div>
+        <button type="button" class="easy-menu-close" onclick="closeEasyMenuModal()" title="Cerrar y ver listado completo">✕</button>
+      </div>
+
+      <!-- Paso 1: Filtrar por categoría -->
+      <div class="easy-menu-step">
+        <div class="easy-menu-step-label">
+          <span>1. Filtra por Testamento o Sección</span>
+        </div>
+        <div class="easy-menu-pills" id="easy-menu-cat-pills">
+          <button type="button" class="easy-cat-pill active" data-cat="ALL" onclick="setEasyMenuCategory('ALL', this)">📚 Todas</button>
+          <button type="button" class="easy-cat-pill" data-cat="AT" onclick="setEasyMenuCategory('AT', this)">📜 Antiguo Testamento</button>
+          <button type="button" class="easy-cat-pill" data-cat="NT" onclick="setEasyMenuCategory('NT', this)">✝️ Nuevo Testamento</button>
+          <button type="button" class="easy-cat-pill" data-cat="CUSTOM" onclick="setEasyMenuCategory('CUSTOM', this)">⭐ Generales / Propias</button>
+        </div>
+      </div>
+
+      <!-- Paso 2: Seleccionar historia o quiz -->
+      <div class="easy-menu-step">
+        <div class="easy-menu-step-label">
+          <span>2. Selecciona la Historia o Quiz</span>
+          <span id="easy-menu-verse-tag" style="font-size: 0.78rem; color: var(--accent-olive); font-weight: 700;"></span>
+        </div>
+        <select id="easy-menu-quiz-select" class="form-control" style="font-weight: 600; color: var(--primary-navy);" onchange="onEasyMenuQuizChange()"></select>
+        <p id="easy-menu-quiz-desc" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.45rem;"></p>
+      </div>
+
+      <!-- Paso 3: Cantidad de preguntas y Dificultad -->
+      <div class="easy-menu-step">
+        <div class="easy-menu-grid-2">
+          <div>
+            <label for="easy-menu-count-select" style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.35rem;">
+              3. Cantidad de Preguntas
+            </label>
+            <select id="easy-menu-count-select" class="form-control" style="font-weight: 700; color: #166534; background: #f0fdf4; border-color: #86efac;" onchange="updateEasyMenuSummary()"></select>
+          </div>
+          <div>
+            <label for="easy-menu-diff-select" style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 0.35rem;">
+              4. Dificultad y Tiempo
+            </label>
+            <select id="easy-menu-diff-select" class="form-control" style="font-weight: 600;" onchange="updateEasyMenuSummary()">
+              <option value="facil">🟢 Fácil (40 seg/preg.)</option>
+              <option value="media" selected>🟡 Media (25 seg/preg.)</option>
+              <option value="dificil">🔴 Difícil (15 seg/preg.)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen rápido -->
+      <div class="easy-menu-summary-box">
+        <span id="easy-menu-summary-text">📖 Evaluación lista</span>
+        <strong id="easy-menu-time-preview">⏱️ 04:10</strong>
+      </div>
+
+      <!-- Botones de acción -->
+      <div style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 0.85rem;">
+        <button type="button" class="btn btn-primary" style="flex: 2; min-width: 200px; font-size: 1rem;" onclick="startQuizFromEasyMenu()">
+          ▶ Comenzar Evaluación Ahora
+        </button>
+        <button type="button" class="btn btn-outline" style="flex: 1; min-width: 140px;" onclick="closeEasyMenuModal()">
+          Ver Listado Completo
+        </button>
+      </div>
+
+      <!-- Preferencia recurrente al abrir la página -->
+      <div class="easy-menu-footer-row">
+        <label style="display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; font-weight: 600; color: var(--text-main);">
+          <input type="checkbox" id="easy-menu-auto-show-chk" checked onchange="toggleEasyMenuAutoShow(this.checked)" style="width: 16px; height: 16px; accent-color: var(--primary-navy);">
+          Mostrar Menú Fácil automáticamente al abrir la página
+        </label>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL DE CONFIRMACIÓN PROPIO -->
   <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-dialog">
@@ -1957,6 +2214,7 @@
     const COMMUNITY_KEY = 'biblia_trivia_community_v1';
     const USER_LIKED_KEY = 'biblia_trivia_user_liked_v1';
     const VISITOR_PROFILE_KEY = 'biblia_trivia_visitor_profile_v1';
+    const EASY_MENU_AUTO_KEY = 'biblia_trivia_easy_menu_auto_v1';
 
     /* ==========================================================================
        BIBLIOTECA INTEGRADA DE HISTORIAS DE LA BIBLIA (ANTIGUO Y NUEVO TESTAMENTO)
@@ -2224,6 +2482,7 @@
     let isRandomModeEnabled = true;
     let deferredInstallPrompt = null;
     let currentLobbyTestamentFilter = 'ALL';
+    let easyMenuCategory = 'ALL';
     const perQuizSettings = {};
     let communityState = {
       visits: 1,
@@ -2269,7 +2528,178 @@
       renderLobby();
       renderManageList();
       resetEditorToNew();
+      initEasyMenuOnLoad();
     });
+
+    /* --------------------------------------------------------------------------
+       MENÚ FÁCIL (ASISTENTE INICIAL Y RECURRENTE PARA ELEGIR HISTORIA Y PREGUNTAS)
+       -------------------------------------------------------------------------- */
+    function initEasyMenuOnLoad() {
+      const savedPref = localStorage.getItem(EASY_MENU_AUTO_KEY);
+      const shouldAutoOpen = savedPref === null ? true : savedPref === 'true';
+
+      const chk = document.getElementById('easy-menu-auto-show-chk');
+      if (chk) chk.checked = shouldAutoOpen;
+
+      if (shouldAutoOpen && quizzes.length > 0) {
+        openEasyMenuModal();
+      }
+    }
+
+    function toggleEasyMenuAutoShow(isChecked) {
+      try {
+        localStorage.setItem(EASY_MENU_AUTO_KEY, String(isChecked));
+      } catch (e) {}
+      showToast(
+        isChecked
+          ? 'El Menú Fácil se mostrará automáticamente al abrir la página.'
+          : 'El Menú Fácil quedó guardado en el botón superior "⚡ Menú Fácil".',
+        'info'
+      );
+    }
+
+    function openEasyMenuModal() {
+      if (!quizzes || quizzes.length === 0) {
+        showToast('No hay evaluaciones disponibles todavía.', 'error');
+        return;
+      }
+
+      const savedPref = localStorage.getItem(EASY_MENU_AUTO_KEY);
+      const chk = document.getElementById('easy-menu-auto-show-chk');
+      if (chk) chk.checked = savedPref === null ? true : savedPref === 'true';
+
+      populateEasyMenuQuizzes();
+      const modal = document.getElementById('easy-menu-modal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeEasyMenuModal() {
+      const modal = document.getElementById('easy-menu-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function setEasyMenuCategory(cat, btnEl) {
+      easyMenuCategory = cat;
+      document.querySelectorAll('#easy-menu-cat-pills .easy-cat-pill').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      populateEasyMenuQuizzes();
+    }
+
+    function populateEasyMenuQuizzes() {
+      const quizSelect = document.getElementById('easy-menu-quiz-select');
+      if (!quizSelect) return;
+
+      const filtered = quizzes.filter(q => {
+        const qCat = q.testament || 'CUSTOM';
+        return easyMenuCategory === 'ALL' || qCat === easyMenuCategory;
+      });
+
+      const listToUse = filtered.length > 0 ? filtered : quizzes;
+      quizSelect.innerHTML = '';
+
+      listToUse.forEach((q, idx) => {
+        const maxAvail = Math.min(50, q.questions.length);
+        const prefix = q.testament === 'AT' ? '📜 ' : q.testament === 'NT' ? '✝️ ' : '⭐ ';
+        const opt = document.createElement('option');
+        opt.value = q.id;
+        opt.textContent = `${idx + 1}. ${prefix}${q.title} (${maxAvail} preg.)`;
+        quizSelect.appendChild(opt);
+      });
+
+      onEasyMenuQuizChange();
+    }
+
+    function onEasyMenuQuizChange() {
+      const quizSelect = document.getElementById('easy-menu-quiz-select');
+      const countSelect = document.getElementById('easy-menu-count-select');
+      const diffSelect = document.getElementById('easy-menu-diff-select');
+      const verseTag = document.getElementById('easy-menu-verse-tag');
+      const descEl = document.getElementById('easy-menu-quiz-desc');
+
+      if (!quizSelect || !countSelect) return;
+
+      const quiz = quizzes.find(q => q.id === quizSelect.value);
+      if (!quiz) return;
+
+      const maxAvail = Math.min(50, quiz.questions.length);
+      const existingCfg = perQuizSettings[quiz.id];
+      const defaultCount = existingCfg ? existingCfg.questionCount : Math.min(10, maxAvail);
+      const defaultDiff = existingCfg ? existingCfg.difficulty : (quiz.difficulty || 'media');
+
+      if (verseTag) verseTag.textContent = quiz.verse || '';
+      if (descEl) descEl.textContent = quiz.description || 'Evaluación interactiva sobre la Biblia.';
+
+      countSelect.innerHTML = '';
+      for (let n = 1; n <= maxAvail; n++) {
+        const opt = document.createElement('option');
+        opt.value = String(n);
+        opt.textContent = n === maxAvail
+          ? `${n} preguntas (Todas)`
+          : `${n} ${n === 1 ? 'pregunta' : 'preguntas'}`;
+        if (n === Math.min(defaultCount, maxAvail)) {
+          opt.selected = true;
+        }
+        countSelect.appendChild(opt);
+      }
+
+      if (diffSelect) {
+        diffSelect.value = defaultDiff;
+      }
+
+      updateEasyMenuSummary();
+    }
+
+    function updateEasyMenuSummary() {
+      const quizSelect = document.getElementById('easy-menu-quiz-select');
+      const countSelect = document.getElementById('easy-menu-count-select');
+      const diffSelect = document.getElementById('easy-menu-diff-select');
+      const summaryText = document.getElementById('easy-menu-summary-text');
+      const timePreview = document.getElementById('easy-menu-time-preview');
+
+      if (!quizSelect || !countSelect || !diffSelect) return;
+
+      const quiz = quizzes.find(q => q.id === quizSelect.value);
+      if (!quiz) return;
+
+      const count = parseInt(countSelect.value, 10) || 1;
+      const diff = diffSelect.value || 'media';
+      const autoSec = calculateTimeByDifficulty(diff, count);
+
+      if (summaryText) {
+        summaryText.textContent = `📖 "${quiz.title}" • ${count} ${count === 1 ? 'pregunta' : 'preguntas'}`;
+      }
+      if (timePreview) {
+        timePreview.textContent = `⏱️ Tiempo: ${formatDurationLabel(autoSec)}`;
+      }
+    }
+
+    function startQuizFromEasyMenu() {
+      const quizSelect = document.getElementById('easy-menu-quiz-select');
+      const countSelect = document.getElementById('easy-menu-count-select');
+      const diffSelect = document.getElementById('easy-menu-diff-select');
+
+      if (!quizSelect) return;
+      const quizId = quizSelect.value;
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+
+      const maxAvail = Math.min(50, quiz.questions.length);
+      const chosenCount = Math.max(1, Math.min(maxAvail, parseInt(countSelect?.value, 10) || 10));
+      const chosenDiff = diffSelect?.value || 'media';
+
+      perQuizSettings[quizId] = {
+        random: typeof quiz.randomMode === 'boolean' ? quiz.randomMode : isRandomModeEnabled,
+        questionCount: chosenCount,
+        difficulty: chosenDiff
+      };
+      quiz.difficulty = chosenDiff;
+      saveQuizzesToStorage();
+      renderLobby();
+
+      closeEasyMenuModal();
+      switchTab('play');
+      startQuiz(quizId);
+    }
 
     /* --------------------------------------------------------------------------
        CONTADOR DE VISITAS, BOTÓN ME GUSTA, PANEL DE ACTIVIDAD Y COMENTARIOS
@@ -4167,6 +4597,9 @@
 
         const answerModalClone = docClone.querySelector('#answer-feedback-modal');
         if (answerModalClone) answerModalClone.classList.remove('open');
+
+        const easyMenuClone = docClone.querySelector('#easy-menu-modal');
+        if (easyMenuClone) easyMenuClone.classList.remove('open');
 
         docClone.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'play'));
         docClone.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id === 'view-play'));
