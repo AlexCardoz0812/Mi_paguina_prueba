@@ -138,7 +138,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN MANUAL (iOS / LOCAL FILE) -->
+  <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN MANUAL -->
   <div id="install-guide-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-card max-w-md w-full rounded-3xl p-6 shadow-2xl border border-amber-400/30 animate-pop-in space-y-4">
       <div class="flex items-center justify-between">
@@ -151,9 +151,9 @@
         Puedes instalar <strong>BibliaTrivia</strong> como una aplicación directa en tu pantalla de inicio o escritorio:
       </p>
       <div class="space-y-2.5 text-xs text-slate-300 bg-slate-900/75 p-4 rounded-2xl border border-white/10">
-        <p><strong class="text-indigo-300">💻 En PC (Chrome / Edge):</strong> Haz clic en el menú <strong>⋮</strong> (arriba a la derecha) → <em>Guardar y compartir</em> → <strong>Instalar página como aplicación</strong> (o haz clic en el ícono de pantalla en la barra de direcciones).</p>
+        <p><strong class="text-indigo-300">💻 En PC (Chrome / Edge):</strong> Haz clic en el menú <strong>⋮</strong> (arriba a la derecha) → <em>Guardar y compartir</em> → <strong>Instalar página como aplicación</strong>.</p>
         <p><strong class="text-emerald-300">🤖 En Android (Chrome):</strong> Toca el menú <strong>⋮</strong> → <strong>Añadir a pantalla de inicio / Instalar aplicación</strong>.</p>
-        <p><strong class="text-amber-300">🍎 En iPhone / iPad (Safari):</strong> Toca el botón <strong>Compartir</strong> (cuadro con flecha hacia arriba) → <strong>Añadir a pantalla de inicio</strong>.</p>
+        <p><strong class="text-amber-300">🍎 En iPhone / iPad (Safari):</strong> Toca el botón <strong>Compartir</strong> → <strong>Añadir a pantalla de inicio</strong>.</p>
       </div>
       <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm">
         Entendido
@@ -183,7 +183,7 @@
         <button onclick="selectStartRole('teacher')" class="text-left p-5 rounded-2xl bg-gradient-to-br from-indigo-600/30 to-blue-900/40 hover:from-indigo-600/45 hover:to-blue-800/50 border-2 border-indigo-400/40 hover:border-indigo-300 transition group shadow-lg">
           <div class="flex items-center justify-between mb-3">
             <span class="text-4xl">👨‍🏫</span>
-            <span class="px-2.5 py-1 rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-bold group-hover:bg-indigo-500 group-hover:text-white transition">Panel Docente</span>
+            <span class="px-2.5 py-1 rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-bold group-hover:bg-indigo-500 group-hover:text-white transition">🔒 Acceso Protegido</span>
           </div>
           <h3 class="text-xl font-bold text-white mb-1">Soy Maestro</h3>
           <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -203,13 +203,63 @@
         </button>
       </div>
 
-      <!-- PANEL DEL MAESTRO -->
+      <!-- PANTALLA DE CONTRASEÑA PARA MAESTRO -->
+      <div id="role-panel-teacher-auth" class="hidden border-t border-white/15 pt-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg sm:text-xl font-bold text-indigo-300 flex items-center gap-2">
+            <span>🔐</span> Verificación de Seguridad del Maestro
+          </h3>
+          <button onclick="selectStartRole('none')" class="text-xs text-slate-400 hover:text-white underline">← Cambiar rol</button>
+        </div>
+
+        <!-- Formulario cuando aún NO hay contraseña configurada -->
+        <div id="teacher-setup-pass-box" class="hidden bg-slate-900/75 p-5 rounded-2xl border border-amber-400/30 space-y-4">
+          <p class="text-xs sm:text-sm text-amber-200">
+            🛡️ <strong>Primera vez en modo Maestro:</strong> Crea una contraseña privada para evitar que los alumnos entren al panel docente o modifiquen calificaciones.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Nueva Contraseña (mín. 4 caracteres)</label>
+              <input type="password" id="teacher-new-pass-input" placeholder="••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Confirmar Contraseña</label>
+              <input type="password" id="teacher-confirm-pass-input" placeholder="••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-white/15 text-white text-sm focus:outline-none focus:border-amber-400">
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span id="teacher-setup-feedback" class="text-xs text-rose-300 font-semibold"></span>
+            <button onclick="setupTeacherPassword()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-sm shadow-lg">
+              🔒 Guardar Contraseña y Entrar
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulario cuando YA existe contraseña configurada -->
+        <div id="teacher-login-pass-box" class="hidden bg-slate-900/75 p-5 rounded-2xl border border-indigo-400/30 space-y-4">
+          <p class="text-xs sm:text-sm text-slate-300">
+            Ingresa la contraseña de maestro para desbloquear la asignación de evaluaciones y el tablero en vivo.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="password" id="teacher-login-pass-input" placeholder="Contraseña de maestro..." class="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 border border-indigo-400/40 text-white text-sm focus:outline-none focus:border-indigo-300">
+            <button onclick="verifyTeacherPassword()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-sm shadow-lg">
+              🔓 Desbloquear Panel
+            </button>
+          </div>
+          <p id="teacher-login-feedback" class="text-xs text-rose-300 font-semibold"></p>
+        </div>
+      </div>
+
+      <!-- PANEL DEL MAESTRO (DESBLOQUEADO) -->
       <div id="role-panel-teacher" class="hidden border-t border-white/15 pt-5 space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h3 class="text-lg sm:text-xl font-bold text-indigo-300 flex items-center gap-2">
             <span>👨‍🏫</span> Configuración de Clase y Tablero en Vivo
           </h3>
-          <button onclick="selectStartRole('none')" class="text-xs text-slate-400 hover:text-white underline">← Cambiar rol</button>
+          <div class="flex items-center gap-3">
+            <button onclick="lockTeacherSession()" class="text-xs text-amber-300 hover:underline">🔒 Bloquear Panel</button>
+            <button onclick="selectStartRole('none')" class="text-xs text-slate-400 hover:text-white underline">← Cambiar rol</button>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/65 p-4 rounded-2xl border border-white/10">
@@ -544,7 +594,6 @@
     let deferredInstallPrompt = null;
 
     function initPWAInstallSupport() {
-      // Crear ícono SVG embebido para el manifest
       const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#1e1b4b"/><text x="50%" y="54%" font-size="280" text-anchor="middle" dominant-baseline="middle">📖</text></svg>`;
       const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
 
@@ -569,7 +618,6 @@
       linkEl.href = manifestURL;
       document.head.appendChild(linkEl);
 
-      // Registrar Service Worker dinámico si está en HTTP/HTTPS
       if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
         const swCode = `
           self.addEventListener('install', (e) => self.skipWaiting());
@@ -582,7 +630,6 @@
         navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
       }
 
-      // Capturar evento nativo de instalación
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredInstallPrompt = e;
@@ -1077,9 +1124,10 @@
     }
 
     // =========================================================================
-    // ESTADO GLOBAL DE LA APLICACIÓN
+    // ESTADO GLOBAL DE LA APLICACIÓN Y SEGURIDAD DE MAESTRO
     // =========================================================================
     let ALL_QUIZZES = [];
+    let isTeacherUnlocked = false;
     let currentSession = {
       quiz: null,
       questions: [],
@@ -1105,7 +1153,8 @@
       ACTIVITY_LOG: 'bibliatrivia_activity_v2',
       VISITOR_NAME: 'bibliatrivia_visitor_name_v2',
       CLASSROOMS: 'bibliatrivia_classrooms_v2',
-      GRADES: 'bibliatrivia_grades_v2'
+      GRADES: 'bibliatrivia_grades_v2',
+      TEACHER_PASS: 'bibliatrivia_teacher_pass_v1'
     };
 
     const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('bibliatrivia_live_sync') : null;
@@ -1225,7 +1274,7 @@
     }
 
     // =========================================================================
-    // VENTANA INICIAL MAESTRO / ALUMNO Y SINCRONIZACIÓN DE AULA EN VIVO
+    // VENTANA INICIAL MAESTRO / ALUMNO Y PROTECCIÓN CON CONTRASEÑA
     // =========================================================================
     function openRoleModal() {
       populateTeacherQuizOptions();
@@ -1239,26 +1288,91 @@
 
     function selectStartRole(role) {
       const cards = document.getElementById('role-selector-cards');
+      const authPanel = document.getElementById('role-panel-teacher-auth');
       const teacherPanel = document.getElementById('role-panel-teacher');
       const studentPanel = document.getElementById('role-panel-student');
 
+      cards.classList.add('hidden');
+      authPanel.classList.add('hidden');
+      teacherPanel.classList.add('hidden');
+      studentPanel.classList.add('hidden');
+
       if (role === 'teacher') {
-        cards.classList.add('hidden');
-        studentPanel.classList.add('hidden');
-        teacherPanel.classList.remove('hidden');
-        populateTeacherQuizOptions();
-        renderLiveClassroomBoard();
-        setTimeout(() => document.getElementById('teacher-name-input')?.focus(), 50);
+        if (isTeacherUnlocked) {
+          teacherPanel.classList.remove('hidden');
+          populateTeacherQuizOptions();
+          renderLiveClassroomBoard();
+          setTimeout(() => document.getElementById('teacher-name-input')?.focus(), 50);
+        } else {
+          authPanel.classList.remove('hidden');
+          const savedPass = localStorage.getItem(STORAGE_KEYS.TEACHER_PASS);
+          const setupBox = document.getElementById('teacher-setup-pass-box');
+          const loginBox = document.getElementById('teacher-login-pass-box');
+
+          if (!savedPass) {
+            setupBox.classList.remove('hidden');
+            loginBox.classList.add('hidden');
+            document.getElementById('teacher-setup-feedback').textContent = '';
+            setTimeout(() => document.getElementById('teacher-new-pass-input')?.focus(), 50);
+          } else {
+            setupBox.classList.add('hidden');
+            loginBox.classList.remove('hidden');
+            document.getElementById('teacher-login-feedback').textContent = '';
+            document.getElementById('teacher-login-pass-input').value = '';
+            setTimeout(() => document.getElementById('teacher-login-pass-input')?.focus(), 50);
+          }
+        }
       } else if (role === 'student') {
-        cards.classList.add('hidden');
-        teacherPanel.classList.add('hidden');
         studentPanel.classList.remove('hidden');
         setTimeout(() => document.getElementById('student-code-input')?.focus(), 50);
       } else {
-        teacherPanel.classList.add('hidden');
-        studentPanel.classList.add('hidden');
         cards.classList.remove('hidden');
       }
+    }
+
+    function setupTeacherPassword() {
+      const p1 = document.getElementById('teacher-new-pass-input').value.trim();
+      const p2 = document.getElementById('teacher-confirm-pass-input').value.trim();
+      const fb = document.getElementById('teacher-setup-feedback');
+
+      if (p1.length < 4) {
+        fb.textContent = '⚠️ La contraseña debe tener al menos 4 caracteres.';
+        return;
+      }
+      if (p1 !== p2) {
+        fb.textContent = '❌ Las contraseñas no coinciden. Inténtalo de nuevo.';
+        return;
+      }
+
+      localStorage.setItem(STORAGE_KEYS.TEACHER_PASS, btoa(p1));
+      isTeacherUnlocked = true;
+      selectStartRole('teacher');
+    }
+
+    function verifyTeacherPassword() {
+      const inputPass = document.getElementById('teacher-login-pass-input').value.trim();
+      const savedPassEncoded = localStorage.getItem(STORAGE_KEYS.TEACHER_PASS);
+      const fb = document.getElementById('teacher-login-feedback');
+
+      if (!inputPass) {
+        fb.textContent = '⚠️ Escribe la contraseña del maestro.';
+        return;
+      }
+
+      if (btoa(inputPass) === savedPassEncoded) {
+        isTeacherUnlocked = true;
+        fb.textContent = '';
+        selectStartRole('teacher');
+      } else {
+        fb.textContent = '❌ Contraseña incorrecta. Acceso denegado.';
+        document.getElementById('teacher-login-pass-input').value = '';
+        document.getElementById('teacher-login-pass-input').focus();
+      }
+    }
+
+    function lockTeacherSession() {
+      isTeacherUnlocked = false;
+      selectStartRole('teacher');
     }
 
     function populateTeacherQuizOptions() {
@@ -1290,6 +1404,7 @@
     }
 
     function createLiveClassroom() {
+      if (!isTeacherUnlocked) return;
       const teacherName = document.getElementById('teacher-name-input').value.trim() || 'Maestro';
       const quizId = document.getElementById('teacher-quiz-select').value;
       const count = parseInt(document.getElementById('teacher-qcount-select').value, 10) || 10;
@@ -1446,11 +1561,13 @@
     }
 
     function clearLiveGrades() {
+      if (!isTeacherUnlocked) return;
       localStorage.removeItem(STORAGE_KEYS.GRADES);
       renderLiveClassroomBoard();
     }
 
     function exportGradesCSV() {
+      if (!isTeacherUnlocked) return;
       const grades = getStoredGrades();
       if (grades.length === 0) {
         alert('No hay calificaciones registradas para exportar.');
@@ -1998,6 +2115,18 @@
       if (feedbackModal && !feedbackModal.classList.contains('hidden')) {
         event.preventDefault();
         nextQuestion();
+        return;
+      }
+
+      if (activeId === 'teacher-login-pass-input') {
+        event.preventDefault();
+        verifyTeacherPassword();
+        return;
+      }
+
+      if (activeId === 'teacher-new-pass-input' || activeId === 'teacher-confirm-pass-input') {
+        event.preventDefault();
+        setupTeacherPassword();
         return;
       }
 
