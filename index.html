@@ -113,7 +113,7 @@
     </div>
   </header>
 
-  <!-- BANNER DE CLASE ACTIVA (SI UN ALUMNO O MAESTRO ESTÁ EN SESIÓN) -->
+  <!-- BANNER DE CLASE ACTIVA -->
   <div id="active-class-banner" class="hidden bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-slate-900/90 border-b border-indigo-400/30 px-4 py-2.5">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
       <div class="flex items-center gap-2">
@@ -135,7 +135,6 @@
   <div id="role-start-modal" class="fixed inset-0 z-50 bg-slate-950/88 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
     <div class="glass-card w-full max-w-4xl rounded-3xl p-5 sm:p-8 shadow-2xl border border-indigo-400/25 animate-pop-in my-auto">
       
-      <!-- Cabecera del Modal -->
       <div class="flex items-start justify-between gap-4 mb-6">
         <div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-bold mb-2">
@@ -174,7 +173,7 @@
         </button>
       </div>
 
-      <!-- PANEL DEL MAESTRO DENTRO DE LA VENTANA -->
+      <!-- PANEL DEL MAESTRO -->
       <div id="role-panel-teacher" class="hidden border-t border-white/15 pt-5 space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h3 class="text-lg sm:text-xl font-bold text-indigo-300 flex items-center gap-2">
@@ -215,7 +214,6 @@
           </div>
         </div>
 
-        <!-- Resultado del Código Generado -->
         <div id="teacher-created-box" class="hidden bg-indigo-950/75 border border-indigo-400/40 rounded-2xl p-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -232,7 +230,6 @@
           </div>
         </div>
 
-        <!-- Tablero en vivo de calificaciones -->
         <div class="bg-slate-900/65 rounded-2xl p-4 border border-white/10">
           <div class="flex items-center justify-between mb-3">
             <h4 class="text-sm font-bold text-white">📊 Resultados de Alumnos en Tiempo Real</h4>
@@ -258,7 +255,7 @@
         </div>
       </div>
 
-      <!-- PANEL DEL ALUMNO DENTRO DE LA VENTANA -->
+      <!-- PANEL DEL ALUMNO -->
       <div id="role-panel-student" class="hidden border-t border-white/15 pt-5 space-y-4">
         <div class="flex items-center justify-between">
           <h3 class="text-lg sm:text-xl font-bold text-emerald-300 flex items-center gap-2">
@@ -283,7 +280,7 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <p id="student-join-feedback" class="text-xs text-slate-400">Pide el código de clase a tu maestro para iniciar la evaluación asignada.</p>
+          <p id="student-join-feedback" class="text-xs text-slate-400">Pide el código de clase a tu maestro y presiona Enter o el botón para iniciar.</p>
           <button onclick="joinClassroomAsStudent()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 transition">
             ▶ Comenzar Evaluación Asignada
           </button>
@@ -314,7 +311,6 @@
         </div>
       </div>
 
-      <!-- Listado ordenado -->
       <div id="quizzes-list-container" class="space-y-3"></div>
     </section>
 
@@ -363,7 +359,6 @@
 
     <!-- VISTA 3: PANTALLA DE JUEGO / EVALUACIÓN -->
     <section id="view-game" class="hidden max-w-4xl mx-auto space-y-5">
-      <!-- Barra superior de progreso y tiempo -->
       <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <span id="game-quiz-title" class="text-sm sm:text-base font-bold text-amber-300 block">Historia</span>
@@ -385,12 +380,10 @@
         </div>
       </div>
 
-      <!-- Barra visual de avance -->
       <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
         <div id="game-progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-indigo-500 transition-all duration-300" style="width: 10%;"></div>
       </div>
 
-      <!-- Tarjeta de Pregunta -->
       <div class="glass-card rounded-3xl p-6 sm:p-8 text-center shadow-xl">
         <span id="game-verse-badge" class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold mb-3">
           Cita Bíblica
@@ -400,7 +393,6 @@
         </h3>
       </div>
 
-      <!-- Cuadrícula 2x2 de Respuestas con Colores Distintivos (Sin letras A, B, C, D) -->
       <div id="game-answers-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </section>
 
@@ -428,7 +420,6 @@
           </div>
         </div>
 
-        <!-- Boleta de alumno si pertenece a una clase -->
         <div id="student-receipt-box" class="hidden bg-emerald-950/60 border border-emerald-400/40 rounded-2xl p-4 text-left space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">✅ Calificación Sincronizada con el Maestro</span>
@@ -451,7 +442,7 @@
       </div>
     </section>
 
-    <!-- SECCIÓN DE COPYRIGHT (SE BLOQUEA PERMANENTEMENTE AL GUARDAR) -->
+    <!-- SECCIÓN DE COPYRIGHT -->
     <footer class="mt-10 text-center text-xs text-slate-400 space-y-2">
       <div id="copyright-form-box" class="inline-flex flex-wrap items-center justify-center gap-2 bg-slate-900/70 px-3.5 py-2 rounded-xl border border-white/10">
         <span>© Autor:</span>
@@ -472,28 +463,25 @@
       <h3 id="feedback-heading" class="text-2xl font-bold text-white mb-1">¡Correcto!</h3>
       <p id="feedback-detail" class="text-sm text-slate-200 mb-5">Excelente respuesta.</p>
       <button onclick="nextQuestion()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-base shadow-lg">
-        Continuar ➔
+        Continuar (Enter) ➔
       </button>
     </div>
   </div>
 
   <!-- BARRA INFERIOR DE COMUNIDAD Y REGISTRO (MINIMIZADA POR DEFECTO) -->
   <div class="fixed bottom-0 inset-x-0 z-40 bg-slate-950/92 backdrop-blur-md border-t border-white/10">
-    <!-- Panel expandible -->
     <div id="community-drawer" class="hidden max-w-5xl mx-auto px-4 py-4 border-b border-white/10 max-h-72 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Comentarios -->
         <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-white/10 space-y-2.5">
           <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-300">💬 Comentarios y Libro de Visitas</h4>
           <div class="flex gap-2">
             <input type="text" id="comment-author-input" placeholder="Tu nombre" class="w-1/3 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-white/10 text-xs text-white">
-            <input type="text" id="comment-text-input" placeholder="Escribe un comentario..." class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-white/10 text-xs text-white">
+            <input type="text" id="comment-text-input" placeholder="Escribe un comentario y pulsa Enter..." class="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-white/10 text-xs text-white">
             <button onclick="postCommunityComment()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">Enviar</button>
           </div>
           <div id="comments-list-box" class="space-y-1.5 max-h-36 overflow-y-auto text-xs"></div>
         </div>
 
-        <!-- Registro de Visitas y Me Gusta -->
         <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-white/10 space-y-2">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold uppercase tracking-wider text-amber-300">📊 Registro de Visitas y Me Gusta</h4>
@@ -504,7 +492,6 @@
       </div>
     </div>
 
-    <!-- Barra compacta siempre visible -->
     <div class="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-xs">
       <div class="flex items-center gap-3">
         <span class="text-slate-300 font-semibold">👁️ Visitas: <strong id="stat-visits-count" class="text-white">1</strong></span>
@@ -950,7 +937,6 @@
         difficulty: idx < 2 ? 'facil' : (idx < 4 ? 'media' : 'dificil')
       }));
 
-      // Generar variaciones analíticas adicionales basadas en los hechos del relato (hasta 50 max)
       const extraQuestions = [];
       story.facts.forEach((f, idx) => {
         if (baseQuestions.length + extraQuestions.length >= 50) return;
@@ -1047,7 +1033,7 @@
     function getSecondsPerQuestion(difficulty) {
       if (difficulty === 'facil') return 40;
       if (difficulty === 'dificil') return 15;
-      return 25; // media
+      return 25;
     }
 
     // =========================================================================
@@ -1161,10 +1147,12 @@
         teacherPanel.classList.remove('hidden');
         populateTeacherQuizOptions();
         renderLiveClassroomBoard();
+        setTimeout(() => document.getElementById('teacher-name-input')?.focus(), 50);
       } else if (role === 'student') {
         cards.classList.add('hidden');
         teacherPanel.classList.add('hidden');
         studentPanel.classList.remove('hidden');
+        setTimeout(() => document.getElementById('student-code-input')?.focus(), 50);
       } else {
         teacherPanel.classList.add('hidden');
         studentPanel.classList.add('hidden');
@@ -1275,6 +1263,7 @@
         openRoleModal();
         selectStartRole('student');
         document.getElementById('student-code-input').value = cleanCode;
+        setTimeout(() => document.getElementById('student-name-input')?.focus(), 80);
       }
     }
 
@@ -1888,11 +1877,66 @@
       if (isHidden) {
         drawer.classList.remove('hidden');
         btn.textContent = '💬 Ocultar Panel ▼';
+        setTimeout(() => document.getElementById('comment-text-input')?.focus(), 50);
       } else {
         drawer.classList.add('hidden');
         btn.textContent = '💬 Comentarios y Registro ▲';
       }
     }
+
+    // =========================================================================
+    // ATAJOS DE TECLADO (CONFIRMAR CON TECLA ENTER EN PC)
+    // =========================================================================
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+
+      const active = document.activeElement;
+      const activeId = active ? active.id : '';
+
+      // 1. Si el pop-up de respuesta (Correcto / Incorrecto) está abierto, avanza a la siguiente pregunta
+      const feedbackModal = document.getElementById('feedback-modal');
+      if (feedbackModal && !feedbackModal.classList.contains('hidden')) {
+        event.preventDefault();
+        nextQuestion();
+        return;
+      }
+
+      // 2. Confirmar comentario en la barra inferior
+      if (activeId === 'comment-text-input' || activeId === 'comment-author-input') {
+        event.preventDefault();
+        postCommunityComment();
+        return;
+      }
+
+      // 3. Confirmar nombre del copyright
+      if (activeId === 'copyright-author-input') {
+        event.preventDefault();
+        savePermanentCopyright();
+        return;
+      }
+
+      // 4. Confirmar identificación de visitante
+      if (activeId === 'visitor-tag-input') {
+        event.preventDefault();
+        updateVisitorName(active.value);
+        active.blur();
+        return;
+      }
+
+      // 5. Confirmar ingreso del alumno en el Aula en Vivo
+      if (['student-code-input', 'student-name-input', 'student-group-input'].includes(activeId)) {
+        event.preventDefault();
+        joinClassroomAsStudent();
+        return;
+      }
+
+      // 6. Confirmar generación de clase del maestro
+      if (activeId === 'teacher-name-input') {
+        event.preventDefault();
+        createLiveClassroom();
+        return;
+      }
+    });
 
     // =========================================================================
     // ARRANQUE INICIAL DE LA APLICACIÓN
