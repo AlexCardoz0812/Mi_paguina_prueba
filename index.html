@@ -56,16 +56,15 @@
     }
 
     /* ==========================================================================
-       ENCABEZADO Y NAVEGACIÓN PRINCIPAL
+       ENCABEZADO COMPACTO Y NAVEGACIÓN PRINCIPAL (NO TAPA EL ÁREA DE JUEGO)
        ========================================================================== */
     header {
       background: linear-gradient(135deg, var(--primary-navy) 0%, #2a4d7a 100%);
       color: #ffffff;
-      padding: 1.25rem 1rem 0;
-      box-shadow: var(--shadow-md);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 0.75rem 1rem 0;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      z-index: 20;
     }
 
     .header-container {
@@ -78,8 +77,8 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: 0.55rem;
+      margin-bottom: 0.65rem;
     }
 
     .header-actions {
@@ -117,20 +116,20 @@
     }
 
     .brand-icon {
-      width: 38px;
-      height: 38px;
+      width: 32px;
+      height: 32px;
       background: var(--accent-gold);
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
 
     .brand h1 {
       font-family: var(--font-serif);
-      font-size: 1.45rem;
+      font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: 0.3px;
     }
@@ -157,7 +156,7 @@
     /* Pestañas de Navegación */
     .nav-tabs {
       display: flex;
-      gap: 0.35rem;
+      gap: 0.3rem;
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -170,8 +169,8 @@
       background: rgba(255, 255, 255, 0.1);
       color: rgba(255, 255, 255, 0.85);
       border: none;
-      padding: 0.75rem 1.25rem;
-      font-size: 0.95rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.88rem;
       font-weight: 600;
       border-radius: 10px 10px 0 0;
       cursor: pointer;
@@ -179,7 +178,7 @@
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
     }
 
     .tab-btn:hover {
@@ -317,7 +316,7 @@
     }
 
     /* ==========================================================================
-       VISTA 1: JUGAR (SELECCIÓN, PARTIDA Y RESULTADOS)
+       VISTA 1: JUGAR (LISTADO INTERACTIVO, PARTIDA Y RESULTADOS)
        ========================================================================== */
     .hero-3d-banner {
       position: relative;
@@ -327,10 +326,10 @@
       border: 1.5px solid rgba(197, 155, 39, 0.55);
       box-shadow: 0 18px 36px -10px rgba(15, 29, 51, 0.45);
       margin-bottom: 1.5rem;
-      min-height: 225px;
+      min-height: 215px;
       display: flex;
       align-items: center;
-      padding: 1.6rem 1.75rem;
+      padding: 1.5rem 1.75rem;
       color: #ffffff;
     }
 
@@ -351,7 +350,7 @@
     .hero-3d-content {
       position: relative;
       z-index: 2;
-      max-width: 540px;
+      max-width: 550px;
       pointer-events: none;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
     }
@@ -373,7 +372,7 @@
 
     .hero-3d-content h2 {
       font-family: var(--font-serif);
-      font-size: 1.75rem;
+      font-size: 1.7rem;
       color: #ffffff;
       margin-bottom: 0.4rem;
       line-height: 1.2;
@@ -381,7 +380,7 @@
 
     .hero-3d-content p {
       color: rgba(241, 245, 249, 0.92);
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       margin-bottom: 1rem;
     }
 
@@ -392,103 +391,147 @@
       flex-wrap: wrap;
     }
 
-    .quiz-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.25rem;
-      perspective: 1100px;
-    }
-
-    .quiz-card {
-      background: linear-gradient(155deg, #ffffff 0%, #fcfaf4 65%, #f5efe2 100%);
-      border: 1.5px solid #e2d8c5;
-      border-bottom: 5px solid #cbbba0;
-      border-radius: var(--radius-lg);
-      padding: 1.4rem;
+    /* Vista en forma de LISTADO limpio y estructurado */
+    .quiz-list {
       display: flex;
       flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .quiz-list-row {
+      background: linear-gradient(135deg, #ffffff 0%, #fcfaf4 100%);
+      border: 1.5px solid #e2d8c5;
+      border-left: 5px solid var(--primary-navy);
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      box-shadow:
-        0 12px 24px -8px rgba(30, 58, 95, 0.14),
-        0 4px 10px -2px rgba(197, 155, 39, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
-      transition: transform 0.18s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
+      gap: 1.15rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .quiz-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 62%);
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      pointer-events: none;
-    }
-
-    .quiz-card:hover {
-      box-shadow:
-        0 24px 38px -10px rgba(30, 58, 95, 0.24),
-        0 10px 20px -4px rgba(197, 155, 39, 0.22);
+    .quiz-list-row:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
       border-color: var(--accent-gold);
+      border-left-color: var(--accent-gold);
     }
 
-    .quiz-card:hover::before {
-      opacity: 1;
+    .quiz-list-info {
+      flex: 1 1 320px;
+      min-width: 240px;
+    }
+
+    .quiz-list-meta {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .quiz-list-title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.55rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .quiz-list-index {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      background: var(--primary-navy);
+      padding: 0.1rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    .quiz-list-row h3 {
+      font-family: var(--font-serif);
+      color: var(--primary-navy);
+      font-size: 1.15rem;
+      margin: 0;
+    }
+
+    .quiz-list-desc {
+      color: var(--text-muted);
+      font-size: 0.87rem;
+      margin: 0;
+    }
+
+    .quiz-list-controls-panel {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .quiz-count-dropdown-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 8px;
+      padding: 0.25rem 0.55rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #166534;
+    }
+
+    .quiz-count-select {
+      padding: 0.18rem 0.4rem;
+      border-radius: 6px;
+      border: 1px solid #4ade80;
+      background: #ffffff;
+      color: #14532d;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     .quiz-badge {
       display: inline-block;
       background: var(--accent-gold-light);
       color: #7c5e10;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
-      padding: 0.25rem 0.65rem;
+      padding: 0.2rem 0.6rem;
       border-radius: 999px;
-      margin-bottom: 0.65rem;
-      align-self: flex-start;
     }
 
-    .quiz-card h3 {
-      font-family: var(--font-serif);
-      color: var(--primary-navy);
-      font-size: 1.2rem;
-      margin-bottom: 0.45rem;
+    .difficulty-badge {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
     }
 
-    .quiz-card p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 1.25rem;
-      flex: 1;
+    .difficulty-badge.facil {
+      background: #dcfce7;
+      color: #166534;
     }
 
-    .quiz-card-actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+    .difficulty-badge.media {
+      background: #fef3c7;
+      color: #92400e;
     }
 
-    .quiz-card-controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.45rem;
-      flex-wrap: wrap;
-      background: rgba(241, 236, 225, 0.72);
-      border: 1px solid #e2d8c5;
-      border-radius: 10px;
-      padding: 0.45rem 0.6rem;
-      margin-bottom: 0.85rem;
+    .difficulty-badge.dificil {
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .card-random-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.28rem 0.65rem;
+      gap: 0.3rem;
+      padding: 0.32rem 0.65rem;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
@@ -515,7 +558,7 @@
     }
 
     .card-time-select {
-      padding: 0.22rem 0.45rem;
+      padding: 0.26rem 0.45rem;
       border-radius: 8px;
       border: 1px solid #cbd5e1;
       background: #ffffff;
@@ -785,13 +828,8 @@
     }
 
     /* ==========================================================================
-       VISTA 2: BIBLIOTECA DE HISTORIAS BÍBLICAS + GENERADOR AUTOMÁTICO
+       FILTROS POR TESTAMENTO
        ========================================================================== */
-    .bible-library-box {
-      background: linear-gradient(135deg, #fffdf8 0%, #f5efe0 100%);
-      border: 1.5px solid var(--accent-gold);
-    }
-
     .library-filters {
       display: flex;
       gap: 0.5rem;
@@ -818,52 +856,10 @@
       color: #ffffff;
     }
 
-    .stories-catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-      gap: 0.7rem;
-      max-height: 330px;
-      overflow-y: auto;
-      padding-right: 0.25rem;
-    }
-
-    .story-catalog-item {
-      background: #ffffff;
-      border: 1.5px solid var(--border-color);
-      border-radius: 12px;
-      padding: 0.75rem 0.85rem;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 0.3rem;
-    }
-
-    .story-catalog-item:hover {
-      border-color: var(--accent-gold);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .story-catalog-item.selected {
-      border-color: var(--primary-navy);
-      background: #eef4fc;
-      box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15);
-    }
-
-    .story-tag-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
     .story-testament-tag {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 0.15rem 0.5rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 999px;
       background: var(--accent-gold-light);
       color: #7c5e10;
@@ -872,28 +868,6 @@
     .story-testament-tag.nt {
       background: #dbeafe;
       color: #1e40af;
-    }
-
-    .story-ref-label {
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .story-item-title {
-      font-family: var(--font-serif);
-      font-weight: 700;
-      font-size: 0.96rem;
-      color: var(--primary-navy);
-    }
-
-    .story-item-preview {
-      font-size: 0.79rem;
-      color: var(--text-muted);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
 
     /* ==========================================================================
@@ -1017,44 +991,8 @@
     }
 
     /* ==========================================================================
-       ESTILOS DEL GENERADOR AUTOMÁTICO Y TEMPORIZADOR
+       TEMPORIZADOR Y CONFETI
        ========================================================================== */
-    .generator-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    @media (min-width: 768px) {
-      .generator-grid {
-        grid-template-columns: 2fr 1.2fr 1fr 1fr;
-      }
-    }
-
-    .quick-pills {
-      display: flex;
-      gap: 0.35rem;
-      margin-top: 0.4rem;
-      flex-wrap: wrap;
-    }
-
-    .quick-pill-btn {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-color);
-      color: var(--primary-navy);
-      border-radius: 999px;
-      padding: 0.15rem 0.55rem;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .quick-pill-btn:hover {
-      background: var(--accent-gold-light);
-      border-color: var(--accent-gold);
-    }
-
     .timer-pill {
       background: #eef2ff;
       color: var(--primary-navy);
@@ -1280,13 +1218,17 @@
     }
 
     /* ==========================================================================
-       SECCIÓN COMUNIDAD OFFLINE: CONTADOR DE VISITAS, ME GUSTA Y COMENTARIOS
+       SECCIÓN COMUNIDAD OFFLINE: MINIMIZADA POR DEFECTO AL PIE
        ========================================================================== */
     .community-section {
       max-width: 960px;
-      margin: 0 auto 2rem;
+      margin: 0 auto 1.25rem;
       padding: 0 1rem;
       width: 100%;
+    }
+
+    .community-card-compact {
+      padding: 0.85rem 1.15rem;
     }
 
     .community-stats-bar {
@@ -1294,10 +1236,22 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 0.85rem;
-      padding-bottom: 1rem;
-      margin-bottom: 1.15rem;
+      gap: 0.65rem;
+    }
+
+    .community-stats-bar.is-expanded {
+      padding-bottom: 0.85rem;
+      margin-bottom: 1rem;
       border-bottom: 1px solid var(--border-color);
+    }
+
+    .community-collapsible-body {
+      display: none;
+    }
+
+    .community-collapsible-body.open {
+      display: block;
+      animation: fadeIn 0.22s ease;
     }
 
     .stats-badges-group {
@@ -1522,10 +1476,7 @@
 
       <nav class="nav-tabs" role="tablist">
         <button class="tab-btn active" data-tab="play" onclick="switchTab('play')">
-          <span>🎮</span> Jugar
-        </button>
-        <button class="tab-btn" data-tab="generate" onclick="switchTab('generate')">
-          <span>✨</span> Generar desde Historia
+          <span>📋</span> Listado de Evaluaciones
         </button>
         <button class="tab-btn" data-tab="create" onclick="switchTab('create')">
           <span>✏️</span> Crear / Editar Manual
@@ -1541,42 +1492,52 @@
   <main>
 
     <!-- ======================================================================
-         PESTAÑA 1: JUGAR
+         PESTAÑA 1: LISTADO DE EVALUACIONES Y JUEGO
          ====================================================================== -->
     <section id="view-play" class="view-section active">
-      <!-- Sub-vista 1A: Selector de Cuestionarios -->
+      <!-- Sub-vista 1A: Listado de Evaluaciones -->
       <div id="play-lobby">
         <!-- Escenario Interactivo 3D Realista -->
         <div class="hero-3d-banner">
           <canvas id="menu-3d-canvas" aria-label="Visualización 3D interactiva de la Biblia"></canvas>
           <div class="hero-3d-content">
-            <span class="hero-3d-pill">✨ Preguntas Aleatorias • Escena 3D Interactiva</span>
+            <span class="hero-3d-pill">✨ 34 Evaluaciones Bíblicas • Hasta 50 Preguntas por Historia</span>
             <h2>Explora la Palabra Jugando</h2>
-            <p>Arrastra o mueve el cursor sobre el libro 3D. Selecciona un cuestionario o genera uno desde las historias bíblicas.</p>
+            <p>Preguntas generadas automáticamente según la extensión de cada relato bíblico. Despliega la lista de preguntas disponibles y elige cuántas deseas contestar.</p>
             <div class="hero-3d-actions">
-              <button type="button" class="btn btn-gold btn-sm" onclick="startRandomQuickGame()">🎲 Partida Aleatoria Rápida</button>
-              <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.35);" onclick="switchTab('generate')">📖 Biblioteca de Historias</button>
+              <button type="button" class="btn btn-gold btn-sm" onclick="startRandomQuickGame()">🎲 Evaluación Aleatoria Rápida</button>
+              <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.35);" onclick="switchTab('create')">✏️ Crear Nueva Evaluación</button>
             </div>
           </div>
         </div>
 
         <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.75rem;">
           <div>
-            <h2>Selecciona un Cuestionario Bíblico</h2>
-            <p>Configura el orden aleatorio y el tiempo directamente en cada tarjeta antes de empezar a jugar.</p>
+            <h2>Listado de Evaluaciones Bíblicas</h2>
+            <p>Despliega el selector de preguntas en cada historia (hasta el máximo generado según su tamaño) y elige la dificultad.</p>
           </div>
+          <input type="search" id="lobby-search-input" class="form-control" style="max-width: 270px; padding: 0.5rem 0.85rem; font-size: 0.9rem;"
+                 placeholder="🔍 Buscar historia o cita..." oninput="renderLobby()">
         </div>
-        <div id="quiz-list-container" class="quiz-grid"></div>
+
+        <div class="library-filters" style="margin-bottom: 1.15rem;">
+          <button type="button" class="testament-pill active" data-filter="ALL" onclick="setLobbyTestamentFilter('ALL', this)">📚 Todas (<span id="count-all-quizzes">0</span>)</button>
+          <button type="button" class="testament-pill" data-filter="AT" onclick="setLobbyTestamentFilter('AT', this)">📜 Antiguo Testamento</button>
+          <button type="button" class="testament-pill" data-filter="NT" onclick="setLobbyTestamentFilter('NT', this)">✝️ Nuevo Testamento</button>
+          <button type="button" class="testament-pill" data-filter="CUSTOM" onclick="setLobbyTestamentFilter('CUSTOM', this)">⭐ Generales / Personalizadas</button>
+        </div>
+
+        <div id="quiz-list-container" class="quiz-list"></div>
       </div>
 
       <!-- Sub-vista 1B: Partida en Curso -->
       <div id="play-active" style="display: none;">
         <div class="card">
           <div class="game-top-bar">
-            <button class="btn btn-outline btn-sm" onclick="exitGame()">← Salir al menú</button>
+            <button class="btn btn-outline btn-sm" onclick="exitGame()">← Volver al listado</button>
             <strong id="active-quiz-title" style="color: var(--primary-navy);">Título</strong>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <span id="timer-badge" class="timer-pill" style="display: none;" title="Tiempo restante para todo el cuestionario">⏱️ <span id="timer-display">05:00</span></span>
+              <span id="timer-badge" class="timer-pill" style="display: none;" title="Tiempo restante asignado según el modo de dificultad">⏱️ <span id="timer-display">05:00</span></span>
               <span class="score-pill">Puntos: <span id="current-score">0</span></span>
             </div>
           </div>
@@ -1607,7 +1568,7 @@
       <div id="play-results" style="display: none;">
         <div class="card results-box">
           <div class="results-trophy" id="results-icon">🏆</div>
-          <h2 id="results-heading" style="font-family: var(--font-serif); color: var(--primary-navy);">¡Juego Completado!</h2>
+          <h2 id="results-heading" style="font-family: var(--font-serif); color: var(--primary-navy);">¡Evaluación Completada!</h2>
           <p id="results-quiz-name" style="color: var(--text-muted); margin-top: 0.25rem;"></p>
 
           <div class="results-score-big" id="results-score-text">8 / 10</div>
@@ -1615,121 +1576,14 @@
 
           <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
             <button class="btn btn-gold" onclick="restartCurrentQuiz()">🔄 Volver a Jugar</button>
-            <button class="btn btn-outline" onclick="exitGame()">📚 Elegir Otro Cuestionario</button>
+            <button class="btn btn-outline" onclick="exitGame()">📋 Volver al Listado</button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ======================================================================
-         PESTAÑA 2: BIBLIOTECA DE HISTORIAS Y GENERADOR AUTOMÁTICO (100% OFFLINE)
-         ====================================================================== -->
-    <section id="view-generate" class="view-section">
-      <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-        <div>
-          <h2>Historias de la Biblia y Generador Automático</h2>
-          <p>Elige una historia del Antiguo o Nuevo Testamento (o pega tu propio pasaje) para crear preguntas al instante.</p>
-        </div>
-      </div>
-
-      <!-- Catálogo Completo de Historias Bíblicas Seleccionables -->
-      <div class="card bible-library-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 0.85rem;">
-          <div>
-            <h3 style="font-family: var(--font-serif); color: var(--primary-navy); font-size: 1.2rem;">
-              📖 Selecciona una Historia Bíblica (<span id="stories-catalog-count">32</span> relatos incluidos)
-            </h3>
-            <p style="font-size: 0.86rem; color: var(--text-muted);">Haz clic en cualquier historia para cargar su cita y texto automáticamente abajo.</p>
-          </div>
-          <input type="search" id="story-search-input" class="form-control" style="max-width: 260px; padding: 0.5rem 0.8rem; font-size: 0.88rem;"
-                 placeholder="🔍 Buscar personaje, cita o tema..." oninput="filterBibleStoriesCatalog()">
-        </div>
-
-        <div class="library-filters">
-          <button type="button" class="testament-pill active" data-filter="ALL" onclick="setStoryTestamentFilter('ALL', this)">Todas las Historias</button>
-          <button type="button" class="testament-pill" data-filter="AT" onclick="setStoryTestamentFilter('AT', this)">📜 Antiguo Testamento</button>
-          <button type="button" class="testament-pill" data-filter="NT" onclick="setStoryTestamentFilter('NT', this)">✝️ Nuevo Testamento</button>
-        </div>
-
-        <div id="stories-catalog-grid" class="stories-catalog-grid"></div>
-      </div>
-
-      <!-- Formulario del Generador -->
-      <div class="card">
-        <div class="generator-grid">
-          <div class="form-group">
-            <label for="gen-title-input">Título del Cuestionario *</label>
-            <input type="text" id="gen-title-input" class="form-control" placeholder="Ej. David y Goliat">
-          </div>
-
-          <div class="form-group">
-            <label for="gen-verse-input">Cita Bíblica *</label>
-            <input type="text" id="gen-verse-input" class="form-control" placeholder="Ej. 1 Samuel 17:4-50">
-          </div>
-
-          <div class="form-group">
-            <label for="gen-count-input">Cantidad de preguntas (1-50)</label>
-            <input type="number" id="gen-count-input" class="form-control" min="1" max="50" value="6">
-            <div class="quick-pills">
-              <button type="button" class="quick-pill-btn" onclick="setGenCount(5)">5</button>
-              <button type="button" class="quick-pill-btn" onclick="setGenCount(10)">10</button>
-              <button type="button" class="quick-pill-btn" onclick="setGenCount(15)">15</button>
-              <button type="button" class="quick-pill-btn" onclick="setGenCount(20)">20</button>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="gen-time-minutes">Tiempo total (min, 0 = libre)</label>
-            <input type="number" id="gen-time-minutes" class="form-control" min="0" max="180" step="0.5" value="3" placeholder="0 = Sin límite">
-            <div class="quick-pills">
-              <button type="button" class="quick-pill-btn" onclick="setGenTime(0)">Libre</button>
-              <button type="button" class="quick-pill-btn" onclick="setGenTime(2)">2m</button>
-              <button type="button" class="quick-pill-btn" onclick="setGenTime(5)">5m</button>
-              <button type="button" class="quick-pill-btn" onclick="setGenTime(10)">10m</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="gen-story-textarea">Texto de la Historia o Pasaje Bíblico *</label>
-          <textarea id="gen-story-textarea" class="form-control" rows="6" placeholder="Selecciona una historia arriba o pega aquí cualquier pasaje bíblico..."></textarea>
-        </div>
-
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <button type="button" class="btn btn-gold" onclick="generateQuizFromStory()">
-            ✨ Generar Cuestionario Automáticamente
-          </button>
-          <button type="button" class="btn btn-outline" onclick="clearGeneratorForm()">
-            Limpiar Campos
-          </button>
-        </div>
-      </div>
-
-      <!-- Vista previa editable de las preguntas generadas -->
-      <div id="generated-preview-card" class="card" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
-          <div>
-            <h3 style="font-family: var(--font-serif); color: var(--primary-navy);">Vista Previa del Cuestionario Generado</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">Revisa o ajusta cualquier pregunta antes de guardarla en tu biblioteca.</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="generateQuizFromStory()">🔄 Regenerar Preguntas</button>
-        </div>
-
-        <div id="generated-questions-list"></div>
-
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem;">
-          <button type="button" class="btn btn-primary" onclick="saveGeneratedQuiz(false)">
-            💾 Guardar en Biblioteca
-          </button>
-          <button type="button" class="btn btn-olive" onclick="saveGeneratedQuiz(true)">
-            ▶ Guardar Cuestionario y Jugar Ahora
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         PESTAÑA 3: CREAR / EDITAR JUEGOS MANUALMENTE
+         PESTAÑA 2: CREAR / EDITAR JUEGOS MANUALMENTE
          ====================================================================== -->
     <section id="view-create" class="view-section">
       <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
@@ -1743,22 +1597,19 @@
       <div class="card">
         <input type="hidden" id="edit-quiz-id" value="">
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
           <div class="form-group">
             <label for="quiz-title-input">Título del Cuestionario *</label>
             <input type="text" id="quiz-title-input" class="form-control" placeholder="Ej. Reyes y Profetas de Israel">
           </div>
 
           <div class="form-group">
-            <label for="quiz-time-minutes">Tiempo límite total (minutos, 0 = sin límite)</label>
-            <input type="number" id="quiz-time-minutes" class="form-control" min="0" max="180" step="0.5" value="0" placeholder="Ej. 5">
-            <div class="quick-pills">
-              <button type="button" class="quick-pill-btn" onclick="setEditorTime(0)">Sin límite</button>
-              <button type="button" class="quick-pill-btn" onclick="setEditorTime(1)">1 min</button>
-              <button type="button" class="quick-pill-btn" onclick="setEditorTime(3)">3 min</button>
-              <button type="button" class="quick-pill-btn" onclick="setEditorTime(5)">5 min</button>
-              <button type="button" class="quick-pill-btn" onclick="setEditorTime(10)">10 min</button>
-            </div>
+            <label for="quiz-difficulty-select">Modo de Dificultad (asigna el tiempo)</label>
+            <select id="quiz-difficulty-select" class="form-control">
+              <option value="facil">🟢 Fácil (40 seg por pregunta)</option>
+              <option value="media" selected>🟡 Media (25 seg por pregunta)</option>
+              <option value="dificil">🔴 Difícil (15 seg por pregunta)</option>
+            </select>
           </div>
         </div>
 
@@ -1790,7 +1641,7 @@
     </section>
 
     <!-- ======================================================================
-         PESTAÑA 4: GUARDAR Y COMPARTIR OFFLINE
+         PESTAÑA 3: GUARDAR Y COMPARTIR OFFLINE
          ====================================================================== -->
     <section id="view-share" class="view-section">
       <div class="section-header">
@@ -1864,19 +1715,10 @@
   <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES (TOAST) -->
   <div id="toast-container" aria-live="polite"></div>
 
-  <!-- SECCIÓN DE VISITAS, ME GUSTA Y COMENTARIOS -->
+  <!-- SECCIÓN DE VISITAS, ME GUSTA Y COMENTARIOS (MINIMIZADA POR DEFECTO) -->
   <section class="community-section" aria-label="Visitas, Me gusta y Comentarios">
-    <div class="card" style="margin-bottom: 0;">
-      <div class="community-stats-bar">
-        <div>
-          <h3 style="font-family: var(--font-serif); color: var(--primary-navy); font-size: 1.25rem;">
-            💬 Comunidad y Comentarios
-          </h3>
-          <p style="font-size: 0.86rem; color: var(--text-muted);">
-            Deja tu valoración o comentario sobre los juegos bíblicos.
-          </p>
-        </div>
-
+    <div class="card community-card-compact" style="margin-bottom: 0;">
+      <div id="community-stats-bar" class="community-stats-bar">
         <div class="stats-badges-group">
           <span class="visit-counter-pill" title="Total de veces que se ha abierto este juego">
             👁️ Visitas: <strong id="visit-counter-value">1</strong>
@@ -1886,53 +1728,62 @@
             <span>Me gusta</span>
             <strong id="like-counter-value">0</strong>
           </button>
+        </div>
+
+        <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+          <button type="button" id="toggle-community-box-btn" class="btn btn-outline btn-sm" onclick="toggleCommunitySection()" title="Expandir o minimizar comentarios">
+            💬 Comentarios (<span id="comments-count-badge">0</span>) ▾
+          </button>
           <button type="button" id="toggle-activity-panel-btn" class="activity-panel-btn" onclick="toggleActivityPanel()" title="Ver quiénes han visitado y dado Me gusta">
             📊 Ver Registro
           </button>
         </div>
       </div>
 
-      <!-- Panel Desplegable: Registro de Quiénes Visitaron y Dieron Me Gusta -->
-      <div id="community-activity-panel" class="activity-panel-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
-          <div>
-            <strong style="color: var(--primary-navy); font-size: 0.98rem;">📋 Panel de Actividad de Visitantes</strong>
-            <p style="font-size: 0.82rem; color: var(--text-muted);">Consulta quiénes han abierto la aplicación y quiénes le dieron "Me gusta".</p>
+      <!-- Cuerpo Plegable (Minimizado al iniciar para no estorbar las preguntas) -->
+      <div id="community-collapsible-body" class="community-collapsible-body">
+        <!-- Panel Desplegable: Registro de Quiénes Visitaron y Dieron Me Gusta -->
+        <div id="community-activity-panel" class="activity-panel-box">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+            <div>
+              <strong style="color: var(--primary-navy); font-size: 0.98rem;">📋 Panel de Actividad de Visitantes</strong>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Consulta quiénes han abierto la aplicación y quiénes le dieron "Me gusta".</p>
+            </div>
+            <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="visitor-name-reg-input" class="form-control" style="padding: 0.35rem 0.65rem; font-size: 0.83rem; width: 185px;" placeholder="Tu nombre para el registro...">
+              <button type="button" class="btn btn-gold btn-sm" onclick="registerVisitorIdentity()">Guardar mi nombre</button>
+            </div>
           </div>
-          <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
-            <input type="text" id="visitor-name-reg-input" class="form-control" style="padding: 0.35rem 0.65rem; font-size: 0.83rem; width: 185px;" placeholder="Tu nombre para el registro...">
-            <button type="button" class="btn btn-gold btn-sm" onclick="registerVisitorIdentity()">Guardar mi nombre</button>
+
+          <div class="activity-panel-grid">
+            <div class="activity-col-card">
+              <h4>
+                <span>❤️ Personas que dieron Me gusta</span>
+                <span id="likes-log-count" style="background: #ffe4e6; color: #be123c; padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem;">0</span>
+              </h4>
+              <div id="likes-log-list"></div>
+            </div>
+
+            <div class="activity-col-card">
+              <h4>
+                <span>👁️ Historial de Visitas</span>
+                <span id="visits-log-count" style="background: var(--bg-subtle); color: var(--primary-navy); padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem;">0</span>
+              </h4>
+              <div id="visits-log-list"></div>
+            </div>
           </div>
         </div>
 
-        <div class="activity-panel-grid">
-          <div class="activity-col-card">
-            <h4>
-              <span>❤️ Personas que dieron Me gusta</span>
-              <span id="likes-log-count" style="background: #ffe4e6; color: #be123c; padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem;">0</span>
-            </h4>
-            <div id="likes-log-list"></div>
-          </div>
-
-          <div class="activity-col-card">
-            <h4>
-              <span>👁️ Historial de Visitas</span>
-              <span id="visits-log-count" style="background: var(--bg-subtle); color: var(--primary-navy); padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem;">0</span>
-            </h4>
-            <div id="visits-log-list"></div>
-          </div>
+        <div class="comment-form-row">
+          <input type="text" id="comment-author-input" class="form-control" maxlength="45" placeholder="Tu nombre (Ej. Carlos)">
+          <textarea id="comment-text-input" class="form-control" rows="2" maxlength="400" placeholder="Escribe un comentario, versículo favorito o sugerencia..."></textarea>
+          <button type="button" class="btn btn-primary" onclick="addCommunityComment()" style="height: 100%; min-height: 46px;">
+            Enviar 💬
+          </button>
         </div>
-      </div>
 
-      <div class="comment-form-row">
-        <input type="text" id="comment-author-input" class="form-control" maxlength="45" placeholder="Tu nombre (Ej. Carlos)">
-        <textarea id="comment-text-input" class="form-control" rows="2" maxlength="400" placeholder="Escribe un comentario, versículo favorito o sugerencia..."></textarea>
-        <button type="button" class="btn btn-primary" onclick="addCommunityComment()" style="height: 100%; min-height: 46px;">
-          Enviar 💬
-        </button>
+        <div id="comments-list-container" class="comments-feed"></div>
       </div>
-
-      <div id="comments-list-container" class="comments-feed"></div>
     </div>
   </section>
 
@@ -2023,9 +1874,10 @@
 [
   {
     "id": "default-biblical-characters",
+    "testament": "CUSTOM",
     "title": "Héroes de la Fe y Relatos Bíblicos",
     "description": "Un recorrido clásico por historias fundamentales del Antiguo y Nuevo Testamento.",
-    "tiempoTotalSegundos": 180,
+    "difficulty": "facil",
     "questions": [
       {
         "question": "¿Quién construyó un arca siguiendo las instrucciones de Dios para sobrevivir al gran diluvio?",
@@ -2061,9 +1913,10 @@
   },
   {
     "id": "default-life-of-jesus",
+    "testament": "NT",
     "title": "Vida y Milagros de Jesús",
     "description": "Preguntas sobre el nacimiento, enseñanzas y señales de Jesús en los Evangelios.",
-    "tiempoTotalSegundos": 0,
+    "difficulty": "media",
     "questions": [
       {
         "question": "¿En qué ciudad nació Jesús según los Evangelios?",
@@ -2098,7 +1951,7 @@
        LÓGICA DE LA APLICACIÓN (JAVASCRIPT PURO Y AUTÓNOMO)
        ======================================================================== -->
   <script>
-    const STORAGE_KEY = 'biblia_trivia_quizzes_v1';
+    const STORAGE_KEY = 'biblia_trivia_quizzes_v2';
     const COPYRIGHT_KEY = 'biblia_trivia_copyright_owner_v1';
     const RANDOM_MODE_KEY = 'biblia_trivia_random_mode_v1';
     const COMMUNITY_KEY = 'biblia_trivia_community_v1';
@@ -2107,6 +1960,7 @@
 
     /* ==========================================================================
        BIBLIOTECA INTEGRADA DE HISTORIAS DE LA BIBLIA (ANTIGUO Y NUEVO TESTAMENTO)
+       El motor genera automáticamente hasta 50 preguntas según la extensión del relato.
        ========================================================================== */
     const BIBLICAL_STORIES_LIBRARY = [
       // ANTIGUO TESTAMENTO
@@ -2115,133 +1969,133 @@
         testament: 'AT',
         title: 'La Creación del Mundo y el Edén',
         verse: 'Génesis 1:1 - 2:25',
-        story: 'En el principio creó Dios los cielos y la tierra en seis días mediante su palabra poderosa. El primer día separó la luz de las tinieblas; el segundo formó la expansión de los cielos; el tercero reunió las aguas y produjo hierba y árboles frutales. El cuarto día puso lumbreras en el cielo, el sol, la luna y las estrellas; el quinto creó los peces del mar y las aves de los cielos. El sexto día formó los animales terrestres y creó al ser humano, Adán y Eva, a su imagen y semejanza, colocándolos en el huerto de Edén y descansando el séptimo día.'
+        story: 'En el principio creó Dios los cielos y la tierra cuando la tierra estaba desordenada y vacía y las tinieblas cubrían la faz del abismo. El primer día dijo Dios que fuera la luz y separó la luz de las tinieblas, llamando a la luz Día y a las tinieblas Noche. El segundo día formó la expansión en medio de las aguas y la llamó Cielos. El tercer día reunió las aguas debajo de los cielos en un lugar llamado Mares, descubrió lo seco llamado Tierra y produjo hierba verde, plantas con semilla y árboles frutales según su género. El cuarto día puso dos grandes lumbreras en la expansión de los cielos: el sol para señorear en el día, la luna para señorear en la noche y también las estrellas. El quinto día creó los grandes monstruos marinos, los peces del mar y toda ave alada según su especie. El sexto día formó los animales terrestres y creó al ser humano, Adán y Eva, a su imagen y semejanza, colocándolos en el huerto de Edén regado por cuatro ríos y descansando el séptimo día de toda su obra.'
       },
       {
         id: 'at-noe',
         testament: 'AT',
         title: 'Noé y el Arca del Diluvio',
         verse: 'Génesis 6:9 - 9:17',
-        story: 'Al ver que la maldad de los hombres se había multiplicado en la tierra, Dios halló gracia en Noé, un varón justo que caminaba con Dios. El Señor ordenó a Noé construir un arca de madera de gofer de trescientos codos de largo y entrar en ella con su esposa, sus tres hijos Sem, Cam y Jafet, y parejas de todo ser viviente. Llovió sobre la tierra durante cuarenta días y cuarenta noches hasta cubrir los montes más altos. Al bajar las aguas, Noé envió un cuervo y luego una paloma que regresó con una hoja de olivo; finalmente Dios puso un arcoíris en las nubes como señal de su pacto eterno.'
+        story: 'Al ver que la maldad de los hombres se había multiplicado en la tierra y todo designio de sus pensamientos era de continuo el mal, Dios halló gracia en Noé, un varón justo y perfecto en sus generaciones que caminaba con Dios. El Señor ordenó a Noé construir un arca de madera de gofer calafateada con brea, de trescientos codos de longitud, cincuenta codos de anchura y treinta codos de altura, con tres pisos y una ventana. Noé entró en el arca a los seiscientos años de edad junto con su esposa, sus tres hijos Sem, Cam y Jafet, y sus tres nueras, además de parejas de todo ser viviente y siete parejas de los animales limpios. Llovió sobre la tierra durante cuarenta días y cuarenta noches hasta que las aguas prevalecieron ciento cincuenta días y cubrieron los montes más altos. Al descender las aguas, el arca reposó sobre los montes de Ararat; Noé envió primero un cuervo y luego una paloma que regresó con una hoja verde de olivo en el pico. Al salir del arca, Noé edificó un altar al Señor y Dios puso un arcoíris en las nubes como señal de su pacto eterno.'
       },
       {
         id: 'at-babel',
         testament: 'AT',
         title: 'La Torre de Babel',
         verse: 'Génesis 11:1-9',
-        story: 'Toda la tierra tenía entonces una sola lengua y unas mismas palabras. Al establecerse en la llanura de Sinar, los hombres decidieron fabricar ladrillos cocidos y edificar una ciudad y una torre cuya cúspide llegara al cielo para hacerse un nombre y no ser esparcidos. Descendió el Señor para ver la ciudad y la torre que edificaban los hijos de los hombres, y confundió allí su lenguaje para que ninguno entendiera el habla de su compañero, dispersándolos desde Babel sobre toda la faz de la tierra.'
+        story: 'Toda la tierra tenía entonces una sola lengua y unas mismas palabras. Al salir de oriente y hallar una llanura en la tierra de Sinar, los hombres se establecieron allí y decidieron fabricar ladrillos cocidos al fuego y usar asfalto en lugar de mezcla. Dijeron entre sí que edificarían una ciudad y una torre cuya cúspide llegara hasta el cielo para hacerse un nombre y evitar ser esparcidos sobre la faz de toda la tierra. Descendió el Señor para ver la ciudad y la torre que edificaban los hijos de los hombres, y observó que al ser un solo pueblo con un mismo lenguaje nada les haría desistir de lo que habían pensado hacer. Por eso el Señor confundió allí su lenguaje para que ninguno entendiera el habla de su compañero, dispersándolos desde Babel sobre toda la faz de la tierra y deteniendo la construcción de la ciudad.'
       },
       {
         id: 'at-abraham',
         testament: 'AT',
         title: 'El Llamado de Abraham y el Sacrificio de Isaac',
         verse: 'Génesis 12:1-7; 22:1-18',
-        story: 'Dios llamó a Abram a salir de su tierra de Ur y de su parentela hacia la tierra de Canaán, prometiéndole hacer de él una nación grande y bendecir en él a todas las familias de la tierra. En su vejez, Abraham y su esposa Sara recibieron al hijo prometido, Isaac. Años después, Dios probó la fe de Abraham pidiéndole ofrecer a Isaac en el monte Moriah. Cuando Abraham obedeció y estaba por sacrificar a su hijo, el ángel del Señor lo detuvo desde el cielo y proveyó un carnero enredado en un zarzal.'
+        story: 'Dios llamó a Abram a salir de su tierra de Ur de los caldeos, de su parentela y de la casa de su padre hacia la tierra de Canaán, prometiéndole hacer de él una nación grande, engrandecer su nombre y bendecir en él a todas las familias de la tierra. Abram obedeció llevando a su esposa Sarai y a su sobrino Lot. En su vejez, cuando Abraham tenía cien años y Sara noventa, recibieron al hijo prometido llamado Isaac. Años después, Dios probó la fe de Abraham pidiéndole tomar a su único hijo Isaac e ir a la tierra de Moriah para ofrecerlo en holocausto sobre un monte. Abraham madrugó, cortó leña, tomó dos siervos y caminó tres días hasta el lugar señalado. Cuando Abraham levantó el cuchillo para sacrificar a su hijo sobre el altar, el ángel del Señor lo detuvo desde el cielo y proveyó un carnero enredado por sus cuernos en un zarzal para el sacrificio.'
       },
       {
         id: 'at-jose',
         testament: 'AT',
         title: 'José en Egipto: De Esclavo a Gobernador',
         verse: 'Génesis 37:1 - 45:28',
-        story: 'Jacob amaba a su hijo José más que a todos sus hermanos y le hizo una túnica de diversos colores. Llenos de envidia por sus sueños, sus hermanos vendieron a José por veinte piezas de plata a unos mercaderes ismaelitas que lo llevaron a Egipto. Allí sirvió en casa de Potifar, fue encarcelado injustamente y luego llamado ante el faraón para interpretar sus sueños sobre siete años de abundancia y siete años de hambre. El faraón nombró a José gobernador de todo Egipto, permitiéndole salvar del hambre a su propia familia y perdonar a sus hermanos.'
+        story: 'Jacob amaba a su hijo José más que a todos sus hermanos porque lo había tenido en su vejez, y le hizo una túnica de diversos colores. Llenos de envidia por los sueños proféticos de José donde las gavillas y las estrellas se inclinaban ante él, sus hermanos lo arrojaron en una cisterna vacía en Dotán y lo vendieron por veinte piezas de plata a unos mercaderes ismaelitas que iban hacia Egipto. En Egipto sirvió fielmente en casa de Potifar, capitán de la guardia del faraón, pero fue encarcelado injustamente tras una falsa acusación. En la prisión interpretó los sueños del copero y del panadero del rey. Dos años después fue llamado ante el faraón para interpretar sus sueños sobre siete vacas gordas y siete vacas flacas, anunciando siete años de gran abundancia seguidos por siete años de hambre severa. El faraón nombró a José gobernador sobre toda la tierra de Egipto, permitiéndole almacenar trigo, salvar del hambre a su propia familia y perdonar con lágrimas a sus hermanos.'
       },
       {
         id: 'at-moises-zarza',
         testament: 'AT',
         title: 'Moisés y la Zarza Ardiente',
         verse: 'Éxodo 2:1 - 4:17',
-        story: 'Para salvarlo del decreto del faraón, la madre de Moisés lo colocó en una arquilla de juncos en el río Nilo, donde fue rescatado y criado por la hija del faraón. Siendo adulto, Moisés huyó a Madián y trabajó como pastor para su suegro Jetro. En el monte Horeb, el ángel del Señor se le apareció en una llama de fuego en medio de una zarza que ardía sin consumirse. Desde allí Dios llamó a Moisés para regresar a Egipto y liberar al pueblo de Israel de la esclavitud.'
+        story: 'Para salvarlo del cruel decreto del faraón que ordenaba arrojar al río a los niños varones hebreos, la madre de Moisés lo escondió tres meses y luego lo colocó en una arquilla de juncos calafateada con asfalto entre los carrizales del río Nilo. Su hermana María vigiló desde lejos hasta que la hija del faraón descendió a lavarse, encontró al niño llorando, tuvo compasión de él y lo adoptó como hijo suyo. Siendo adulto, Moisés huyó a la tierra de Madián donde defendió a las hijas del sacerdote Jetro junto a un pozo, se casó con Séfora y trabajó cuarenta años como pastor de ovejas. Conduciendo el rebaño hasta Horeb, el monte de Dios, el ángel del Señor se le apareció en una llama de fuego en medio de una zarza que ardía sin consumirse. Dios llamó a Moisés por su nombre, le ordenó quitar el calzado de sus pies porque el lugar era tierra santa y lo envió de regreso a Egipto con una vara milagrosa para liberar al pueblo de Israel.'
       },
       {
         id: 'at-exodo-mar-rojo',
         testament: 'AT',
         title: 'Las Plagas de Egipto y el Cruce del Mar Rojo',
         verse: 'Éxodo 7:14 - 14:31',
-        story: 'Ante la negativa del faraón de dejar ir a Israel, Dios envió diez plagas sobre Egipto, culminando con la noche de la Pascua en la que la sangre del cordero protegió los hogares israelitas. Tras salir de Egipto guiados por una columna de nube de día y una columna de fuego de noche, el pueblo quedó acorralado frente al Mar Rojo mientras los carros del faraón los perseguían. Moisés extendió su vara sobre el mar, y el Señor dividió las aguas formando un camino seco por donde cruzó todo Israel antes de que las aguas cubrieran al ejército egipcio.'
+        story: 'Ante la terquedad del faraón que endureció su corazón y se negó a dejar salir a Israel, Dios envió diez plagas sobre Egipto mediante Moisés y Aarón: las aguas convertidas en sangre, ranas, piojos, moscas, peste en el ganado, úlceras, granizo con fuego, langostas, tres días de tinieblas densas y finalmente la muerte de los primogénitos. En la noche de la Pascua, los israelitas marcaron los postes y el dintel de sus puertas con la sangre de un cordero sin defecto para ser protegidos. Tras salir de Egipto guiados de día por una columna de nube y de noche por una columna de fuego, el pueblo acampó frente al Mar Rojo mientras seiscientos carros escogidos del faraón los perseguían. Moisés extendió su mano y su vara sobre el mar, y el Señor hizo reciar un fuerte viento oriental toda la noche que dividió las aguas formando muros a derecha e izquierda, permitiendo que Israel cruzara en seco antes de que las aguas volvieran y cubrieran al ejército egipcio.'
       },
       {
         id: 'at-diez-mandamientos',
         testament: 'AT',
         title: 'Los Diez Mandamientos en el Monte Sinaí',
         verse: 'Éxodo 19:16 - 20:21; 31:18',
-        story: 'Al tercer mes de salir de Egipto, Israel acampó frente al monte Sinaí, el cual humeaba y temblaba con truenos, relámpagos y sonido de bocina. Moisés subió a la cumbre del monte durante cuarenta días y cuarenta noches, donde Dios le entregó la ley y los Diez Mandamientos escritos en dos tablas de piedra: amar y adorar solo a Dios, no hacer ídolos, honrar el día de reposo, honrar a padre y madre, y no matar, hurtar, mentir ni codiciar.'
+        story: 'Al tercer mes de haber salido de la tierra de Egipto, los hijos de Israel llegaron al desierto de Sinaí y acamparon frente al monte. Al tercer día hubo truenos y relámpagos, una espesa nube cubrió el monte y se oyó un sonido muy fuerte de bocina que hizo estremecer a todo el campamento, mientras el monte Sinaí humeaba porque el Señor había descendido sobre él en fuego. Moisés subió a la cumbre del monte donde permaneció cuarenta días y cuarenta noches sin comer pan ni beber agua. Allí Dios pronunció su santa ley y entregó a Moisés dos tablas de piedra escritas con el dedo de Dios conteniendo los Diez Mandamientos: no tener otros dioses, no hacer imágenes para adorarlas, no tomar el nombre de Dios en vano, acordarse del día de reposo para santificarlo, honrar a padre y madre, no matar, no cometer adulterio, no hurtar, no hablar falso testimonio y no codiciar lo del prójimo.'
       },
       {
         id: 'at-jerico',
         testament: 'AT',
         title: 'Josué y la Caída de los Muros de Jericó',
         verse: 'Josué 6:1-27',
-        story: 'Tras la muerte de Moisés, Josué guió a Israel a cruzar el río Jordán hacia la tierra prometida, enfrentándose a la ciudad amurallada de Jericó. Siguiendo las instrucciones del Señor, los soldados y siete sacerdotes con bocinas de cuerno de carnero marcharon alrededor de la ciudad una vez al día durante seis días llevando el arca del pacto. El séptimo día dieron siete vueltas alrededor de Jericó, tocaron las bocinas, todo el pueblo gritó a gran voz y los muros de la ciudad se derrumbaron.'
+        story: 'Tras la muerte de Moisés, Josué hijo de Nun guió al pueblo de Israel a cruzar en seco el río Jordán hacia la tierra prometida de Canaán, llegando frente a la ciudad fortificada de Jericó cuyas puertas estaban fuertemente cerradas por temor a los israelitas. El Señor entregó a Josué un plan extraordinario: todos los hombres de guerra junto con siete sacerdotes que llevaban siete bocinas de cuerno de carnero delante del arca del pacto marcharían alrededor de la ciudad una vez al día durante seis días en completo silencio. Al séptimo día se levantaron al despuntar el alba y dieron siete vueltas alrededor de Jericó de la misma manera. En la séptima vuelta, cuando los sacerdotes tocaron prolongadamente las bocinas, Josué ordenó al pueblo gritar a gran voz, y los altos muros de Jericó se derrumbaron completamente, salvándose únicamente Rahab y su familia por haber protegido a los espías.'
       },
       {
         id: 'at-gedeon',
         testament: 'AT',
         title: 'Gedeón y sus Trescientos Valientes',
         verse: 'Jueces 6:11 - 7:25',
-        story: 'Cuando los madianitas oprimían a Israel, el ángel del Señor llamó a Gedeón mientras sacudía trigo en un lagar. Gedeón reunió un ejército de treinta y dos mil hombres, pero Dios redujo las tropas para mostrar su poder, dejando únicamente a trescientos soldados que bebieron agua llevándola con la mano a la boca. De noche, Gedeón dividió a los trescientos en tres escuadrones con trompetas y cántaros vacíos con antorchas encendidas adentro; al romper los cántaros y sonar las trompetas, el campamento enemigo entró en confusión y huyó.'
+        story: 'Cuando los madianitas y amalecitas invadían la tierra destruyendo las cosechas de Israel, el ángel del Señor se sentó debajo de una encina en Ofra y llamó a Gedeón hijo de Joás mientras sacudía trigo en un lagar para esconderlo. Después de pedir la señal del vellón de lana con rocío, Gedeón reunió un ejército de treinta y dos mil hombres junto a la fuente de Harod. Sin embargo, Dios redujo el ejército para que Israel no se jactara de su propia fuerza: primero regresaron veintidós mil que tenían temor, y luego junto al agua fueron escogidos únicamente trescientos soldados que lamieron el agua llevándola con la mano a su boca. A la medianoche, Gedeón dividió a los trescientos hombres en tres escuadrones equipados con trompetas y cántaros vacíos con antorchas encendidas adentro; al tocar las trompetas, quebrar los cántaros y gritar por la espada del Señor y de Gedeón, todo el campamento enemigo entró en pánico y huyó.'
       },
       {
         id: 'at-sanson',
         testament: 'AT',
         title: 'Sansón y Dalila',
         verse: 'Jueces 13:1 - 16:30',
-        story: 'Sansón fue consagrado como nazareo desde su nacimiento y recibió de Dios una fuerza sobrenatural para defender a Israel de los filisteos, matando incluso a un león joven con sus manos. Sin embargo, Dalila fue sobornada por los príncipes filisteos para descubrir el secreto de su fuerza. Tras insistirle cada día, Sansón reveló que nunca había pasado navaja sobre su cabeza. Mientras dormía le cortaron las siete trenzas de su cabello, perdió su fuerza y fue capturado; pero al crecerle de nuevo el cabello, clamó a Dios y derribó las columnas del templo filisteo.'
+        story: 'Anunciado por un ángel a Manoa y su esposa, Sansón fue consagrado como nazareo desde su nacimiento y recibió del Espíritu del Señor una fuerza sobrenatural para librar a Israel de los filisteos. En su juventud despedazó un león joven con sus propias manos en las viñas de Timnat y más tarde derrotó a mil filisteos con una quijada de asno fresca. Años después se enamoró de Dalila en el valle de Sorec, a quien los príncipes filisteos ofrecieron mil cien siclos de plata cada uno para descubrir el secreto de su fuerza. Tras tres engaños con mimbres frescos, cuerdas nuevas y telares, Dalila lo presionó cada día hasta que Sansón le reveló que nunca había pasado navaja sobre su cabeza. Mientras dormía sobre sus rodillas le cortaron las siete trenzas de su cabello, perdió su fuerza, le sacaron los ojos y lo ataron en Gaza; pero al crecerle nuevamente el cabello, clamó a Dios y derribó las dos columnas principales del templo de Dagón.'
       },
       {
         id: 'at-rut',
         testament: 'AT',
         title: 'Rut y Noemí: Lealtad y Redención',
         verse: 'Rut 1:1 - 4:17',
-        story: 'Durante una hambruna en Belén, Noemí emigró a Moab donde quedaron viudas ella y sus dos nueras. Al regresar a Belén, Rut decidió quedarse junto a su suegra diciendo que su pueblo sería su pueblo y su Dios sería su Dios. En Belén, Rut espigó en los campos de Booz, un pariente cercano generoso que protegió a Rut, se casó con ella como pariente redentor y juntos fueron padres de Obed, abuelo del rey David.'
+        story: 'Durante una severa hambruna en Belén de Judá en tiempos de los jueces, Elimelec emigró a los campos de Moab junto con su esposa Noemí y sus dos hijos Mahlón y Quelión. Tras morir Elimelec y sus dos hijos, Noemí decidió regresar a Belén al oír que Dios había bendecido su tierra con pan. Aunque Orfa regresó a su pueblo, Rut la moabita se aferró con amor a su suegra declarando que adondequiera que ella fuera iría también, su pueblo sería su pueblo y su Dios sería su Dios. Al llegar a Belén al comienzo de la siega de la cebada, Rut salió a espigar detrás de los segadores en los campos de Booz, un pariente rico y bondadoso de Elimelec. Booz protegió a Rut, ordenó dejar espigas adicionales para ella y actuó como pariente redentor casándose con ella; juntos tuvieron un hijo llamado Obed, quien fue padre de Isaí y abuelo del gran rey David.'
       },
       {
         id: 'at-david-goliat',
         testament: 'AT',
         title: 'David y el Gigante Goliat',
         verse: '1 Samuel 17:4-50',
-        story: 'Salió del campamento de los filisteos un paladín llamado Goliat, oriundo de Gat, que medía seis codos y un palmo de altura. Durante cuarenta días desafió al ejército de Israel y al rey Saúl. David, un joven pastor de Belén hijo de Isaí, rechazó la armadura de bronce de Saúl, tomó su cayado, escogió cinco piedras lisas del arroyo y avanzó con su honda en la mano en el nombre del Señor de los ejércitos. Lanzó una piedra que se clavó en la frente de Goliat, derribando al gigante.'
+        story: 'Cuando los filisteos reunieron sus ejércitos en Soco de Judá frente al valle de Ela, salió de su campamento un campeón llamado Goliat, oriundo de Gat, que medía seis codos y un palmo de altura y vestía un casco de bronce, una coraza de malla de cinco mil siclos y una lanza cuya asta era como un rodillo de telar. Durante cuarenta días desafió mañana y tarde al ejército de Israel y al rey Saúl. David, el hijo menor de Isaí de Belén que cuidaba las ovejas de su padre, llegó al campamento llevando provisiones para sus hermanos y aceptó enfrentar al gigante confiando en el Dios vivo que lo había librado del león y del oso. Rechazando la pesada armadura de Saúl, David tomó su cayado, escogió cinco piedras lisas del arroyo y avanzó con su honda en la mano en el nombre del Señor de los ejércitos; lanzó una piedra que se hundió en la frente de Goliat, derribando al gigante rostro en tierra.'
       },
       {
         id: 'at-salomon',
         testament: 'AT',
         title: 'La Sabiduría del Rey Salomón y el Templo',
         verse: '1 Reyes 3:5-28; 6:1-38',
-        story: 'Al inicio de su reinado, Dios se apareció en sueños a Salomón en Gabaón y le dijo que pidiera lo que quisiera. En lugar de pedir riquezas o larga vida, Salomón pidió un corazón entendido para juzgar y gobernar con justicia al pueblo de Israel. Agradado por su humildad, Dios le concedió una sabiduría incomparable, además de riquezas y paz, permitiéndole construir el majestuoso Templo del Señor en Jerusalén.'
+        story: 'Al comenzar su reinado sobre Israel en lugar de su padre David, Salomón fue a Gabaón a ofrecer mil holocaustos, y aquella noche Dios se le apareció en sueños diciéndole que pidiera lo que quisiera recibir. En lugar de pedir larga vida, riquezas o la muerte de sus enemigos, Salomón pidió humildemente un corazón entendido para juzgar al pueblo y discernir entre lo bueno y lo malo. Agradado por esta petición, Dios le concedió una sabiduría y prudencia incomparables, además de riquezas y gloria sin igual entre los reyes. Su sabiduría brilló al resolver el caso de dos madres que reclamaban un mismo bebé vivo, y posteriormente dirigió durante siete años la construcción del majestuoso Templo del Señor en Jerusalén revestido de cedro del Líbano y oro puro.'
       },
       {
         id: 'at-elias-carmelo',
         testament: 'AT',
         title: 'Elías y los Profetas en el Monte Carmelo',
         verse: '1 Reyes 18:17-40',
-        story: 'Durante una sequía de tres años en tiempos del rey Acab, el profeta Elías convocó al pueblo y a cuatrocientos cincuenta profetas de Baal en el monte Carmelo. Propuso preparar dos altares sin poner fuego para demostrar quién era el verdadero Dios. Los profetas de Baal clamaron desde la mañana hasta la tarde sin respuesta. Luego Elías reparó el altar del Señor, empapó la leña con doce cántaros de agua y oró; al instante descendió fuego del cielo que consumió el holocausto, la leña, las piedras y el agua.'
+        story: 'Durante una terrible sequía de tres años y medio anunciada por palabra de Dios en tiempos del impío rey Acab y Jezabel, el profeta Elías tisbita convocó a todo Israel y a cuatrocientos cincuenta profetas de Baal en el monte Carmelo. Elías desafió al pueblo a dejar de claudicar entre dos pensamientos y propuso preparar dos altares con leña y un buey sin poner fuego debajo, para que el Dios que respondiera por fuego fuera reconocido como el verdadero Dios. Los profetas de Baal clamaron desde la mañana hasta la hora del sacrificio vespertino saltando y sajándose sin obtener respuesta. Luego Elías reparó el altar del Señor con doce piedras conforme a las tribus de Israel, cavó una zanja alrededor, empapó tres veces la leña con doce cántaros de agua y oró con fe; al instante cayó fuego del cielo que consumió el holocausto, la leña, las piedras, el polvo y hasta lamió el agua de la zanja.'
       },
       {
         id: 'at-daniel-leones',
         testament: 'AT',
         title: 'Daniel en el Foso de los Leones',
         verse: 'Daniel 6:1-28',
-        story: 'Daniel sobresalía entre todos los gobernadores del reino de Darío por su espíritu superior e integridad. Sus rivales convencieron al rey de firmar un decreto prohibiendo orar a cualquier dios u hombre durante treinta días excepto al rey. Daniel continuó arrodillándose tres veces al día frente a su ventana abierta hacia Jerusalén para orar a Dios. Por ello fue arrojado al foso de los leones, pero a la mañana siguiente salió completamente ileso porque Dios envió su ángel y cerró la boca de los leones.'
+        story: 'Al tomar Darío el medo el reino de Babilonia, constituyó ciento veinte sátrapas y tres gobernadores sobre todo el imperio, destacando Daniel por su espíritu superior e irreprochable integridad. Llenos de envidia y sin hallar falta en su administración, los demás funcionarios convencieron al rey Darío de firmar un edicto real irrevocable prohibiendo hacer petición a cualquier dios u hombre durante treinta días excepto al rey, bajo pena de ser arrojado al foso de los leones. Al saber que el edicto estaba firmado, Daniel entró en su casa y, con las ventanas de su cámara abiertas hacia Jerusalén, se arrodillaba tres veces al día para orar y dar gracias a su Dios como solía hacerlo. Descubierto por sus acusadores, Daniel fue arrojado al foso de los leones sellado con el anillo del rey; al amanecer, Darío corrió angustiado al foso y halló a Daniel completamente ileso porque Dios envió su ángel y cerró la boca de los leones.'
       },
       {
         id: 'at-horno-fuego',
         testament: 'AT',
         title: 'Sadrac, Mesac y Abed-nego en el Horno de Fuego',
         verse: 'Daniel 3:1-30',
-        story: 'El rey Nabucodonosor levantó una estatua de oro de sesenta codos de altura en el campo de Dura y ordenó que todos se postraran al sonar los instrumentos musicales. Los tres jóvenes hebreos Sadrac, Mesac y Abed-nego se negaron a adorar la estatua. Furioso, el rey mandó calentar el horno siete veces más de lo acostumbrado y los arrojó atados adentro; sin embargo, caminaron ilesos en medio del fuego acompañados por un cuarto varón semejante al Hijo de Dios.'
+        story: 'El rey Nabucodonosor levantó una inmensa estatua de oro de sesenta codos de altura y seis codos de anchura en el campo de Dura en la provincia de Babilonia, ordenando que todos los gobernantes se postraran y adoraran la estatua al sonar la bocina, la flauta, el tamboril, el arpa y toda clase de música. Los tres jóvenes judíos Sadrac, Mesac y Abed-nego se negaron firmemente a servir a los dioses del rey ni adorar la estatua de oro, declarando que su Dios podía librarlos y que aun si no lo hiciera nunca adorarían ídolos. Lleno de ira, Nabucodonosor mandó calentar el horno siete veces más de lo acostumbrado y ordenó a los hombres más vigorosos de su ejército atarlos y arrojarlos dentro. El fuego mató a los soldados que los llevaron, pero los tres jóvenes cayeron desatados en medio del horno y caminaron ilesos acompañados por un cuarto varón con aspecto semejante al Hijo de Dios.'
       },
       {
         id: 'at-jonas',
         testament: 'AT',
         title: 'Jonás y el Gran Pez hacia Nínive',
         verse: 'Jonás 1:1 - 3:10',
-        story: 'Dios envió al profeta Jonás a predicar contra la maldad de la gran ciudad de Nínive, pero Jonás huyó abordando una nave hacia Tarsis. El Señor levantó una gran tempestad en el mar, y al ser arrojado al agua por los marineros, Jonás fue tragado por un gran pez en cuyo vientre permaneció tres días y tres noches orando a Dios. Tras ser devuelto a tierra firme, Jonás predicó en Nínive y toda la ciudad, desde el rey hasta el pueblo, ayunó y se arrepintió.'
+        story: 'Vino palabra del Señor al profeta Jonás hijo de Amitai ordenándole levantarse e ir a predicar contra la maldad de la gran ciudad de Nínive. Sin embargo, Jonás huyó de la presencia del Señor descendiendo al puerto de Jope, donde pagó su pasaje y abordó una nave que zarpaba hacia Tarsis. El Señor envió un viento impetuoso que desató una furiosa tempestad en el mar a punto de partir la nave. Mientras los marineros clamaban a sus dioses y arrojaban la carga al mar, Jonás dormía en el interior del barco; al echar suertes cayó sobre Jonás, quien pidió ser arrojado al mar para que se aquietara la tormenta. El Señor dispuso un gran pez que tragó a Jonás, permaneciendo en su vientre tres días y tres noches en profunda oración hasta ser vomitado en tierra firme. Luego Jonás fue a Nínive, proclamó el mensaje de Dios y toda la ciudad, desde el rey en su trono hasta los animales, ayunó en cilicio y se arrepintió.'
       },
       {
         id: 'at-ester',
         testament: 'AT',
         title: 'La Reina Ester Salva a su Pueblo',
         verse: 'Ester 2:17 - 8:17',
-        story: 'La joven judía Ester fue elegida reina de Persia por el rey Asuero en Susa. Cuando el malvado oficial Amán tramó destruir a todos los judíos del imperio, Mardoqueo animó a Ester a interceder ante el rey aunque presentarse sin ser llamada conllevaba pena de muerte. Tras ayunar tres días junto a su pueblo, Ester se presentó ante el rey Asuero, halló gracia ante sus ojos, desenmascaró el plan de Amán y salvó la vida de todo el pueblo judío.'
+        story: 'En la fortaleza de Susa, la joven huérfana judía Hadasa, llamada Ester y criada por su primo Mardoqueo, fue elegida reina de Persia por el rey Asuero por su gracia y belleza. Poco después, el soberbio oficial Amán fue engrandecido sobre todos los príncipes y, furioso porque Mardoqueo no se arrodillaba ante él, tramó un decreto real para exterminar a todos los judíos del imperio en un mismo día. Mardoqueo envió aviso a Ester recordándole que quizás había llegado al reino para una hora como aquella. Aunque presentarse ante el rey sin ser llamada conllevaba pena de muerte si él no extendía su cetro de oro, Ester pidió a todos los judíos de Susa ayunar tres días y tres noches con ella. Al tercer día Ester se presentó vestida con sus ropas reales, halló favor ante el rey Asuero quien le extendió el cetro de oro, invitó al rey y a Amán a dos banquetes, desenmascaró el complot de Amán y logró salvar a todo su pueblo.'
       },
 
       // NUEVO TESTAMENTO
@@ -2250,91 +2104,91 @@
         testament: 'NT',
         title: 'El Nacimiento de Jesús en Belén',
         verse: 'Lucas 2:1-20; Mateo 2:1-12',
-        story: 'Por un edicto de Augusto César para empadronar al mundo, José y María viajaron desde Nazaret de Galilea hasta Belén de Judea. Al no haber lugar en el mesón, María dio a luz a Jesús, lo envolvió en pañales y lo acostó en un pesebre. Un ángel anunció las buenas nuevas de gran gozo a unos pastores que velaban en el campo, acompañados por una multitud de huestes celestiales; más tarde unos sabios de oriente siguieron una estrella y le ofrecieron oro, incienso y mirra.'
+        story: 'En aquellos días se promulgó un edicto de parte de Augusto César para que todo el mundo fuera empadronado, por lo cual José subió desde Nazaret de Galilea hasta Belén de Judea, la ciudad de David, junto con María su esposa que estaba encinta. Mientras estaban allí se cumplieron los días de su alumbramiento, y María dio a luz a su hijo primogénito Jesús, lo envolvió en pañales y lo acostó en un pesebre porque no había lugar para ellos en el mesón. En la misma región había pastores que velaban y guardaban las vigilias de la noche sobre su rebaño, a quienes se les presentó un ángel del Señor rodeado de resplandor anunciando el nacimiento del Salvador acompañado por una multitud de huestes celestiales que alababan a Dios. Tiempo después unos sabios magos de oriente llegaron a Jerusalén guiados por una estrella brillante que se detuvo sobre donde estaba el niño, postrándose para adorarlo y ofreciéndole tesoros de oro, incienso y mirra.'
       },
       {
         id: 'nt-bautismo-tentacion',
         testament: 'NT',
         title: 'El Bautismo de Jesús y la Tentación en el Desierto',
         verse: 'Mateo 3:13 - 4:11',
-        story: 'Jesús vino desde Galilea al río Jordán para ser bautizado por Juan el Bautista. Al subir del agua, los cielos se abrieron, el Espíritu de Dios descendió como paloma sobre Él y una voz del cielo dijo que era su Hijo amado. Luego Jesús fue llevado por el Espíritu al desierto donde ayunó cuarenta días y cuarenta noches, venciendo las tres tentaciones del diablo respondiendo siempre con la Palabra escrita de Dios.'
+        story: 'Entonces Jesús vino desde Galilea hasta el río Jordán para ser bautizado por Juan el Bautista, quien intentaba oponerse diciendo que necesitaba ser bautizado por Él, pero Jesús respondió que convenía cumplir toda justicia. Al ser bautizado y subir del agua, los cielos se abrieron, el Espíritu de Dios descendió en forma corporal como paloma posándose sobre Él, y una voz desde los cielos declaró que era su Hijo amado en quien tenía complacencia. Inmediatamente después Jesús fue llevado por el Espíritu al desierto donde ayunó cuarenta días y cuarenta noches y sintió hambre. El tentador se acercó proponiéndole convertir piedras en pan, lanzarse desde el pináculo del templo en Jerusalén y adorarlo a cambio de todos los reinos del mundo, pero Jesús venció cada tentación respondiendo firmemente con las Escrituras hasta que el diablo lo dejó y vinieron ángeles a servirle.'
       },
       {
         id: 'nt-bodas-cana',
         testament: 'NT',
         title: 'Las Bodas de Caná: El Primer Milagro',
         verse: 'Juan 2:1-11',
-        story: 'Se celebraron unas bodas en Caná de Galilea a las que asistieron Jesús, su madre María y sus discípulos. Cuando faltó el vino, María dijo a los sirvientes que hicieran todo lo que Jesús les dijera. Había allí seis tinajas de piedra para la purificación; Jesús ordenó llenarlas de agua hasta el borde y luego llevar una muestra al maestresala, quien comprobó que el agua había sido transformada en el mejor vino.'
+        story: 'Al tercer día se celebraron unas bodas en Caná de Galilea, donde estaba María la madre de Jesús y también fueron invitados Jesús y sus primeros discípulos. Cuando faltó el vino durante la fiesta, la madre de Jesús le comentó que ya no tenían vino y luego indicó a los sirvientes que hicieran exactamente todo lo que Él les dijera. Había allí seis tinajas de piedra destinadas a los ritos de purificación de los judíos, en cada una de las cuales cabían dos o tres cántaros. Jesús ordenó a los sirvientes llenar las tinajas de agua hasta el borde y luego sacar un poco para llevarlo al maestresala. Al probar el agua hecha vino sin saber de dónde procedía, el maestresala llamó al esposo elogiando que hubiera guardado el mejor vino hasta el final, manifestando Jesús su gloria como principio de sus señales.'
       },
       {
         id: 'nt-sermon-monte',
         testament: 'NT',
         title: 'El Sermón del Monte y las Bienaventuranzas',
         verse: 'Mateo 5:1 - 7:29',
-        story: 'Al ver a las multitudes, Jesús subió al monte en Galilea y enseñó a sus discípulos las Bienaventuranzas, llamando bienaventurados a los pobres en espíritu, a los mansos, a los misericordiosos, a los de limpio corazón y a los pacificadores. Enseñó que sus seguidores son la sal de la tierra y la luz del mundo, dio la oración del Padre Nuestro y concluyó comparando al que oye y hace sus palabras con un hombre prudente que edifica su casa sobre la roca.'
+        story: 'Al ver a las grandes multitudes que lo seguían desde Galilea, Decápolis, Jerusalén y Judea, Jesús subió al monte, se sentó y abrió su boca para enseñar a sus discípulos pronunciando las Bienaventuranzas: bienaventurados los pobres en espíritu, los que lloran, los mansos, los que tienen hambre y sed de justicia, los misericordiosos, los de limpio corazón, los pacificadores y los que padecen persecución por causa de la justicia. Enseñó que sus discípulos son la sal de la tierra y la luz del mundo como una ciudad asentada sobre un monte, exhortó a amar incluso a los enemigos, enseñó la oración modelo del Padre Nuestro y pidió buscar primeramente el reino de Dios y su justicia. Concluyó comparando a quien oye y hace sus palabras con un hombre prudente que edificó su casa sobre la roca firme frente a la lluvia, los ríos y los vientos.'
       },
       {
         id: 'nt-multiplicacion-panes',
         testament: 'NT',
         title: 'Alimentación de los Cinco Mil',
         verse: 'Juan 6:1-14; Mateo 14:13-21',
-        story: 'Una gran multitud siguió a Jesús hasta un lugar desierto junto al mar de Galilea. Al caer la tarde, los discípulos hallaron únicamente a un muchacho que tenía cinco panes de cebada y dos pececillos. Jesús mandó recostar a la gente sobre la hierba, tomó los cinco panes y los dos peces, dio gracias a Dios y los repartió hasta que cinco mil hombres comieron y se saciaron, recogiendo doce cestas llenas de los pedazos que sobraron.'
+        story: 'Después de cruzar al otro lado del mar de Galilea, una gran multitud siguió a pie a Jesús hasta un lugar desierto porque veían las señales que hacía en los enfermos. Al caer la tarde y ver que tenían hambre, Jesús preguntó a Felipe dónde comprarían pan para darles de comer, y Andrés señaló que allí estaba un muchacho que tenía únicamente cinco panes de cebada y dos pececillos. Jesús mandó recostar a la gente en grupos sobre la hierba verde, tomó en sus manos los cinco panes y los dos peces, levantó los ojos al cielo, dio gracias a Dios y los partió entregándolos a sus discípulos para repartirlos entre la multitud. Todos comieron hasta saciarse siendo cerca de cinco mil hombres sin contar mujeres y niños, y al recoger los pedazos sobrantes llenaron doce cestas completas.'
       },
       {
         id: 'nt-caminar-agua',
         testament: 'NT',
         title: 'Jesús Camina sobre el Agua',
         verse: 'Mateo 14:22-33',
-        story: 'Después de alimentar a la multitud, Jesús envió a sus discípulos en la barca mientras Él subía al monte a orar a solas. A la cuarta vigilia de la noche, la barca era azotada por las olas y el viento contrario, y Jesús se acercó a ellos caminando sobre el mar. Pedro pidió ir hacia Él sobre las aguas y caminó varios pasos, pero al sentir el fuerte viento tuvo miedo y comenzó a hundirse, siendo rescatado al instante por la mano de Jesús.'
+        story: 'Inmediatamente después de alimentar a la multitud, Jesús hizo que sus discípulos subieran a la barca e fueran delante de Él a la otra ribera hacia Betsaida mientras despedía a la gente, y luego subió al monte a orar a solas hasta entrada la noche. Ya en medio del mar, la barca era azotada con violencia por las olas porque el viento era contrario. A la cuarta vigilia de la noche Jesús vino hacia ellos caminando sobre el mar, y los discípulos se turbaron gritando de miedo pensando que era un fantasma, pero Jesús les habló diciendo que tuvieran ánimo porque era Él. Entonces Pedro pidió caminar sobre las aguas hacia Jesús, dio varios pasos sobre el mar, pero al ver el fuerte viento tuvo miedo y comenzó a hundirse clamando salvación, siendo sostenido al instante por la mano extendida de Jesús.'
       },
       {
         id: 'nt-buen-samaritano',
         testament: 'NT',
         title: 'La Parábola del Buen Samaritano',
         verse: 'Lucas 10:25-37',
-        story: 'Para responder quién es nuestro prójimo, Jesús relató la historia de un hombre que descendía de Jerusalén a Jericó y cayó en manos de ladrones que lo despojaron y dejaron medio muerto. Un sacerdote y un levita pasaron de largo por el camino, pero un samaritano movido a misericordia vendó sus heridas con aceite y vino, lo subió en su cabalgadura, lo llevó a un mesón y pagó dos denarios para su cuidado.'
+        story: 'Cuando un intérprete de la ley preguntó a Jesús qué debía hacer para heredar la vida eterna y quién era su prójimo, Jesús respondió relatando la parábola de un hombre que descendía de Jerusalén a Jericó y cayó en manos de ladrones, quienes lo despojaron de sus ropas, lo hirieron gravemente y se marcharon dejándolo medio muerto junto al camino. Casualmente descendió por aquel mismo camino un sacerdote que al verlo pasó de largo por el otro lado, y de igual manera un levita llegó cerca, lo miró y pasó de largo. Pero un samaritano que iba de viaje vino cerca de él y al verlo fue movido a misericordia: se acercó, vendó sus heridas echándoles aceite y vino, lo puso en su propia cabalgadura, lo llevó al mesón y al día siguiente entregó dos denarios al mesonero para que terminara de cuidarlo.'
       },
       {
         id: 'nt-hijo-prodigo',
         testament: 'NT',
         title: 'La Parábola del Hijo Pródigo',
         verse: 'Lucas 15:11-32',
-        story: 'Un hombre tenía dos hijos, y el menor pidió su parte de la herencia para marcharse a una provincia lejana donde malgastó todos sus bienes viviendo perdidamente. Cuando llegó una gran hambre y terminó cuidando cerdos, volvió en sí y decidió regresar arrepentido a pedir trabajo como jornalero. Aún estaba lejos cuando su padre lo vio, corrió lleno de amor a abrazarlo y besó su rostro, celebrando una gran fiesta porque su hijo perdido había sido hallado.'
+        story: 'Para mostrar el gozo del cielo por cada pecador que se arrepiente, Jesús contó la historia de un hombre que tenía dos hijos, y el menor pidió a su padre la parte de los bienes que le correspondía. Pocos días después juntó todo y se marchó lejos a una provincia apartada donde desperdició todos sus bienes viviendo perdidamente. Cuando todo lo hubo malgastado vino una gran hambre en aquella provincia y terminó trabajando en el campo apacentando cerdos, deseando llenar su vientre con las algarrobas que comían los cerdos sin que nadie le diera. Volviendo en sí decidió regresar arrepentido a casa de su padre para pedir ser tratado como uno de sus jornaleros; cuando aún estaba lejos su padre lo vio, fue movido a misericordia, corrió, se echó sobre su cuello, lo besó y mandó traer el mejor vestido, un anillo, calzado y preparar un gran banquete.'
       },
       {
         id: 'nt-lazaro',
         testament: 'NT',
         title: 'La Resurrección de Lázaro en Betania',
         verse: 'Juan 11:1-44',
-        story: 'Lázaro de Betania, hermano de Marta y María, enfermó gravemente y murió. Cuando Jesús llegó, Lázaro llevaba ya cuatro días en el sepulcro. Jesús declaró a Marta que Él es la resurrección y la vida, lloró frente a la tumba, ordenó quitar la piedra y clamó a gran voz: Lázaro, ven fuera. Al instante el que había estado muerto salió atado de pies y manos con vendas, manifestando la gloria de Dios.'
+        story: 'En la aldea de Betania cerca de Jerusalén enfermó gravemente Lázaro, hermano de Marta y de María, quienes enviaron aviso a Jesús diciendo que aquel a quien amaba estaba enfermo. Jesús permaneció dos días más donde estaba y al llegar a Betania halló que Lázaro llevaba ya cuatro días en el sepulcro. Marta salió a recibir a Jesús expresando su fe, y Jesús le declaró solemnemente que Él es la resurrección y la vida y que quien cree en Él aunque esté muerto vivirá. Al ver llorar a María y a los que la acompañaban, Jesús se conmovió en espíritu y lloró frente a la cueva cerrada con una piedra; ordenó quitar la piedra, dio gracias al Padre y clamó a gran voz: Lázaro, ven fuera, saliendo vivo el que había estado muerto atado de pies y manos con vendas.'
       },
       {
         id: 'nt-zaqueo',
         testament: 'NT',
         title: 'Zaqueo y el Encuentro en Jericó',
         verse: 'Lucas 19:1-10',
-        story: 'Al pasar Jesús por Jericó, un jefe de los publicanos llamado Zaqueo, que era rico y de baja estatura, quería ver quién era Jesús pero la multitud se lo impedía. Corrió adelante y subió a un árbol sicómoro para verlo pasar. Jesús miró hacia arriba, lo llamó por su nombre pidiéndole bajar rápido para posar en su casa; Zaqueo lo recibió con gozo y prometió dar la mitad de sus bienes a los pobres y devolver cuatro veces lo defraudado.'
+        story: 'Habiendo entrado Jesús en la ciudad de Jericó e iba pasando por ella, un varón llamado Zaqueo, que era jefe de los publicanos recaudadores de impuestos y muy rico, procuraba ver quién era Jesús pero no podía a causa de la multitud pues era pequeño de estatura. Corriendo delante de todos subió a un árbol sicómoro para verlo porque había de pasar por allí. Cuando Jesús llegó a aquel lugar miró hacia arriba, lo vio y le dijo con afecto: Zaqueo, date prisa, desciende, porque hoy es necesario que pose yo en tu casa. Zaqueo descendió aprisa y lo recibió gozoso en su hogar mientras muchos murmuraban; allí Zaqueo se puso en pie ante el Señor y prometió dar la mitad de sus bienes a los pobres y devolver cuadruplicado a cualquiera en algo que hubiera defraudado.'
       },
       {
         id: 'nt-ultima-cena-resurreccion',
         testament: 'NT',
         title: 'La Última Cena, Crucifixión y Resurrección',
         verse: 'Lucas 22:14-20; 24:1-12',
-        story: 'Durante la Pascua en el aposento alto de Jerusalén, Jesús compartió el pan y la copa con sus doce apóstoles instituyendo el nuevo pacto, y luego oró en el huerto de Getsemaní antes de ser entregado y crucificado en el monte Gólgota. Al tercer día, muy de mañana, las mujeres fueron al sepulcro llevando especias aromáticas y hallaron la piedra removida y la tumba vacía, anunciando dos ángeles que Jesús había resucitado tal como lo había dicho.'
+        story: 'Cuando llegó la hora de celebrar la Pascua en un gran aposento alto de Jerusalén, Jesús se sentó a la mesa con sus doce apóstoles, lavó sus pies en humildad y compartió el pan partido y la copa instituyendo el nuevo pacto en su sangre. Después fue a orar al monte de los Olivos en Getsemaní, donde fue entregado por Judas, juzgado injustamente y crucificado en el lugar llamado Gólgota entre dos malhechores. José de Arimatea colocó su cuerpo en un sepulcro nuevo cavado en la peña, pero el primer día de la semana muy de mañana las mujeres fueron al sepulcro llevando especias aromáticas y hallaron removida la piedra y el sepulcro vacío, apareciendo dos varones con vestiduras resplandecientes que anunciaron que Jesús no estaba entre los muertos sino que había resucitado.'
       },
       {
         id: 'nt-pentecostes',
         testament: 'NT',
         title: 'Pentecostés y el Nacimiento de la Iglesia',
         verse: 'Hechos 2:1-41',
-        story: 'El día de Pentecostés estaban todos los creyentes unánimes juntos en Jerusalén cuando vino del cielo un estruendo como de un viento recio y aparecieron lenguas repartidas como de fuego sobre cada uno de ellos. Todos fueron llenos del Espíritu Santo y comenzaron a hablar en otras lenguas las maravillas de Dios; Pedro predicó con valentía y alrededor de tres mil personas creyeron y fueron bautizadas aquel día.'
+        story: 'Cuando llegó el día de Pentecostés estaban todos los creyentes unánimes juntos en un mismo lugar en Jerusalén, y de repente vino del cielo un estruendo como de un viento recio que soplaba y llenó toda la casa donde estaban sentados. Se les aparecieron lenguas repartidas como de fuego asentándose sobre cada uno de ellos, y todos fueron llenos del Espíritu Santo comenzando a hablar en otras lenguas según el Espíritu les daba que hablasen. Judíos piadosos de todas las naciones que moraban en Jerusalén se juntaron maravillados al oírlos hablar en sus propios idiomas las maravillas de Dios; entonces Pedro se puso en pie junto con los once apóstoles y predicó con valentía sobre Cristo resucitado, recibiendo su palabra y bautizándose aquel día como tres mil personas.'
       },
       {
         id: 'nt-pablo-damasco',
         testament: 'NT',
         title: 'La Conversión de Saulo camino a Damasco',
         verse: 'Hechos 9:1-22',
-        story: 'Saulo de Tarso perseguía con amenazas a los discípulos del Señor y viajaba hacia Damasco con cartas para encarcelarlos. Cerca de la ciudad lo rodeó de repente un resplandor de luz del cielo, cayó en tierra y oyó la voz de Jesús preguntándole por qué lo perseguía. Saulo quedó ciego durante tres días sin comer ni beber hasta que el discípulo Ananías oró por él, recobró la vista, fue bautizado y predicó el evangelio como el apóstol Pablo.'
+        story: 'Saulo de Tarso, respirando aún amenazas y muerte contra los discípulos del Señor, pidió cartas al sumo sacerdote en Jerusalén para ir a las sinagogas de Damasco y traer presos a hombres y mujeres creyentes. Al acercarse ya a Damasco al mediodía, repentinamente lo rodeó un resplandor de luz del cielo más brillante que el sol; cayó en tierra y oyó una voz que le decía: Saulo, Saulo, ¿por qué me persigues? Al preguntar quién era, el Señor respondió que era Jesús a quien él perseguía y le ordenó entrar en la ciudad. Saulo se levantó sin poder ver durante tres días en los cuales no comió ni bebíó, hasta que el discípulo Ananías fue enviado por el Señor a imponerle las manos para que recobrara la vista, fuera lleno del Espíritu Santo, se bautizara y predicara a Cristo como el apóstol Pablo.'
       }
     ];
 
@@ -2369,8 +2223,7 @@
     let quizzes = [];
     let isRandomModeEnabled = true;
     let deferredInstallPrompt = null;
-    let currentStoryTestamentFilter = 'ALL';
-    let selectedCatalogStoryId = null;
+    let currentLobbyTestamentFilter = 'ALL';
     const perQuizSettings = {};
     let communityState = {
       visits: 1,
@@ -2414,7 +2267,6 @@
       loadQuizzes();
       initMenu3DScene();
       renderLobby();
-      renderBibleStoriesCatalog();
       renderManageList();
       resetEditorToNew();
     });
@@ -2425,7 +2277,7 @@
     function detectVisitorDevice() {
       const ua = navigator.userAgent || '';
       if (/Android/i.test(ua)) return 'Android';
-      if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+      if (/iPhone|iPad|iPod/.test(ua)) return 'iOS';
       if (/Windows/i.test(ua)) return 'Windows';
       if (/Mac/i.test(ua)) return 'Mac';
       if (/Linux/i.test(ua)) return 'Linux';
@@ -2537,11 +2389,31 @@
       } catch (e) {}
     }
 
+    function toggleCommunitySection(forceOpen = null) {
+      const body = document.getElementById('community-collapsible-body');
+      const statsBar = document.getElementById('community-stats-bar');
+      const toggleBtn = document.getElementById('toggle-community-box-btn');
+      if (!body) return;
+
+      const shouldOpen = forceOpen !== null ? forceOpen : !body.classList.contains('open');
+      body.classList.toggle('open', shouldOpen);
+      if (statsBar) statsBar.classList.toggle('is-expanded', shouldOpen);
+      if (toggleBtn) {
+        const count = communityState.comments.length;
+        toggleBtn.innerHTML = shouldOpen
+          ? `💬 Minimizar Comentarios ▴`
+          : `💬 Comentarios (<span id="comments-count-badge">${count}</span>) ▾`;
+      }
+    }
+
     function toggleActivityPanel() {
       const panel = document.getElementById('community-activity-panel');
       const btn = document.getElementById('toggle-activity-panel-btn');
       if (!panel) return;
       const isOpen = panel.classList.toggle('open');
+      if (isOpen) {
+        toggleCommunitySection(true);
+      }
       if (btn) {
         btn.textContent = isOpen ? '✖ Cerrar Registro' : '📊 Ver Registro';
       }
@@ -2589,16 +2461,17 @@
       const likeBtn = document.getElementById('like-toggle-btn');
       const heartIcon = document.getElementById('like-heart-icon');
       const listEl = document.getElementById('comments-list-container');
+      const commentsBadge = document.getElementById('comments-count-badge');
 
       if (visitsEl) visitsEl.textContent = communityState.visits.toLocaleString('es-ES');
       if (likesEl) likesEl.textContent = communityState.likes.toLocaleString('es-ES');
+      if (commentsBadge) commentsBadge.textContent = communityState.comments.length;
 
       if (likeBtn && heartIcon) {
         likeBtn.classList.toggle('liked', hasUserLiked);
         heartIcon.textContent = hasUserLiked ? '❤️' : '🤍';
       }
 
-      // Renderizar listas del Panel de Visitas y Me gusta
       const likesLogCount = document.getElementById('likes-log-count');
       const likesLogList = document.getElementById('likes-log-list');
       const visitsLogCount = document.getElementById('visits-log-count');
@@ -2741,66 +2614,6 @@
       saveCommunityState();
       renderCommunityWidgets();
       showToast('¡Comentario publicado! 💬', 'success');
-    }
-
-    function filterBibleStoriesCatalog() {
-      renderBibleStoriesCatalog();
-    }
-
-    function renderBibleStoriesCatalog() {
-      const grid = document.getElementById('stories-catalog-grid');
-      const countBadge = document.getElementById('stories-catalog-count');
-      if (!grid) return;
-
-      const query = (document.getElementById('story-search-input')?.value || '').trim().toLowerCase();
-
-      const filtered = BIBLICAL_STORIES_LIBRARY.filter(item => {
-        const matchesTestament = currentStoryTestamentFilter === 'ALL' || item.testament === currentStoryTestamentFilter;
-        const matchesQuery = !query ||
-          item.title.toLowerCase().includes(query) ||
-          item.verse.toLowerCase().includes(query) ||
-          item.story.toLowerCase().includes(query);
-        return matchesTestament && matchesQuery;
-      });
-
-      if (countBadge) countBadge.textContent = filtered.length;
-      grid.innerHTML = '';
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.9rem;">No se encontraron historias con ese filtro. Prueba otro término o pega tu propio pasaje abajo.</div>`;
-        return;
-      }
-
-      filtered.forEach(item => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'story-catalog-item' + (selectedCatalogStoryId === item.id ? ' selected' : '');
-        const isNT = item.testament === 'NT';
-        btn.innerHTML = `
-          <div class="story-tag-row">
-            <span class="story-testament-tag ${isNT ? 'nt' : ''}">${isNT ? 'Nuevo Testamento' : 'Antiguo Testamento'}</span>
-            <span class="story-ref-label">${escapeHTML(item.verse)}</span>
-          </div>
-          <div class="story-item-title">${escapeHTML(item.title)}</div>
-          <div class="story-item-preview">${escapeHTML(item.story)}</div>
-        `;
-        btn.onclick = () => selectBiblicalStoryFromCatalog(item.id);
-        grid.appendChild(btn);
-      });
-    }
-
-    function selectBiblicalStoryFromCatalog(storyId) {
-      const found = BIBLICAL_STORIES_LIBRARY.find(s => s.id === storyId);
-      if (!found) return;
-
-      selectedCatalogStoryId = storyId;
-      document.getElementById('gen-title-input').value = found.title;
-      document.getElementById('gen-verse-input').value = found.verse;
-      document.getElementById('gen-story-textarea').value = found.story;
-
-      renderBibleStoriesCatalog();
-      showToast(`Historia "${found.title}" (${found.verse}) cargada. Pulsa "Generar Cuestionario Automáticamente".`, 'success');
-      document.getElementById('gen-title-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     /* --------------------------------------------------------------------------
@@ -2985,26 +2798,46 @@
 
     function loadQuizzes() {
       const embedded = getEmbeddedQuizzes();
+      const prebuiltStories = buildPrebuiltBiblicalStoryQuizzes();
       const savedRaw = localStorage.getItem(STORAGE_KEY);
+      const map = new Map();
+
+      embedded.forEach(q => map.set(q.id, q));
+      prebuiltStories.forEach(q => {
+        if (!map.has(q.id)) {
+          map.set(q.id, q);
+        }
+      });
 
       if (savedRaw) {
         try {
           const saved = JSON.parse(savedRaw);
           if (Array.isArray(saved) && saved.length > 0) {
-            const map = new Map();
-            embedded.forEach(q => map.set(q.id, q));
             saved.forEach(q => map.set(q.id, q));
-            quizzes = Array.from(map.values());
-            saveQuizzesToStorage();
-            return;
           }
         } catch (e) {
           console.error('Error parseando localStorage:', e);
         }
       }
 
-      quizzes = embedded;
+      quizzes = Array.from(map.values());
       saveQuizzesToStorage();
+    }
+
+    function buildPrebuiltBiblicalStoryQuizzes() {
+      return BIBLICAL_STORIES_LIBRARY.map(storyItem => {
+        // Genera hasta un máximo de 50 preguntas naturales según qué tan grande y rica sea la historia
+        const generated = runHeuristicBiblicalNLP(storyItem.story, storyItem.verse, 50, 'media', true);
+        return {
+          id: 'story_quiz_' + storyItem.id,
+          testament: storyItem.testament,
+          verse: storyItem.verse,
+          title: storyItem.title,
+          description: `${storyItem.verse} — ${generated.length} preguntas generadas según la extensión del relato.`,
+          difficulty: 'media',
+          questions: generated
+        };
+      });
     }
 
     function saveQuizzesToStorage() {
@@ -3030,16 +2863,21 @@
       if (tabName === 'play') {
         exitGame();
         renderLobby();
-      } else if (tabName === 'generate') {
-        renderBibleStoriesCatalog();
       } else if (tabName === 'create') {
         renderManageList();
       }
     }
 
     /* --------------------------------------------------------------------------
-       SECCIÓN 1: JUGAR TRIVIA
+       SECCIÓN 1: LISTADO DE EVALUACIONES (CON DESPLEGABLE DE PREGUNTAS Y DIFICULTAD)
        -------------------------------------------------------------------------- */
+    function setLobbyTestamentFilter(filter, btnEl) {
+      currentLobbyTestamentFilter = filter;
+      document.querySelectorAll('.testament-pill').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderLobby();
+    }
+
     function formatSecondsMMSS(totalSec) {
       const safe = Math.max(0, Math.floor(totalSec));
       const mins = Math.floor(safe / 60);
@@ -3056,121 +2894,165 @@
       return `${secs} seg`;
     }
 
+    function getDifficultyMeta(diffKey) {
+      const key = (diffKey || 'media').toLowerCase();
+      if (key === 'facil') return { key: 'facil', label: '🟢 Fácil', secPerQuestion: 40 };
+      if (key === 'dificil') return { key: 'dificil', label: '🔴 Difícil', secPerQuestion: 15 };
+      return { key: 'media', label: '🟡 Media', secPerQuestion: 25 };
+    }
+
+    function calculateTimeByDifficulty(difficultyKey, questionCount) {
+      const meta = getDifficultyMeta(difficultyKey);
+      const count = Math.max(1, Number(questionCount) || 1);
+      return meta.secPerQuestion * count;
+    }
+
     function renderLobby() {
       const container = document.getElementById('quiz-list-container');
+      const totalBadge = document.getElementById('count-all-quizzes');
+      const searchQuery = (document.getElementById('lobby-search-input')?.value || '').trim().toLowerCase();
       container.innerHTML = '';
 
-      if (quizzes.length === 0) {
+      if (totalBadge) {
+        totalBadge.textContent = quizzes.length;
+      }
+
+      const filteredQuizzes = quizzes.filter(quiz => {
+        const qTestament = quiz.testament || 'CUSTOM';
+        const matchesTestament = currentLobbyTestamentFilter === 'ALL' || qTestament === currentLobbyTestamentFilter;
+        const matchesSearch = !searchQuery ||
+          quiz.title.toLowerCase().includes(searchQuery) ||
+          (quiz.description && quiz.description.toLowerCase().includes(searchQuery)) ||
+          (quiz.verse && quiz.verse.toLowerCase().includes(searchQuery));
+        return matchesTestament && matchesSearch;
+      });
+
+      if (filteredQuizzes.length === 0) {
         container.innerHTML = `
-          <div class="card" style="grid-column: 1 / -1; text-align: center;">
-            <p style="margin-bottom: 1rem;">Aún no hay cuestionarios disponibles.</p>
-            <button class="btn btn-primary" onclick="switchTab('generate')">Generar desde una Historia Bíblica</button>
+          <div class="card" style="text-align: center;">
+            <p style="margin-bottom: 1rem;">No se encontraron evaluaciones con ese filtro o búsqueda.</p>
+            <button class="btn btn-outline" onclick="setLobbyTestamentFilter('ALL', document.querySelector('.testament-pill[data-filter=ALL]')); document.getElementById('lobby-search-input').value=''; renderLobby();">Mostrar Todas las Evaluaciones</button>
           </div>
         `;
         return;
       }
 
-      quizzes.forEach(quiz => {
+      filteredQuizzes.forEach((quiz, idx) => {
+        const maxAvailable = Math.min(50, quiz.questions.length);
         if (!perQuizSettings[quiz.id]) {
           perQuizSettings[quiz.id] = {
             random: typeof quiz.randomMode === 'boolean' ? quiz.randomMode : isRandomModeEnabled,
-            seconds: Number(quiz.tiempoTotalSegundos) || 0
+            questionCount: Math.min(10, maxAvailable),
+            difficulty: quiz.difficulty || 'media'
           };
         }
 
         const cfg = perQuizSettings[quiz.id];
-        const baseSeconds = Number(quiz.tiempoTotalSegundos) || 0;
-        const presetValues = [0, 60, 120, 180, 300, 600];
-        if (baseSeconds > 0 && !presetValues.includes(baseSeconds)) {
-          presetValues.push(baseSeconds);
-          presetValues.sort((a, b) => a - b);
+        cfg.questionCount = Math.max(1, Math.min(maxAvailable, cfg.questionCount || maxAvailable));
+
+        let countOptionsHTML = '';
+        for (let n = 1; n <= maxAvailable; n++) {
+          const label = n === maxAvailable ? `${n} preguntas (Todas)` : `${n} ${n === 1 ? 'pregunta' : 'preguntas'}`;
+          countOptionsHTML += `<option value="${n}" ${cfg.questionCount === n ? 'selected' : ''}>${label}</option>`;
         }
 
-        const timeOptionsHTML = presetValues.map(sec => {
-          const label = sec === 0 ? 'Sin límite' : formatDurationLabel(sec);
-          return `<option value="${sec}" ${cfg.seconds === sec ? 'selected' : ''}>${label}</option>`;
-        }).join('');
+        const diffMeta = getDifficultyMeta(cfg.difficulty);
+        const autoSeconds = calculateTimeByDifficulty(cfg.difficulty, cfg.questionCount);
+        const testamentTag = quiz.testament === 'AT'
+          ? '<span class="story-testament-tag">📜 Antiguo Testamento</span>'
+          : quiz.testament === 'NT'
+            ? '<span class="story-testament-tag nt">✝️ Nuevo Testamento</span>'
+            : '<span class="story-testament-tag" style="background:#e0e7ff;color:#3730a3;">⭐ Evaluación</span>';
 
-        const card = document.createElement('div');
-        card.className = 'quiz-card';
-        card.innerHTML = `
-          <div style="transform: translateZ(18px);">
-            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.65rem;">
-              <span class="quiz-badge" style="margin-bottom: 0;">📖 ${quiz.questions.length} ${quiz.questions.length === 1 ? 'pregunta' : 'preguntas'}</span>
+        const row = document.createElement('div');
+        row.className = 'quiz-list-row';
+        row.innerHTML = `
+          <div class="quiz-list-info">
+            <div class="quiz-list-meta">
+              ${testamentTag}
+              <span class="quiz-badge">📖 Máx. ${maxAvailable} preg.</span>
+              <span class="difficulty-badge ${diffMeta.key}">${diffMeta.label}</span>
+              <span class="quiz-badge" style="background: #eef2ff; color: var(--primary-navy);">⏱️ ${formatDurationLabel(autoSeconds)}</span>
             </div>
-            <h3>${escapeHTML(quiz.title)}</h3>
-            <p>${escapeHTML(quiz.description || 'Cuestionario interactivo sobre la Biblia.')}</p>
+            <div class="quiz-list-title-row">
+              <span class="quiz-list-index">#${idx + 1}</span>
+              <h3>${escapeHTML(quiz.title)}</h3>
+            </div>
+            <p class="quiz-list-desc">${escapeHTML(quiz.description || 'Evaluación interactiva sobre la Biblia.')}</p>
           </div>
-          <div style="transform: translateZ(24px);">
-            <div class="quiz-card-controls">
-              <button type="button"
-                      class="card-random-btn ${cfg.random ? 'is-active' : ''}"
-                      onclick="toggleCardRandomMode('${quiz.id}')"
-                      title="Activar o desactivar orden aleatorio en este juego">
-                ${cfg.random ? '🔀 Aleatorio: SÍ' : '📋 Orden fijo'}
-              </button>
-              <label class="card-time-box" title="Tiempo límite para este cuestionario">
-                ⏱️
-                <select class="card-time-select" onchange="updateCardTime('${quiz.id}', this.value)">
-                  ${timeOptionsHTML}
-                </select>
-              </label>
-            </div>
-            <div class="quiz-card-actions">
-              <button class="btn btn-primary" style="flex: 1;" onclick="startQuiz('${quiz.id}')">▶ Jugar Ahora</button>
-              <button class="btn btn-outline btn-sm" title="Editar cuestionario" onclick="editQuiz('${quiz.id}')">✏️</button>
-            </div>
+
+          <div class="quiz-list-controls-panel">
+            <label class="quiz-count-dropdown-box" title="Despliega para elegir cuántas preguntas responder (hasta ${maxAvailable})">
+              🔢 Contestar:
+              <select class="quiz-count-select" onchange="updateCardQuestionCount('${quiz.id}', this.value)">
+                ${countOptionsHTML}
+              </select>
+            </label>
+
+            <button type="button"
+                    class="card-random-btn ${cfg.random ? 'is-active' : ''}"
+                    onclick="toggleCardRandomMode('${quiz.id}')"
+                    title="Activar o desactivar orden aleatorio">
+              ${cfg.random ? '🔀 Aleatorio' : '📋 Fijo'}
+            </button>
+
+            <label class="card-time-box" title="Modo de dificultad (define el tiempo automáticamente)">
+              🎯
+              <select class="card-time-select" onchange="updateCardDifficulty('${quiz.id}', this.value)">
+                <option value="facil" ${cfg.difficulty === 'facil' ? 'selected' : ''}>Fácil (40s/p)</option>
+                <option value="media" ${cfg.difficulty === 'media' ? 'selected' : ''}>Media (25s/p)</option>
+                <option value="dificil" ${cfg.difficulty === 'dificil' ? 'selected' : ''}>Difícil (15s/p)</option>
+              </select>
+            </label>
+
+            <button class="btn btn-primary btn-sm" onclick="startQuiz('${quiz.id}')">▶ Iniciar (${cfg.questionCount})</button>
+            <button class="btn btn-outline btn-sm" title="Editar cuestionario" onclick="editQuiz('${quiz.id}')">✏️</button>
           </div>
         `;
-        attach3DCardTilt(card);
-        container.appendChild(card);
+        container.appendChild(row);
       });
+    }
+
+    function updateCardQuestionCount(quizId, countVal) {
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+      const maxAvailable = Math.min(50, quiz.questions.length);
+      if (!perQuizSettings[quizId]) {
+        perQuizSettings[quizId] = {
+          random: isRandomModeEnabled,
+          questionCount: Math.min(10, maxAvailable),
+          difficulty: quiz.difficulty || 'media'
+        };
+      }
+      const parsed = parseInt(countVal, 10);
+      perQuizSettings[quizId].questionCount = Math.max(1, Math.min(maxAvailable, isNaN(parsed) ? 1 : parsed));
+      renderLobby();
+    }
+
+    function updateCardDifficulty(quizId, diffVal) {
+      const quiz = quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+      if (!perQuizSettings[quizId]) {
+        perQuizSettings[quizId] = { random: isRandomModeEnabled, questionCount: quiz.questions.length, difficulty: diffVal };
+      } else {
+        perQuizSettings[quizId].difficulty = diffVal;
+      }
+      quiz.difficulty = diffVal;
+      saveQuizzesToStorage();
+      renderLobby();
+      renderManageList();
     }
 
     function toggleCardRandomMode(quizId) {
       const quiz = quizzes.find(q => q.id === quizId);
       if (!quiz) return;
       if (!perQuizSettings[quizId]) {
-        perQuizSettings[quizId] = { random: true, seconds: Number(quiz.tiempoTotalSegundos) || 0 };
+        perQuizSettings[quizId] = { random: true, questionCount: quiz.questions.length, difficulty: quiz.difficulty || 'media' };
       }
       perQuizSettings[quizId].random = !perQuizSettings[quizId].random;
       quiz.randomMode = perQuizSettings[quizId].random;
       saveQuizzesToStorage();
       renderLobby();
-    }
-
-    function updateCardTime(quizId, secondsVal) {
-      const quiz = quizzes.find(q => q.id === quizId);
-      if (!quiz) return;
-      const secs = Math.max(0, parseInt(secondsVal, 10) || 0);
-      if (!perQuizSettings[quizId]) {
-        perQuizSettings[quizId] = { random: isRandomModeEnabled, seconds: secs };
-      } else {
-        perQuizSettings[quizId].seconds = secs;
-      }
-      quiz.tiempoTotalSegundos = secs;
-      saveQuizzesToStorage();
-      renderManageList();
-    }
-
-    function attach3DCardTilt(card) {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -7;
-        const rotateY = ((x - centerX) / centerX) * 7;
-
-        card.style.setProperty('--glare-x', `${(x / rect.width) * 100}%`);
-        card.style.setProperty('--glare-y', `${(y / rect.height) * 100}%`);
-        card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-5px)`;
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0px)';
-      });
     }
 
     function startRandomQuickGame() {
@@ -3182,11 +3064,15 @@
       startQuiz(randomQuiz.id);
     }
 
-    function prepareQuizForPlay(sourceQuiz, useRandom = true) {
+    function prepareQuizForPlay(sourceQuiz, useRandom = true, limitCount = null) {
+      const maxQuestions = limitCount && limitCount > 0
+        ? Math.min(limitCount, sourceQuiz.questions.length)
+        : sourceQuiz.questions.length;
+
       if (!useRandom) {
         return {
           ...sourceQuiz,
-          questions: sourceQuiz.questions.map(q => ({
+          questions: sourceQuiz.questions.slice(0, maxQuestions).map(q => ({
             question: q.question,
             options: [...q.options],
             correctIndex: q.correctIndex,
@@ -3195,7 +3081,7 @@
         };
       }
 
-      const shuffledQuestions = shuffleArray(sourceQuiz.questions).map(q => {
+      const shuffledQuestions = shuffleArray(sourceQuiz.questions).slice(0, maxQuestions).map(q => {
         const indexedOptions = q.options.map((text, idx) => ({
           text,
           isCorrect: idx === q.correctIndex
@@ -3226,11 +3112,13 @@
 
       const cardCfg = perQuizSettings[quizId] || {
         random: typeof found.randomMode === 'boolean' ? found.randomMode : isRandomModeEnabled,
-        seconds: Number(found.tiempoTotalSegundos) || 0
+        questionCount: found.questions.length,
+        difficulty: found.difficulty || 'media'
       };
 
-      const preparedQuiz = prepareQuizForPlay(found, cardCfg.random);
-      const effectiveSeconds = Number(cardCfg.seconds) || 0;
+      const preparedQuiz = prepareQuizForPlay(found, cardCfg.random, cardCfg.questionCount);
+      const diffMeta = getDifficultyMeta(cardCfg.difficulty);
+      const effectiveSeconds = calculateTimeByDifficulty(cardCfg.difficulty, preparedQuiz.questions.length);
 
       currentGame = {
         quiz: preparedQuiz,
@@ -3248,7 +3136,7 @@
       document.getElementById('play-results').style.display = 'none';
       document.getElementById('play-active').style.display = 'block';
 
-      document.getElementById('active-quiz-title').textContent = preparedQuiz.title;
+      document.getElementById('active-quiz-title').textContent = `${preparedQuiz.title} (${diffMeta.label})`;
       startGlobalQuizTimer();
       renderCurrentQuestion();
     }
@@ -3459,13 +3347,13 @@
 
       document.getElementById('results-heading').textContent = timedOut
         ? '⏰ ¡Se acabó el tiempo!'
-        : '¡Juego Completado!';
+        : '¡Evaluación Completada!';
       document.getElementById('results-quiz-name').textContent = quiz.title;
       document.getElementById('results-score-text').textContent = `${score} / ${total} (${pct}%)`;
 
       let icon = timedOut ? '⏰' : '🌟';
       let msg = timedOut
-        ? `El tiempo límite terminó. Lograste responder ${score} de ${total} preguntas correctamente antes de que finalizara el reloj.`
+        ? `El tiempo asignado al modo terminó. Lograste responder ${score} de ${total} preguntas correctamente.`
         : '¡Buen intento! Sigue explorando las Escrituras y vuelve a intentarlo.';
 
       if (!timedOut && pct === 100) {
@@ -3728,71 +3616,10 @@
       requestAnimationFrame(animate);
     }
 
-    function setGenCount(val) {
-      document.getElementById('gen-count-input').value = val;
-    }
-
-    function setGenTime(mins) {
-      document.getElementById('gen-time-minutes').value = mins;
-    }
-
-    function setEditorTime(mins) {
-      document.getElementById('quiz-time-minutes').value = mins;
-    }
-
-    function clearGeneratorForm() {
-      selectedCatalogStoryId = null;
-      document.getElementById('gen-title-input').value = '';
-      document.getElementById('gen-verse-input').value = '';
-      document.getElementById('gen-count-input').value = '6';
-      document.getElementById('gen-time-minutes').value = '3';
-      document.getElementById('gen-story-textarea').value = '';
-      document.getElementById('generated-preview-card').style.display = 'none';
-      document.getElementById('generated-questions-list').innerHTML = '';
-      renderBibleStoriesCatalog();
-    }
-
-    function generateQuizFromStory() {
-      const title = document.getElementById('gen-title-input').value.trim();
-      const verse = document.getElementById('gen-verse-input').value.trim();
-      const rawText = document.getElementById('gen-story-textarea').value.trim();
-      const countInput = document.getElementById('gen-count-input');
-      let targetCount = parseInt(countInput.value, 10);
-
-      if (isNaN(targetCount) || targetCount < 1) {
-        targetCount = 1;
-        countInput.value = '1';
-      } else if (targetCount > 50) {
-        targetCount = 50;
-        countInput.value = '50';
-      }
-
-      if (!rawText || rawText.length < 30) {
-        showToast('Selecciona una historia bíblica arriba o pega un pasaje más detallado.', 'error');
-        document.getElementById('gen-story-textarea').focus();
-        return;
-      }
-
-      if (!title) {
-        document.getElementById('gen-title-input').value = verse ? `Estudio de ${verse}` : 'Cuestionario Bíblico';
-      }
-
-      const generatedQuestions = runHeuristicBiblicalNLP(rawText, verse, targetCount);
-
-      if (generatedQuestions.length === 0) {
-        showToast('No se pudieron extraer suficientes datos del texto. Intenta añadir más oraciones.', 'error');
-        return;
-      }
-
-      renderGeneratedPreview(generatedQuestions);
-      document.getElementById('generated-preview-card').style.display = 'block';
-      document.getElementById('generated-preview-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      showToast(`¡Se generaron ${generatedQuestions.length} preguntas a partir del pasaje!`, 'success');
-    }
-
-    function runHeuristicBiblicalNLP(text, verseRef, desiredCount) {
+    function runHeuristicBiblicalNLP(text, verseRef, maxCap = 50, difficulty = 'media', naturalOnly = true) {
       const refLabel = verseRef || 'el pasaje bíblico';
       const cleanText = text.replace(/\s+/g, ' ').trim();
+      const hardCap = Math.min(50, Math.max(1, maxCap));
 
       let sentences = cleanText
         .split(/(?<=[.!?])\s+/)
@@ -3834,14 +3661,20 @@
       const textNumbers = Array.from(numbersSet);
       const textKeywords = Array.from(keywordsSet);
 
-      const candidates = [];
+      const angleBuckets = {
+        names: [],
+        numbers: [],
+        keywords: [],
+        sequence: [],
+        statements: []
+      };
       const seenQuestions = new Set();
 
-      const addCandidate = (qObj) => {
+      const addCandidateToBucket = (bucketName, qObj) => {
         const key = qObj.question.toLowerCase().replace(/\s+/g, ' ').trim();
         if (!seenQuestions.has(key)) {
           seenQuestions.add(key);
-          candidates.push(qObj);
+          angleBuckets[bucketName].push(qObj);
         }
       };
 
@@ -3862,7 +3695,7 @@
               3
             );
             const built = buildShuffledOptions(targetName, distractors);
-            addCandidate({
+            addCandidateToBucket('names', {
               question: `Según ${refLabel}, ¿qué personaje o lugar completa la siguiente frase?\n"${maskedSentence}"`,
               options: built.options,
               correctIndex: built.correctIndex,
@@ -3885,7 +3718,7 @@
               : BIBLICAL_DISTRACTOR_BANK.numbers;
             const distractors = pickDistractors(targetNum, textNumbers, fallbackPool, 3);
             const built = buildShuffledOptions(targetNum, distractors);
-            addCandidate({
+            addCandidateToBucket('numbers', {
               question: `De acuerdo con ${refLabel}, ¿qué cantidad o número corresponde en este detalle?\n"${maskedSentence}"`,
               options: built.options,
               correctIndex: built.correctIndex,
@@ -3898,8 +3731,9 @@
       // Ángulo 3: Palabras clave
       sentences.forEach(sentence => {
         const words = sentence.replace(/[.,;:¡!¿?"'()«»]/g, '').split(' ');
+        const minWordLen = difficulty === 'dificil' ? 7 : 6;
         const contentWords = words.filter((w, idx) =>
-          idx > 0 && w.length >= 6 && !SPANISH_STOPWORDS.has(w.toLowerCase()) && !/^[A-ZÁÉÍÓÚÑ]/.test(w)
+          idx > 0 && w.length >= minWordLen && !SPANISH_STOPWORDS.has(w.toLowerCase()) && !/^[A-ZÁÉÍÓÚÑ]/.test(w)
         );
 
         contentWords.forEach(targetWord => {
@@ -3907,7 +3741,7 @@
           if (maskedSentence !== sentence) {
             const distractors = pickDistractors(targetWord, textKeywords, BIBLICAL_DISTRACTOR_BANK.keywords, 3);
             const built = buildShuffledOptions(targetWord, distractors);
-            addCandidate({
+            addCandidateToBucket('keywords', {
               question: `Completa la palabra clave según el relato de ${refLabel}:\n"${maskedSentence}"`,
               options: built.options,
               correctIndex: built.correctIndex,
@@ -3933,7 +3767,7 @@
           ];
           const distractors = pickDistractors(nextEvt + '.', otherEvts, fallbacks, 3);
           const built = buildShuffledOptions(nextEvt + '.', distractors);
-          addCandidate({
+          addCandidateToBucket('sequence', {
             question: `En la secuencia de ${refLabel}, ¿qué sucedió inmediatamente después de que "${currentEvt}"?`,
             options: built.options,
             correctIndex: built.correctIndex,
@@ -3947,16 +3781,48 @@
         const cleanSent = sentence.replace(/[.!?]+$/, '');
         const falseStatements = generatePlausibleFalseStatements(cleanSent, textNames);
         const built = buildShuffledOptions(cleanSent + '.', falseStatements);
-        addCandidate({
-          question: `Según ${refLabel} (detalle #${idx + 1}), ¿cuál de las siguientes afirmaciones es correcta?`,
+        addCandidateToBucket('statements', {
+          question: `Según ${refLabel} (hecho #${idx + 1}), ¿cuál de las siguientes afirmaciones es correcta?`,
           options: built.options,
           correctIndex: built.correctIndex,
           explanation: `${refLabel} — Afirmación fiel al texto bíblico.`
         });
       });
 
+      // Priorizar preguntas según nivel de dificultad elegido
+      let orderedCandidates = [];
+      if (difficulty === 'facil') {
+        orderedCandidates = [
+          ...shuffleArray(angleBuckets.names),
+          ...shuffleArray(angleBuckets.statements),
+          ...shuffleArray(angleBuckets.numbers),
+          ...shuffleArray(angleBuckets.keywords),
+          ...shuffleArray(angleBuckets.sequence)
+        ];
+      } else if (difficulty === 'dificil') {
+        orderedCandidates = [
+          ...shuffleArray(angleBuckets.numbers),
+          ...shuffleArray(angleBuckets.sequence),
+          ...shuffleArray(angleBuckets.keywords),
+          ...shuffleArray(angleBuckets.names),
+          ...shuffleArray(angleBuckets.statements)
+        ];
+      } else {
+        orderedCandidates = shuffleArray([
+          ...angleBuckets.names,
+          ...angleBuckets.numbers,
+          ...angleBuckets.keywords,
+          ...angleBuckets.sequence,
+          ...angleBuckets.statements
+        ]);
+      }
+
+      if (naturalOnly) {
+        return orderedCandidates.slice(0, hardCap);
+      }
+
       let loopGuard = 0;
-      while (candidates.length < desiredCount && loopGuard < desiredCount * 2) {
+      while (orderedCandidates.length < hardCap && loopGuard < hardCap * 2) {
         const baseSent = sentences[loopGuard % sentences.length].replace(/[.!?]+$/, '');
         const altFalse = [
           'El texto afirma exactamente lo contrario a este suceso.',
@@ -3964,7 +3830,7 @@
           'Este hecho sucedió únicamente en tiempos del rey Salomón.'
         ];
         const built = buildShuffledOptions(baseSent + '.', altFalse);
-        addCandidate({
+        orderedCandidates.push({
           question: `Repaso de ${refLabel} (punto ${loopGuard + 1}): ¿qué enseñanza o hecho confirma la lectura?`,
           options: built.options,
           correctIndex: built.correctIndex,
@@ -3973,7 +3839,7 @@
         loopGuard++;
       }
 
-      return shuffleArray(candidates).slice(0, desiredCount);
+      return orderedCandidates.slice(0, hardCap);
     }
 
     function replaceWholeWord(sentence, word, replacement) {
@@ -4046,121 +3912,6 @@
       return copy;
     }
 
-    function renderGeneratedPreview(questions) {
-      const container = document.getElementById('generated-questions-list');
-      container.innerHTML = '';
-
-      questions.forEach((q, idx) => {
-        const uniqueId = 'genq_' + Date.now() + '_' + idx;
-        const letters = ['A', 'B', 'C', 'D'];
-        let optionsHTML = '';
-
-        for (let i = 0; i < 4; i++) {
-          optionsHTML += `
-            <div class="option-input-row ${i === q.correctIndex ? 'is-correct' : ''}">
-              <input type="radio" name="correct_${uniqueId}" value="${i}" ${i === q.correctIndex ? 'checked' : ''}
-                     title="Marcar como respuesta correcta" onchange="highlightCorrectOption(this)">
-              <strong>${letters[i]}.</strong>
-              <input type="text" class="opt-text-input" value="${escapeAttr(q.options[i] || '')}">
-            </div>
-          `;
-        }
-
-        const block = document.createElement('div');
-        block.className = 'question-editor-item';
-        block.innerHTML = `
-          <div class="question-editor-header">
-            <h4 class="q-item-label">Pregunta Generada #${idx + 1}</h4>
-            <button type="button" class="btn btn-danger btn-sm" onclick="removeGeneratedBlock(this)">Eliminar</button>
-          </div>
-          <div class="form-group">
-            <textarea class="form-control q-text-input" rows="2">${escapeHTML(q.question)}</textarea>
-          </div>
-          <div class="options-editor-grid">
-            ${optionsHTML}
-          </div>
-          <div class="form-group" style="margin-bottom: 0;">
-            <input type="text" class="form-control q-exp-input" value="${escapeAttr(q.explanation || '')}">
-          </div>
-        `;
-        container.appendChild(block);
-      });
-    }
-
-    function removeGeneratedBlock(btn) {
-      const list = document.getElementById('generated-questions-list');
-      if (list.children.length <= 1) {
-        showToast('Debe quedar al menos una pregunta en el cuestionario.', 'error');
-        return;
-      }
-      btn.closest('.question-editor-item').remove();
-      const items = list.querySelectorAll('.question-editor-item');
-      items.forEach((item, idx) => {
-        item.querySelector('.q-item-label').textContent = `Pregunta Generada #${idx + 1}`;
-      });
-    }
-
-    function saveGeneratedQuiz(playImmediately) {
-      const title = document.getElementById('gen-title-input').value.trim() || 'Cuestionario Bíblico Generado';
-      const verse = document.getElementById('gen-verse-input').value.trim();
-      const minsVal = parseFloat(document.getElementById('gen-time-minutes').value);
-      const tiempoTotalSegundos = (!isNaN(minsVal) && minsVal > 0) ? Math.round(minsVal * 60) : 0;
-
-      const description = verse
-        ? `Cuestionario generado a partir de ${verse}.`
-        : 'Cuestionario generado a partir de un relato bíblico.';
-
-      const nodes = document.querySelectorAll('#generated-questions-list .question-editor-item');
-      if (nodes.length === 0) {
-        showToast('Primero genera las preguntas a partir de la historia.', 'error');
-        return;
-      }
-
-      const parsedQuestions = [];
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        const qText = node.querySelector('.q-text-input').value.trim();
-        const options = Array.from(node.querySelectorAll('.opt-text-input')).map(inp => inp.value.trim());
-        const checkedRadio = node.querySelector('input[type="radio"]:checked');
-        const correctIndex = checkedRadio ? parseInt(checkedRadio.value, 10) : 0;
-        const explanation = node.querySelector('.q-exp-input').value.trim();
-
-        if (!qText || options.some(o => o === '')) {
-          showToast(`Revisa que la Pregunta #${i + 1} y sus 4 opciones estén completas.`, 'error');
-          return;
-        }
-
-        parsedQuestions.push({
-          question: qText,
-          options,
-          correctIndex,
-          explanation
-        });
-      }
-
-      const newQuiz = {
-        id: 'quiz_gen_' + Date.now(),
-        title,
-        description,
-        tiempoTotalSegundos,
-        questions: parsedQuestions
-      };
-
-      quizzes.push(newQuiz);
-      saveQuizzesToStorage();
-      renderLobby();
-      renderManageList();
-
-      showToast('¡Cuestionario guardado en tu biblioteca offline!', 'success');
-
-      if (playImmediately) {
-        switchTab('play');
-        startQuiz(newQuiz.id);
-      } else {
-        switchTab('play');
-      }
-    }
-
     /* --------------------------------------------------------------------------
        SECCIÓN 3: CREAR Y EDITAR CUESTIONARIOS MANUALMENTE
        -------------------------------------------------------------------------- */
@@ -4168,7 +3919,8 @@
       document.getElementById('edit-quiz-id').value = '';
       document.getElementById('editor-mode-title').textContent = 'Crear Nuevo Cuestionario';
       document.getElementById('quiz-title-input').value = '';
-      document.getElementById('quiz-time-minutes').value = '0';
+      const diffSelect = document.getElementById('quiz-difficulty-select');
+      if (diffSelect) diffSelect.value = 'media';
       document.getElementById('quiz-desc-input').value = '';
 
       const list = document.getElementById('questions-editor-list');
@@ -4250,9 +4002,8 @@
     function saveQuizFromEditor() {
       const title = document.getElementById('quiz-title-input').value.trim();
       const description = document.getElementById('quiz-desc-input').value.trim();
+      const difficulty = document.getElementById('quiz-difficulty-select')?.value || 'media';
       const existingId = document.getElementById('edit-quiz-id').value;
-      const minsVal = parseFloat(document.getElementById('quiz-time-minutes').value);
-      const tiempoTotalSegundos = (!isNaN(minsVal) && minsVal > 0) ? Math.round(minsVal * 60) : 0;
 
       if (!title) {
         showToast('Por favor escribe un título para el cuestionario.', 'error');
@@ -4294,20 +4045,26 @@
         const idx = quizzes.findIndex(q => q.id === existingId);
         if (idx !== -1) {
           quizzes[idx] = {
+            ...quizzes[idx],
             id: existingId,
             title,
             description,
-            tiempoTotalSegundos,
+            difficulty,
             questions: parsedQuestions
           };
+          if (perQuizSettings[existingId]) {
+            perQuizSettings[existingId].difficulty = difficulty;
+            perQuizSettings[existingId].questionCount = Math.min(perQuizSettings[existingId].questionCount, parsedQuestions.length);
+          }
         }
         showToast('¡Cuestionario actualizado con éxito!', 'success');
       } else {
         const newQuiz = {
           id: 'quiz_' + Date.now(),
+          testament: 'CUSTOM',
           title,
           description,
-          tiempoTotalSegundos,
+          difficulty,
           questions: parsedQuestions
         };
         quizzes.push(newQuiz);
@@ -4329,8 +4086,8 @@
       document.getElementById('edit-quiz-id').value = quiz.id;
       document.getElementById('editor-mode-title').textContent = `Editando: ${quiz.title}`;
       document.getElementById('quiz-title-input').value = quiz.title;
-      const mins = (Number(quiz.tiempoTotalSegundos) || 0) / 60;
-      document.getElementById('quiz-time-minutes').value = mins > 0 ? Number(mins.toFixed(2)) : '0';
+      const diffSelect = document.getElementById('quiz-difficulty-select');
+      if (diffSelect) diffSelect.value = quiz.difficulty || 'media';
       document.getElementById('quiz-desc-input').value = quiz.description || '';
 
       const list = document.getElementById('questions-editor-list');
@@ -4350,13 +4107,15 @@
       }
 
       quizzes.forEach(q => {
-        const timeInfo = formatDurationLabel(Number(q.tiempoTotalSegundos) || 0);
+        const autoSec = calculateTimeByDifficulty(q.difficulty, q.questions.length);
+        const timeInfo = formatDurationLabel(autoSec);
+        const diffMeta = getDifficultyMeta(q.difficulty);
         const row = document.createElement('div');
         row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); flex-wrap: wrap;';
         row.innerHTML = `
           <div>
             <strong style="color: var(--primary-navy);">${escapeHTML(q.title)}</strong>
-            <div style="font-size: 0.85rem; color: var(--text-muted);">${q.questions.length} preguntas • ⏱️ ${timeInfo}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">${q.questions.length} preguntas • ${diffMeta.label} • ⏱️ ${timeInfo}</div>
           </div>
           <div style="display: flex; gap: 0.5rem;">
             <button class="btn btn-outline btn-sm" onclick="editQuiz('${q.id}')">✏️ Editar</button>
@@ -4397,17 +4156,8 @@
         const lobbyClone = docClone.querySelector('#quiz-list-container');
         if (lobbyClone) lobbyClone.innerHTML = '';
 
-        const catalogClone = docClone.querySelector('#stories-catalog-grid');
-        if (catalogClone) catalogClone.innerHTML = '';
-
         const editorListClone = docClone.querySelector('#questions-editor-list');
         if (editorListClone) editorListClone.innerHTML = '';
-
-        const genPreviewClone = docClone.querySelector('#generated-preview-card');
-        if (genPreviewClone) genPreviewClone.style.display = 'none';
-
-        const genListClone = docClone.querySelector('#generated-questions-list');
-        if (genListClone) genListClone.innerHTML = '';
 
         const manageListClone = docClone.querySelector('#manage-quizzes-list');
         if (manageListClone) manageListClone.innerHTML = '';
